@@ -110,7 +110,7 @@ export function blogPostingSchema(post: CollectionEntry<'blog'>): JsonLd {
   const { data } = post;
   return {
     '@context': 'https://schema.org',
-    '@type': 'BlogPosting',
+    '@type': data.schema ?? 'BlogPosting',
     '@id': `${url}#article`,
     headline: data.title,
     description: data.description,
@@ -123,6 +123,16 @@ export function blogPostingSchema(post: CollectionEntry<'blog'>): JsonLd {
     articleSection: data.category,
     ...(data.tags.length > 0 ? { keywords: data.tags.join(', ') } : {}),
     author: { '@type': 'Organization', name: data.author, url: SITE.url },
+    // Señal EEAT: revisión editorial por una persona acreditada.
+    ...(data.reviewedBy
+      ? {
+          reviewedBy: {
+            '@type': 'Person',
+            name: data.reviewedBy,
+            ...(data.reviewerTitle ? { jobTitle: data.reviewerTitle } : {}),
+          },
+        }
+      : {}),
     publisher: { '@id': ORG_ID },
     image: absUrl(data.ogImage ?? SITE.defaultOgImage),
   };
