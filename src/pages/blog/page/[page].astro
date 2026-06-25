@@ -1,0 +1,46 @@
+---
+import type { GetStaticPaths } from 'astro';
+import Base from '../../../layouts/Base.astro';
+import BlogListing from '../../../components/BlogListing.astro';
+import CTAGuia from '../../../components/CTAGuia.astro';
+import { getPublishedPosts } from '../../../lib/posts';
+import { POSTS_PER_PAGE } from '../../../consts';
+
+export const getStaticPaths = (async ({ paginate }) => {
+  const posts = await getPublishedPosts();
+  // paginate genera /blog/page/1, /blog/page/2, ...
+  return paginate(posts, { pageSize: POSTS_PER_PAGE });
+}) satisfies GetStaticPaths;
+
+const { page } = Astro.props;
+
+// La página 1 vive en /blog (index). Redirigimos su contenido conceptualmente:
+// aquí solo se sirven páginas 2..n, pero paginate también crea la 1.
+const noindex = page.currentPage === 1;
+---
+
+<Base
+  title={`Blog · Página ${page.currentPage}`}
+  description="Artículos sobre jubilación anticipada en España: requisitos, penalizaciones y cálculo de la pensión."
+  path={`/blog/page/${page.currentPage}`}
+  noindex={noindex}
+>
+  <section class="container-prose py-12 sm:py-16">
+    <header class="max-w-3xl">
+      <h1 class="text-3xl font-bold sm:text-4xl">Blog</h1>
+      <p class="mt-4 text-lg text-ink-soft">
+        Página {page.currentPage} de {page.lastPage}.
+      </p>
+    </header>
+
+    <div class="mt-10">
+      <BlogListing
+        posts={page.data}
+        currentPage={page.currentPage}
+        lastPage={page.lastPage}
+      />
+    </div>
+  </section>
+
+  <CTAGuia variant="banner" />
+</Base>

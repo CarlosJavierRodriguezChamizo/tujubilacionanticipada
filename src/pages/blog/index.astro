@@ -1,0 +1,63 @@
+---
+import Base from '../../layouts/Base.astro';
+import BlogListing from '../../components/BlogListing.astro';
+import CTAGuia from '../../components/CTAGuia.astro';
+import { getPublishedPosts } from '../../lib/posts';
+import { POSTS_PER_PAGE } from '../../consts';
+import {
+  blogCollectionSchema,
+  breadcrumbSchema,
+  webPageSchema,
+} from '../../lib/schema';
+
+const allPosts = await getPublishedPosts();
+const posts = allPosts.slice(0, POSTS_PER_PAGE);
+const lastPage = Math.max(1, Math.ceil(allPosts.length / POSTS_PER_PAGE));
+
+const descripcion =
+  'Artículos sobre jubilación anticipada en España: requisitos, penalizaciones, cálculo de la pensión y guías prácticas para planificar tu retiro.';
+
+const schema = [
+  blogCollectionSchema(allPosts),
+  breadcrumbSchema([
+    { name: 'Inicio', path: '/' },
+    { name: 'Blog', path: '/blog' },
+  ]),
+  webPageSchema({
+    type: 'CollectionPage',
+    path: '/blog',
+    name: 'Blog sobre jubilación anticipada',
+    description: descripcion,
+    breadcrumbPath: '/blog',
+  }),
+];
+---
+
+<Base
+  title="Blog sobre jubilación anticipada"
+  description={descripcion}
+  path="/blog"
+  schema={schema}
+>
+  <section class="container-prose py-12 sm:py-16">
+    <header class="max-w-3xl">
+      <h1 class="text-3xl font-bold sm:text-4xl">Blog</h1>
+      <p class="mt-4 text-lg text-ink-soft">
+        Guías y análisis para entender tu pensión y tomar mejores decisiones
+        sobre cuándo jubilarte.
+      </p>
+    </header>
+
+    <div class="mt-10">
+      {
+        posts.length > 0 ? (
+          <BlogListing posts={posts} currentPage={1} lastPage={lastPage} />
+        ) : (
+          <p class="text-ink-muted">Todavía no hay artículos publicados.</p>
+        )
+      }
+    </div>
+  </section>
+
+  <CTAGuia variant="banner" />
+</Base>

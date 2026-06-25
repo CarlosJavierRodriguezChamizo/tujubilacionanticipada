@@ -1,0 +1,73 @@
+---
+import Base from '../layouts/Base.astro';
+import Simulador from '../components/Simulador.jsx';
+import { DISCLAIMER } from '../consts';
+import {
+  faqSchema,
+  breadcrumbSchema,
+  webApplicationSchema,
+  webPageSchema,
+} from '../lib/schema';
+
+const path = '/simulador';
+const descripcion =
+  'Calcula gratis tu pensión estimada y las fechas posibles de jubilación ordinaria, anticipada voluntaria y forzosa en España.';
+
+const faqs = [
+  {
+    q: '¿Cuánto se penaliza la jubilación anticipada voluntaria?',
+    a: 'La jubilación anticipada voluntaria se penaliza un 1,875 % por cada trimestre que se adelante, con un máximo de 2 años antes de la edad legal.',
+  },
+  {
+    q: '¿Cuánto se penaliza la jubilación anticipada forzosa?',
+    a: 'La jubilación anticipada forzosa (por ERE o despido) se penaliza un 1,625 % por trimestre, y permite adelantar hasta 4 años la jubilación.',
+  },
+  {
+    q: '¿Qué es la base reguladora?',
+    a: 'La base reguladora es el promedio de tus bases de cotización de los últimos años y sirve para calcular el importe de tu pensión.',
+  },
+];
+
+const schema = [
+  webApplicationSchema({
+    name: 'Simulador de jubilación anticipada',
+    description: descripcion,
+    path,
+  }),
+  faqSchema(faqs),
+  breadcrumbSchema([
+    { name: 'Inicio', path: '/' },
+    { name: 'Simulador', path },
+  ]),
+  webPageSchema({
+    path,
+    name: 'Simulador de jubilación anticipada',
+    description: descripcion,
+    breadcrumbPath: path,
+  }),
+];
+---
+
+<Base
+  title="Simulador de jubilación anticipada"
+  description={descripcion}
+  path={path}
+  schema={schema}
+>
+  <section class="container-prose py-12 sm:py-16">
+    <div class="max-w-3xl">
+      <h1 class="text-3xl font-bold sm:text-4xl">
+        Simulador de jubilación anticipada
+      </h1>
+      <p class="mt-4 text-lg text-ink-soft">
+        Estima tu pensión y descubre cuándo podrías jubilarte. Compara la
+        jubilación ordinaria con la anticipada voluntaria y la forzosa, con la
+        penalización aplicada en cada caso.
+      </p>
+    </div>
+
+    <div class="mt-10">
+      <Simulador client:load disclaimer={DISCLAIMER} />
+    </div>
+  </section>
+</Base>

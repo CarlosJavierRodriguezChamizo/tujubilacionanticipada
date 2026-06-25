@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#244781" />
+      <stop offset="1" stop-color="#1c3257" />
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)" />
+  <rect x="80" y="80" width="64" height="64" rx="14" fill="#ffffff" />
+  <text x="112" y="125" font-family="Inter, system-ui, sans-serif" font-size="30" font-weight="700" fill="#244781" text-anchor="middle">TJ</text>
+  <text x="80" y="320" font-family="Inter, system-ui, sans-serif" font-size="68" font-weight="700" fill="#ffffff">Tu Jubilación Anticipada</text>
+  <text x="80" y="400" font-family="Inter, system-ui, sans-serif" font-size="40" font-weight="500" fill="#b3cdec">Entiende tu pensión. Decide cuándo jubilarte.</text>
+  <text x="80" y="560" font-family="Inter, system-ui, sans-serif" font-size="28" fill="#84acdd">tujubilacionanticipada.com</text>
+</svg>

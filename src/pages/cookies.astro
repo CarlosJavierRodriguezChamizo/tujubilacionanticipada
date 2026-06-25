@@ -1,0 +1,60 @@
+---
+import Base from '../layouts/Base.astro';
+import { SITE } from '../consts';
+---
+
+<Base
+  title="Política de cookies"
+  description="Información sobre el uso de cookies en Tu Jubilación Anticipada."
+  path="/cookies"
+  noindex={true}
+>
+  <section class="container-prose py-12 sm:py-16">
+    <div class="prose prose-lg mx-auto prose-a:text-brand-600">
+      <h1>Política de cookies</h1>
+
+      <h2>¿Qué son las cookies?</h2>
+      <p>
+        Las cookies son pequeños archivos que un sitio web almacena en tu
+        dispositivo para recordar información sobre tu visita.
+      </p>
+
+      <h2>Cookies que utilizamos</h2>
+      <ul>
+        <li>
+          <strong>Técnicas (necesarias):</strong> imprescindibles para el
+          funcionamiento del sitio. No requieren consentimiento.
+        </li>
+        <li>
+          <strong>Analíticas (opcionales):</strong> nos ayudan a entender, de
+          forma agregada y anónima, cómo se usa el sitio para mejorarlo. Solo se
+          activan con tu consentimiento.
+        </li>
+      </ul>
+
+      <p>
+        Actualmente este sitio funciona con un uso mínimo de cookies. Si en el
+        futuro incorporamos herramientas de analítica o de terceros, se
+        actualizará esta política y se solicitará tu consentimiento cuando
+        corresponda.
+      </p>
+
+      <h2>Cómo gestionar las cookies</h2>
+      <p>
+        Puedes configurar o eliminar las cookies desde los ajustes de tu
+        navegador. Ten en cuenta que desactivar algunas cookies puede afectar al
+        funcionamiento del sitio.
+      </p>
+
+      <h2>Más información</h2>
+      <p>
+        Para cualquier duda sobre esta política, escríbenos a{' '}
+        <a href={`mailto:${SITE.email}`}>{SITE.email}</a>.
+      </p>
+
+      <p class="text-sm text-ink-muted">
+        Última actualización: junio de 2026.
+      </p>
+    </div>
+  </section>
+</Base>

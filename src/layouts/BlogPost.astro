@@ -1,0 +1,78 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import Base from './Base.astro';
+import CTAGuia from '../components/CTAGuia.astro';
+import { formatDate, toISO } from '../lib/posts';
+import { blogPostingSchema, breadcrumbSchema } from '../lib/schema';
+
+interface Props {
+  post: CollectionEntry<'blog'>;
+}
+
+const { post } = Astro.props;
+const { data } = post;
+const path = `/blog/${post.slug}`;
+
+const articleSchema = blogPostingSchema(post);
+const breadcrumb = breadcrumbSchema([
+  { name: 'Inicio', path: '/' },
+  { name: 'Blog', path: '/blog' },
+  { name: data.title, path },
+]);
+---
+
+<Base
+  title={data.title}
+  description={data.description}
+  path={path}
+  image={data.ogImage}
+  ogType="article"
+  schema={[articleSchema, breadcrumb]}
+>
+  <article class="container-prose py-10 sm:py-14">
+    <nav aria-label="Migas de pan" class="mb-6 text-sm text-ink-muted">
+      <a href="/" class="hover:text-brand-600">Inicio</a>
+      <span class="px-1.5" aria-hidden="true">/</span>
+      <a href="/blog" class="hover:text-brand-600">Blog</a>
+    </nav>
+
+    <header class="mx-auto max-w-prose">
+      <p class="text-sm font-medium uppercase tracking-wide text-brand-600">
+        {data.category}
+      </p>
+      <h1 class="mt-2 text-3xl font-bold leading-tight sm:text-4xl">
+        {data.title}
+      </h1>
+      <p class="mt-4 text-lg text-ink-soft">{data.description}</p>
+      <div class="mt-4 flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-ink-muted">
+        <span>{data.author}</span>
+        <span aria-hidden="true">·</span>
+        <time datetime={toISO(data.pubDate)}>{formatDate(data.pubDate)}</time>
+        {
+          data.updatedDate && (
+            <>
+              <span aria-hidden="true">·</span>
+              <span>Actualizado: {formatDate(data.updatedDate)}</span>
+            </>
+          )
+        }
+      </div>
+    </header>
+
+    <hr class="mx-auto mt-8 max-w-prose border-gray-200" />
+
+    <div class="prose prose-lg mx-auto mt-8 prose-headings:font-semibold prose-a:font-medium prose-a:text-brand-600 hover:prose-a:text-brand-700">
+      <slot />
+    </div>
+
+    <div class="mx-auto mt-12 max-w-prose">
+      <CTAGuia />
+    </div>
+
+    <div class="mx-auto mt-10 max-w-prose border-t border-gray-200 pt-6">
+      <a href="/blog" class="text-sm font-medium text-brand-600 hover:text-brand-700">
+        ← Volver al blog
+      </a>
+    </div>
+  </article>
+</Base>

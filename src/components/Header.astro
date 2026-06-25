@@ -1,0 +1,87 @@
+---
+import { SITE, NAV_LINKS } from '../consts';
+
+const currentPath = Astro.url.pathname;
+
+function isActive(href: string): boolean {
+  if (href === '/') return currentPath === '/';
+  return currentPath === href || currentPath.startsWith(href + '/');
+}
+---
+
+<header class="sticky top-0 z-40 border-b border-gray-200 bg-white/90 backdrop-blur">
+  <div class="container-prose flex h-16 items-center justify-between gap-4">
+    <a href="/" class="flex items-center gap-2 text-ink no-underline">
+      <span
+        class="grid h-8 w-8 place-items-center rounded-md bg-brand-600 text-sm font-bold text-white"
+        aria-hidden="true"
+      >
+        TJ
+      </span>
+      <span class="text-base font-semibold tracking-tight sm:text-lg">
+        {SITE.name}
+      </span>
+    </a>
+
+    <!-- Navegación de escritorio -->
+    <nav class="hidden items-center gap-1 md:flex" aria-label="Principal">
+      {
+        NAV_LINKS.map((link) => (
+          <a
+            href={link.href}
+            class:list={[
+              'rounded-md px-3 py-2 text-sm font-medium no-underline transition-colors',
+              isActive(link.href)
+                ? 'bg-brand-50 text-brand-700'
+                : 'text-ink-soft hover:bg-gray-50 hover:text-ink',
+            ]}
+            aria-current={isActive(link.href) ? 'page' : undefined}
+          >
+            {link.label}
+          </a>
+        ))
+      }
+      <a href="/simulador" class="btn-primary ml-2 px-4 py-2 text-sm no-underline">
+        Calcular ahora
+      </a>
+    </nav>
+
+    <!-- Menú móvil (details/summary, sin JS) -->
+    <details class="relative md:hidden">
+      <summary
+        class="flex h-10 w-10 cursor-pointer list-none items-center justify-center rounded-md border border-gray-300 [&::-webkit-details-marker]:hidden"
+        aria-label="Abrir menú"
+      >
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <line x1="3" y1="6" x2="21" y2="6" />
+          <line x1="3" y1="12" x2="21" y2="12" />
+          <line x1="3" y1="18" x2="21" y2="18" />
+        </svg>
+      </summary>
+      <nav
+        class="absolute right-0 mt-2 w-56 rounded-lg border border-gray-200 bg-white p-2 shadow-lg"
+        aria-label="Móvil"
+      >
+        {
+          NAV_LINKS.map((link) => (
+            <a
+              href={link.href}
+              class:list={[
+                'block rounded-md px-3 py-2 text-sm font-medium no-underline',
+                isActive(link.href)
+                  ? 'bg-brand-50 text-brand-700'
+                  : 'text-ink-soft hover:bg-gray-50',
+              ]}
+              aria-current={isActive(link.href) ? 'page' : undefined}
+            >
+              {link.label}
+            </a>
+          ))
+        }
+        <a href="/simulador" class="btn-primary mt-1 w-full px-3 py-2 text-sm no-underline">
+          Calcular ahora
+        </a>
+      </nav>
+    </details>
+  </div>
+</header>

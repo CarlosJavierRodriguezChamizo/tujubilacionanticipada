@@ -1,0 +1,54 @@
+---
+import { GUIA_PRECIO } from '../consts';
+
+interface Props {
+  /** Variante visual: 'card' (caja destacada) o 'banner' (ancho completo) */
+  variant?: 'card' | 'banner';
+}
+
+const { variant = 'card' } = Astro.props;
+---
+
+{
+  variant === 'banner' ? (
+    <section class="bg-brand-600">
+      <div class="container-prose flex flex-col items-start gap-4 py-12 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <h2 class="text-2xl font-bold text-white">
+            Planifica tu jubilación con la guía completa
+          </h2>
+          <p class="mt-2 max-w-xl text-brand-100">
+            Todos los pasos, requisitos y cálculos para decidir cuándo jubilarte,
+            explicados de forma clara.
+          </p>
+        </div>
+        <a
+          href="/guia-jubilacion-anticipada"
+          class="btn shrink-0 bg-white text-brand-700 no-underline hover:bg-brand-50"
+        >
+          Ver la guía · {GUIA_PRECIO}€
+        </a>
+      </div>
+    </section>
+  ) : (
+    <aside class="rounded-xl border border-brand-200 bg-brand-50 p-6">
+      <p class="text-sm font-semibold uppercase tracking-wide text-brand-700">
+        Guía práctica
+      </p>
+      <h3 class="mt-1 text-xl font-bold text-ink">
+        Da el siguiente paso con seguridad
+      </h3>
+      <p class="mt-2 text-sm leading-relaxed text-ink-soft">
+        La guía de jubilación anticipada reúne requisitos, penalizaciones,
+        plazos y un plan paso a paso para que tomes tu decisión con todos los
+        datos sobre la mesa.
+      </p>
+      <a
+        href="/guia-jubilacion-anticipada"
+        class="btn-primary mt-4 no-underline"
+      >
+        Ver la guía · {GUIA_PRECIO}€
+      </a>
+    </aside>
+  )
+}

@@ -1,0 +1,72 @@
+---
+import Base from '../layouts/Base.astro';
+import { SITE } from '../consts';
+---
+
+<Base
+  title="Aviso legal"
+  description="Aviso legal y condiciones de uso de Tu Jubilación Anticipada."
+  path="/aviso-legal"
+  noindex={true}
+>
+  <section class="container-prose py-12 sm:py-16">
+    <div class="prose prose-lg mx-auto prose-a:text-brand-600">
+      <h1>Aviso legal</h1>
+
+      <h2>1. Datos identificativos</h2>
+      <p>
+        En cumplimiento de la Ley 34/2002, de Servicios de la Sociedad de la
+        Información y de Comercio Electrónico (LSSI-CE), se informa de que este
+        sitio web, <strong>{SITE.domain}</strong>, es titularidad del responsable
+        del proyecto {SITE.name}. Puedes contactar a través del correo
+        <a href={`mailto:${SITE.email}`}>{SITE.email}</a>.
+      </p>
+      <p class="text-sm text-ink-muted">
+        [Completa aquí con el nombre/razón social, NIF/CIF y domicilio del
+        titular antes de publicar.]
+      </p>
+
+      <h2>2. Objeto</h2>
+      <p>
+        Este sitio tiene una finalidad informativa y divulgativa sobre la
+        jubilación anticipada en España. El acceso y uso del sitio atribuye la
+        condición de usuario e implica la aceptación de las presentes
+        condiciones.
+      </p>
+
+      <h2>3. Exención de responsabilidad</h2>
+      <p>
+        Los contenidos y las estimaciones del simulador tienen carácter
+        orientativo y no constituyen asesoramiento profesional. El titular no se
+        responsabiliza de las decisiones tomadas a partir de la información aquí
+        publicada. Se recomienda verificar siempre los datos con la Seguridad
+        Social o con un profesional cualificado.
+      </p>
+
+      <h2>4. Propiedad intelectual</h2>
+      <p>
+        Los textos, el diseño y los elementos gráficos de este sitio están
+        protegidos por derechos de propiedad intelectual. No se permite su
+        reproducción total o parcial sin autorización expresa.
+      </p>
+
+      <h2>5. Enlaces</h2>
+      <p>
+        Este sitio puede contener enlaces a páginas de terceros. El titular no
+        se hace responsable del contenido ni de las políticas de privacidad de
+        dichos sitios.
+      </p>
+
+      <h2>6. Legislación aplicable</h2>
+      <p>
+        Las presentes condiciones se rigen por la legislación española. Para
+        cualquier controversia, las partes se someten a los juzgados y
+        tribunales que correspondan conforme a derecho.
+      </p>
+
+      <p class="text-sm text-ink-muted">
+        Última actualización: junio de 2026.
+      </p>
+    </div>
+  </section>
+</Base>

@@ -1,0 +1,76 @@
+---
+import Base from '../layouts/Base.astro';
+import { SITE } from '../consts';
+import { webPageSchema, breadcrumbSchema } from '../lib/schema';
+
+const path = '/sobre-este-sitio';
+const descripcion =
+  'Quiénes estamos detrás de Tu Jubilación Anticipada, cuál es nuestro objetivo y el alcance de la información que publicamos.';
+
+const schema = [
+  webPageSchema({
+    type: 'AboutPage',
+    path,
+    name: 'Sobre este sitio',
+    description: descripcion,
+    breadcrumbPath: path,
+  }),
+  breadcrumbSchema([
+    { name: 'Inicio', path: '/' },
+    { name: 'Sobre este sitio', path },
+  ]),
+];
+---
+
+<Base
+  title="Sobre este sitio"
+  description={descripcion}
+  path={path}
+  schema={schema}
+>
+  <section class="container-prose py-12 sm:py-16">
+    <div class="prose prose-lg mx-auto prose-a:text-brand-600">
+      <h1>Sobre este sitio</h1>
+
+      <p>
+        <strong>{SITE.name}</strong> es un portal informativo independiente cuyo
+        objetivo es ayudar a los trabajadores en España a entender cómo funciona
+        la jubilación anticipada y a tomar decisiones mejor informadas sobre su
+        futuro.
+      </p>
+
+      <h2>Nuestro enfoque</h2>
+      <p>
+        Explicamos en lenguaje claro conceptos que suelen estar enterrados en
+        normativa técnica: la edad legal de jubilación, las penalizaciones por
+        adelantar el retiro, el cálculo de la base reguladora o los requisitos
+        de acceso a cada modalidad. Nuestro simulador ofrece estimaciones
+        orientativas para que tengas una primera referencia.
+      </p>
+
+      <h2>Quién está detrás</h2>
+      <p>
+        El contenido está elaborado por la redacción de {SITE.name}, que revisa
+        y actualiza los artículos a partir de fuentes oficiales como la
+        Seguridad Social y el Boletín Oficial del Estado.
+      </p>
+
+      <h2>Aviso importante</h2>
+      <p>
+        La información de este sitio tiene carácter <strong>orientativo y
+        divulgativo</strong>. No constituye asesoramiento jurídico, fiscal ni
+        financiero, ni sustituye la información oficial de la Seguridad Social.
+        Las cifras del simulador son estimaciones simplificadas y pueden diferir
+        del cálculo real de tu pensión. Antes de tomar cualquier decisión,
+        consulta tu caso concreto con la Seguridad Social o con un profesional
+        cualificado.
+      </p>
+
+      <h2>Contacto</h2>
+      <p>
+        ¿Tienes dudas o sugerencias? Escríbenos a{' '}
+        <a href={`mailto:${SITE.email}`}>{SITE.email}</a>.
+      </p>
+    </div>
+  </section>
+</Base>

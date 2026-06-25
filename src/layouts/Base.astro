@@ -1,0 +1,72 @@
+---
+import '../styles/global.css';
+import BaseHead from '../components/BaseHead.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { SITE } from '../consts';
+import { organizationSchema, websiteSchema } from '../lib/schema';
+
+interface Props {
+  title: string;
+  description: string;
+  path?: string;
+  image?: string;
+  ogType?: 'website' | 'article';
+  noindex?: boolean;
+  /** JSON-LD a inyectar. Puede ser un objeto o un array de objetos. */
+  schema?: Record<string, unknown> | Record<string, unknown>[];
+}
+
+const {
+  title,
+  description,
+  path,
+  image,
+  ogType = 'website',
+  noindex = false,
+  schema,
+} = Astro.props;
+
+// Entidades sitewide (Organization + WebSite) presentes en todas las páginas.
+// Se concatenan con el/los schema(s) específicos de cada página.
+const schemaList = [
+  organizationSchema(),
+  websiteSchema(),
+  ...(Array.isArray(schema) ? schema : schema ? [schema] : []),
+];
+---
+
+<!doctype html>
+<html lang={SITE.lang}>
+  <head>
+    <BaseHead
+      title={title}
+      description={description}
+      path={path}
+      image={image}
+      ogType={ogType}
+      noindex={noindex}
+    />
+    {
+      schemaList.map((s) => (
+        <script
+          type="application/ld+json"
+          set:html={JSON.stringify(s)}
+        />
+      ))
+    }
+  </head>
+  <body class="flex min-h-screen flex-col">
+    <a
+      href="#main"
+      class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded focus:bg-brand-600 focus:px-4 focus:py-2 focus:text-white"
+    >
+      Saltar al contenido
+    </a>
+    <Header />
+    <main id="main" class="flex-1">
+      <slot />
+    </main>
+    <Footer />
+  </body>
+</html>

@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+
+# Páginas legales sin valor de indexación
+Disallow: /aviso-legal
+Disallow: /privacidad
+Disallow: /cookies
+
+Sitemap: https://tujubilacionanticipada.com/sitemap-index.xml

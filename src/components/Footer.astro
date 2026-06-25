@@ -1,0 +1,66 @@
+---
+import { SITE, NAV_LINKS, FOOTER_LEGAL_LINKS } from '../consts';
+
+const year = new Date().getFullYear();
+---
+
+<footer class="mt-16 border-t border-gray-200 bg-gray-50">
+  <div class="container-prose py-12">
+    <div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+      <div class="lg:col-span-2">
+        <p class="text-base font-semibold text-ink">{SITE.name}</p>
+        <p class="mt-2 max-w-sm text-sm text-ink-muted">{SITE.tagline}</p>
+        <p class="mt-4 max-w-sm text-xs leading-relaxed text-ink-muted">
+          Portal informativo independiente. El contenido es orientativo y no
+          sustituye el asesoramiento profesional ni la información oficial de la
+          Seguridad Social.
+        </p>
+      </div>
+
+      <div>
+        <p class="text-sm font-semibold text-ink">Navegación</p>
+        <ul class="mt-3 space-y-2">
+          {
+            NAV_LINKS.map((link) => (
+              <li>
+                <a
+                  href={link.href}
+                  class="text-sm text-ink-soft no-underline hover:text-brand-600"
+                >
+                  {link.label}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+
+      <div>
+        <p class="text-sm font-semibold text-ink">Legal</p>
+        <ul class="mt-3 space-y-2">
+          {
+            FOOTER_LEGAL_LINKS.map((link) => (
+              <li>
+                <a
+                  href={link.href}
+                  class="text-sm text-ink-soft no-underline hover:text-brand-600"
+                >
+                  {link.label}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </div>
+
+    <div class="mt-10 flex flex-col gap-2 border-t border-gray-200 pt-6 text-xs text-ink-muted sm:flex-row sm:items-center sm:justify-between">
+      <p>© {year} {SITE.domain}. Todos los derechos reservados.</p>
+      <p>
+        <a href={`mailto:${SITE.email}`} class="hover:text-brand-600">
+          {SITE.email}
+        </a>
+      </p>
+    </div>
+  </div>
+</footer>

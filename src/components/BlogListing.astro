@@ -1,0 +1,62 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import ArticleCard from './ArticleCard.astro';
+
+interface Props {
+  posts: CollectionEntry<'blog'>[];
+  currentPage: number;
+  lastPage: number;
+}
+
+const { posts, currentPage, lastPage } = Astro.props;
+
+// Construye la URL de una página del listado (página 1 = /blog).
+const pageHref = (n: number) => (n <= 1 ? '/blog' : `/blog/page/${n}`);
+const hasPrev = currentPage > 1;
+const hasNext = currentPage < lastPage;
+---
+
+<div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+  {posts.map((post) => <ArticleCard post={post} />)}
+</div>
+
+{
+  lastPage > 1 && (
+    <nav
+      class="mt-12 flex items-center justify-between border-t border-gray-200 pt-6"
+      aria-label="Paginación"
+    >
+      {hasPrev ? (
+        <a
+          href={pageHref(currentPage - 1)}
+          class="btn-secondary no-underline"
+          rel="prev"
+        >
+          ← Anteriores
+        </a>
+      ) : (
+        <span class="btn-secondary cursor-not-allowed opacity-40" aria-disabled="true">
+          ← Anteriores
+        </span>
+      )}
+
+      <span class="text-sm text-ink-muted">
+        Página {currentPage} de {lastPage}
+      </span>
+
+      {hasNext ? (
+        <a
+          href={pageHref(currentPage + 1)}
+          class="btn-secondary no-underline"
+          rel="next"
+        >
+          Siguientes →
+        </a>
+      ) : (
+        <span class="btn-secondary cursor-not-allowed opacity-40" aria-disabled="true">
+          Siguientes →
+        </span>
+      )}
+    </nav>
+  )
+}
