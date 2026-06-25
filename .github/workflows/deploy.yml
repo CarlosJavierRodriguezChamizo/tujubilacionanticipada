@@ -39,6 +39,7 @@ jobs:
         run: npm run build
 
       - name: Deploy a Vercel
+        id: deploy
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
@@ -49,21 +50,26 @@ jobs:
           npm i -g vercel@latest
           vercel pull --yes --environment=production --token="$VERCEL_TOKEN"
           vercel build --prod --token="$VERCEL_TOKEN"
-          vercel deploy --prebuilt --prod --token="$VERCEL_TOKEN"
+          DEPLOY_URL=$(vercel deploy --prebuilt --prod --token="$VERCEL_TOKEN" | tail -1)
+          echo "Deploy URL: $DEPLOY_URL"
+          echo "deploy_url=$DEPLOY_URL" >> "$GITHUB_OUTPUT"
 
       - name: Smoke test — verificar HTTP 200
+        env:
+          # Verifica la URL real del despliegue (siempre activa), no un dominio
+          # personalizado que podría no estar configurado todavía.
+          DEPLOY_URL: ${{ steps.deploy.outputs.deploy_url }}
         run: |
-          # Reintenta hasta ~2 min para dar margen a la propagación de Vercel.
           for i in $(seq 1 12); do
-            STATUS=$(curl -s -o /dev/null -w "%{http_code}" -L https://tujubilacionanticipada.com)
-            echo "Intento $i — HTTP status: $STATUS"
+            STATUS=$(curl -s -o /dev/null -w "%{http_code}" -L "$DEPLOY_URL")
+            echo "Intento $i — HTTP $STATUS ($DEPLOY_URL)"
             if [ "$STATUS" = "200" ]; then
               echo "Site OK"
               exit 0
             fi
             sleep 10
           done
-          echo "El site no devolvió 200 tras varios intentos (último: $STATUS)"
+          echo "El despliegue no devolvió 200 tras varios intentos (último: $STATUS)"
           exit 1
 
       - name: Email — deploy exitoso
