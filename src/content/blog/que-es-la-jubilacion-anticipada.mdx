@@ -8,9 +8,12 @@ author: "tujubilacionanticipada.com"
 reviewedBy: "Javier Rodríguez"
 reviewerTitle: "Escalón 26, Seguridad Social — Gestión de pensiones de ex-funcionarios"
 schema: "Article"
+heroImage: "/blog/que-es-la-jubilacion-anticipada.jpg"
+heroImageAlt: "Ilustración de trabajador de mediana edad ante una encrucijada entre la jubilación ordinaria y la jubilación anticipada, con documentos de la Seguridad Social"
 tags: ["jubilación anticipada", "tipos de jubilación anticipada", "jubilación anticipada España"]
 draft: false
 ---
+import BarChart from '../../components/charts/BarChart.astro';
 
 > *Este artículo es orientativo y no constituye asesoría legal ni laboral. Para una planificación personalizada, consulta con un graduado social o asesor laboral.*
 
@@ -126,6 +129,16 @@ La penalización máxima en la modalidad involuntaria resta, en este caso, **564
 | Involuntaria (art. 207) | 4 años | 33 años | Sí (ERE, despido objetivo…) | 1,625 % / trimestre |
 | Voluntaria (art. 208) | 2 años | 35 años | No | Variable (1,5 %–1,875 % / trimestre) |
 | Discapacidad ≥45 % | Variable | Misma que la ordinaria | Grado reconocido | Sin coeficiente adicional |
+
+<BarChart
+  title="Penalización máxima por modalidad de jubilación anticipada"
+  unit="%"
+  caption="Fuente: arts. 207 y 208 LGSS (RDL 8/2015). Involuntaria: coeficiente fijo 1,625 %/trim. × 16 trim. Voluntaria: coeficiente máximo 1,875 %/trim. × 8 trim."
+  data={[
+    { label: 'Voluntaria (2 años)', value: 15 },
+    { label: 'Involuntaria (4 años)', value: 26, highlight: true },
+  ]}
+/>
 
 Toda la información actualizada sobre requisitos, documentación y procedimiento de solicitud está disponible en la [sede electrónica de la Seguridad Social](https://www.seg-social.es/wps/portal/wss/internet/Trabajadores/PrestacionesPensionesContributivas/10967).
 
