@@ -25,7 +25,7 @@ const breadcrumb = breadcrumbSchema([
   title={data.title}
   description={data.description}
   path={path}
-  image={data.ogImage}
+  image={data.ogImage ?? data.heroImage}
   ogType="article"
   schema={[articleSchema, breadcrumb]}
 >
@@ -58,6 +58,21 @@ const breadcrumb = breadcrumbSchema([
         }
       </div>
     </header>
+
+    {
+      data.heroImage && (
+        <figure class="mx-auto mt-8 max-w-3xl">
+          <img
+            src={data.heroImage}
+            alt={data.heroImageAlt ?? data.title}
+            width="1200"
+            height="675"
+            loading="eager"
+            class="aspect-video w-full rounded-xl border border-gray-200 object-cover"
+          />
+        </figure>
+      )
+    }
 
     <hr class="mx-auto mt-8 max-w-prose border-gray-200" />
 

@@ -51,6 +51,35 @@ Cada artículo debe incluir al final una nota de revisión firmada por:
    > *"Si tienes 57 años, 35 años cotizados y una base reguladora de 2.200€/mes..."*
    Los cálculos deben ser correctos según la normativa vigente (LGSS, RDL 2/2015).
 
+4b. **Gráfico de datos** — inserta **al menos un gráfico de barras** a media altura del
+   artículo, con datos reales y verificables (porcentajes, importes, edades, años cotizados).
+   Usa el componente `BarChart`. Añade el import justo después del frontmatter:
+
+   ```mdx
+   import BarChart from '../../components/charts/BarChart.astro';
+   ```
+
+   Y colócalo donde aporte valor (no decorativo), por ejemplo:
+
+   ```mdx
+   <BarChart
+     title="Penalización acumulada por trimestres anticipados"
+     unit="%"
+     caption="Fuente: coeficiente reductor vigente, seg-social.es."
+     data={[
+       { label: '1 trim.', value: 1.875 },
+       { label: '4 trim. (1 año)', value: 7.5 },
+       { label: '8 trim. (2 años)', value: 15, highlight: true },
+     ]}
+   />
+   ```
+
+   Reglas del gráfico:
+   - `data` es un array de `{ label, value, highlight? }`. `value` siempre numérico.
+   - Marca con `highlight: true` la barra más relevante (máximo, o el caso destacado).
+   - `unit` es el sufijo ('%', '€', 'años'…). Pon `caption` con la fuente oficial.
+   - Solo datos reales y correctos según la normativa. Nunca inventes cifras.
+
 5. **FAQ** — mínimo 4 preguntas frecuentes con respuestas concretas y fuente enlazada.
 
 6. **Conclusión** — resumen práctico de los puntos clave.
@@ -77,10 +106,15 @@ author: "tujubilacionanticipada.com"
 reviewedBy: "[REVIEWER_NAME]"
 reviewerTitle: "[REVIEWER_TITLE]"
 schema: "Article"
+heroImage: "/blog/[slug].jpg"
+heroImageAlt: "[descripción breve de la ilustración, sin texto, para accesibilidad]"
 tags: ["[keyword]", "jubilación anticipada"]
 draft: false
 ---
 ```
+
+> `heroImage` apunta a la imagen que genera el orquestador (ver ROUTINE_PROMPT.md,
+> paso de imagen). Usa siempre la ruta `/blog/[slug].jpg` con el mismo slug del artículo.
 
 **Importante sobre los campos:**
 - `category` debe ser EXACTAMENTE el valor de `silo` del calendario. Solo se admite
@@ -109,11 +143,13 @@ draft: false
 
 ## Checklist antes de entregar el MDX
 
-- [ ] Frontmatter completo con todos los campos
-- [ ] description entre 150 y 160 caracteres
+- [ ] Frontmatter completo con todos los campos (incl. heroImage y heroImageAlt)
+- [ ] description entre 130 y 160 caracteres
+- [ ] `import BarChart` tras el frontmatter
 - [ ] Disclaimer al inicio
 - [ ] Mínimo 3 H2
 - [ ] Mínimo 2 ejemplos numéricos correctos
+- [ ] Al menos 1 `<BarChart>` con datos reales a media altura
 - [ ] Todos los datos con fuente oficial enlazada
 - [ ] FAQ con mínimo 4 preguntas
 - [ ] Disclaimer al final

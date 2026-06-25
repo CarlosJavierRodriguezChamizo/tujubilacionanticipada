@@ -8,9 +8,13 @@ author: "Redacción de Tu Jubilación Anticipada"
 reviewedBy: "Javier Rodríguez"
 reviewerTitle: "Escalón 26, Seguridad Social — Gestión de pensiones de ex-funcionarios"
 schema: "BlogPosting"
+heroImage: "/blog/jubilacion-anticipada-voluntaria-requisitos-penalizaciones.jpg"
+heroImageAlt: "Trabajador de mediana edad revisando documentos de jubilación con un calendario y una calculadora"
 tags: ["jubilación anticipada", "penalización", "requisitos", "Seguridad Social"]
 draft: false
 ---
+
+import BarChart from '../../components/charts/BarChart.astro';
 
 La **jubilación anticipada voluntaria** te permite retirarte antes de la edad legal a cambio de una reducción permanente en tu pensión. Es una de las decisiones financieras más importantes de tu vida laboral, así que conviene entender bien los números antes de dar el paso.
 
@@ -48,6 +52,19 @@ Como el máximo que puedes adelantar son **2 años (8 trimestres)**, la penaliza
 `8 trimestres × 1,875 % = 15 %`
 
 Es decir, si te jubilas dos años antes, tu pensión puede reducirse alrededor de un **15 % de forma permanente**. Conviene insistir en este punto: el coeficiente no desaparece al cumplir la edad ordinaria; te acompaña durante toda la vida de la prestación.
+
+<BarChart
+  title="Penalización acumulada según trimestres anticipados (voluntaria)"
+  unit="%"
+  caption="Coeficiente del 1,875 % por trimestre. Cálculo orientativo sobre el coeficiente reductor vigente."
+  data={[
+    { label: '1 trim.', value: 1.875 },
+    { label: '2 trim.', value: 3.75 },
+    { label: '4 trim. (1 año)', value: 7.5 },
+    { label: '6 trim.', value: 11.25 },
+    { label: '8 trim. (2 años)', value: 15, highlight: true },
+  ]}
+/>
 
 ### Un ejemplo numérico
 

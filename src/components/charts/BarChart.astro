@@ -1,0 +1,146 @@
+---
+/**
+ * Gráfico de barras vertical en SVG. Ligero, sin dependencias y accesible.
+ * Pensado para insertarse en artículos MDX con datos reales.
+ *
+ * Uso en un .mdx:
+ *   import BarChart from '../../components/charts/BarChart.astro';
+ *
+ *   <BarChart
+ *     title="Penalización por trimestre anticipado (voluntaria)"
+ *     unit="%"
+ *     caption="Fuente: coeficientes reductores, LGSS."
+ *     data={[
+ *       { label: '1 trim.', value: 1.875 },
+ *       { label: '4 trim.', value: 7.5 },
+ *       { label: '8 trim.', value: 15, highlight: true },
+ *     ]}
+ *   />
+ */
+interface DataPoint {
+  label: string;
+  value: number;
+  highlight?: boolean;
+}
+
+interface Props {
+  data: DataPoint[];
+  title?: string;
+  caption?: string;
+  /** Sufijo de unidad para las etiquetas de valor (ej. '%', '€'). */
+  unit?: string;
+  /** Valor máximo del eje. Si se omite, se calcula a partir de los datos. */
+  max?: number;
+}
+
+const { data, title, caption, unit = '', max } = Astro.props;
+
+// Geometría del SVG (coordenadas internas; se escala con viewBox).
+const W = 720;
+const H = 360;
+const padX = 48;
+const padTop = 32;
+const padBottom = 56;
+const plotW = W - padX * 2;
+const plotH = H - padTop - padBottom;
+
+const maxValue = max ?? Math.max(...data.map((d) => d.value), 0);
+const safeMax = maxValue > 0 ? maxValue : 1;
+
+const n = data.length;
+const slot = plotW / n;
+const barW = Math.min(slot * 0.6, 90);
+
+const fmt = (v: number) =>
+  `${v.toLocaleString('es-ES', { maximumFractionDigits: 2 })}${unit ? ` ${unit}` : ''}`;
+
+const bars = data.map((d, i) => {
+  const h = (d.value / safeMax) * plotH;
+  const x = padX + slot * i + (slot - barW) / 2;
+  const y = padTop + (plotH - h);
+  return { ...d, x, y, h, cx: x + barW / 2 };
+});
+
+// Resumen para lectores de pantalla.
+const ariaLabel =
+  (title ? `${title}. ` : 'Gráfico de barras. ') +
+  data.map((d) => `${d.label}: ${fmt(d.value)}`).join('; ') +
+  '.';
+---
+
+<figure class="not-prose my-8 rounded-xl border border-gray-200 bg-white p-5 sm:p-6">
+  {title && <figcaption class="mb-4 text-sm font-semibold text-ink">{title}</figcaption>}
+
+  <svg
+    viewBox={`0 0 ${W} ${H}`}
+    width="100%"
+    role="img"
+    aria-label={ariaLabel}
+    class="h-auto w-full"
+  >
+    <!-- Línea base -->
+    <line
+      x1={padX}
+      y1={padTop + plotH}
+      x2={W - padX}
+      y2={padTop + plotH}
+      stroke="#e5e7eb"
+      stroke-width="1"
+    />
+    {
+      bars.map((b) => (
+        <g>
+          <rect
+            x={b.x}
+            y={b.y}
+            width={barW}
+            height={Math.max(b.h, 1)}
+            rx="4"
+            fill={b.highlight ? '#2a5396' : '#84acdd'}
+          >
+            <title>{`${b.label}: ${fmt(b.value)}`}</title>
+          </rect>
+          <text
+            x={b.cx}
+            y={b.y - 8}
+            text-anchor="middle"
+            font-size="15"
+            font-weight="600"
+            fill="#1a1d21"
+          >
+            {fmt(b.value)}
+          </text>
+          <text
+            x={b.cx}
+            y={padTop + plotH + 22}
+            text-anchor="middle"
+            font-size="14"
+            fill="#6b7280"
+          >
+            {b.label}
+          </text>
+        </g>
+      ))
+    }
+  </svg>
+
+  {caption && <p class="mt-3 text-xs text-ink-muted">{caption}</p>}
+
+  <!-- Tabla equivalente para accesibilidad (oculta visualmente) -->
+  <table class="sr-only">
+    {title && <caption>{title}</caption>}
+    <thead>
+      <tr><th scope="col">Categoría</th><th scope="col">Valor</th></tr>
+    </thead>
+    <tbody>
+      {
+        data.map((d) => (
+          <tr>
+            <th scope="row">{d.label}</th>
+            <td>{fmt(d.value)}</td>
+          </tr>
+        ))
+      }
+    </tbody>
+  </table>
+</figure>

@@ -29,6 +29,8 @@ Comprueba que existen TODOS estos campos y tienen valor real (no vacío, no plac
 - [ ] Disclaimer al INICIO del artículo (antes del primer párrafo)
 - [ ] Mínimo 3 secciones H2
 - [ ] Mínimo 2 ejemplos numéricos con cálculos detallados
+- [ ] Al menos 1 gráfico `<BarChart>` con datos reales (con su `import`) a media altura
+- [ ] `heroImage` en el frontmatter apuntando a `/blog/[slug].jpg` y `heroImageAlt` descriptivo
 - [ ] Sección FAQ con mínimo 4 preguntas y respuestas con fuente
 - [ ] Disclaimer al FINAL del artículo
 - [ ] Nota de revisión firmada al final (nombre + cargo + fecha)

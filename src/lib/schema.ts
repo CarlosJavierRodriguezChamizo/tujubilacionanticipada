@@ -134,7 +134,7 @@ export function blogPostingSchema(post: CollectionEntry<'blog'>): JsonLd {
         }
       : {}),
     publisher: { '@id': ORG_ID },
-    image: absUrl(data.ogImage ?? SITE.defaultOgImage),
+    image: absUrl(data.ogImage ?? data.heroImage ?? SITE.defaultOgImage),
   };
 }
 

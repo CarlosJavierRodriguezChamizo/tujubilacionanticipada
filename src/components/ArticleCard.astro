@@ -10,7 +10,22 @@ const { post } = Astro.props;
 const { data } = post;
 ---
 
-<article class="group relative flex h-full flex-col rounded-xl border border-gray-200 bg-white p-6 transition-shadow hover:shadow-md">
+<article class="group relative flex h-full flex-col overflow-hidden rounded-xl border border-gray-200 bg-white transition-shadow hover:shadow-md">
+  {
+    data.heroImage && (
+      <a href={`/blog/${post.slug}`} class="block" tabindex="-1" aria-hidden="true">
+        <img
+          src={data.heroImage}
+          alt=""
+          width="1200"
+          height="675"
+          loading="lazy"
+          class="aspect-video w-full object-cover"
+        />
+      </a>
+    )
+  }
+  <div class="flex flex-1 flex-col p-6">
   <div class="flex items-center gap-2 text-xs text-ink-muted">
     <span class="rounded-full bg-brand-50 px-2.5 py-0.5 font-medium text-brand-700">
       {data.category}
@@ -34,4 +49,5 @@ const { data } = post;
   <span class="mt-4 text-sm font-medium text-brand-600 group-hover:text-brand-700">
     Leer artículo →
   </span>
+  </div>
 </article>

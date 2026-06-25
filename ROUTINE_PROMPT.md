@@ -53,6 +53,36 @@ Usa como datos:
 
 Guarda el resultado en: `src/content/blog/[slug].mdx`
 
+El frontmatter debe incluir `heroImage: "/blog/[slug].jpg"` y un `heroImageAlt` descriptivo,
+y el cuerpo debe contener el `import BarChart` y al menos un `<BarChart>` con datos reales
+(según `PROMPT_REDACTOR.md`).
+
+## Paso 3b — Generar la imagen destacada (Magnific)
+
+Genera UNA ilustración de portada para el artículo con el MCP de imágenes (Magnific/Freepik).
+
+**Estilo FIJO (no cambiar nunca, para que todas las imágenes sean coherentes):**
+
+```
+Flat-color editorial illustration, clean modern vector style with flat inks and subtle
+texture, limited sober palette of deep blues (#2a5396, #1c3257), soft grays and white,
+minimalist and professional, calm and trustworthy mood, generous negative space,
+NO text, NO words, NO letters. Subject: [DESCRIBIR LA ESCENA SEGÚN EL TEMA DEL ARTÍCULO,
+relacionada con jubilación/pensiones en España, personas de 50-65 años].
+Editorial finance illustration for a Spanish pensions website.
+```
+
+Pasos:
+1. Genera la imagen en formato **16:9**, `count: 1`, con el prompt de estilo fijo + una
+   escena adaptada al tema del artículo de hoy.
+2. Espera a que termine y obtén la URL del resultado.
+3. Descarga la imagen a `public/blog/[slug].jpg` (mismo slug del artículo).
+
+**Degradación elegante:** si el MCP de imágenes NO está disponible o la generación falla,
+**elimina** las líneas `heroImage` y `heroImageAlt` del frontmatter del artículo y continúa.
+El artículo se publicará sin imagen (el sitio lo soporta) en lugar de quedar con una imagen rota.
+Anótalo en el log.
+
 ## Paso 4 — Verificar el artículo (Agente Verificador, hasta 3 intentos)
 
 Siguiendo el checklist completo de `PROMPT_VERIFICADOR.md`, verifica el artículo
@@ -81,6 +111,8 @@ Si el artículo ha sido aprobado:
 
 ```bash
 git add src/content/blog/[slug].mdx
+# Incluye la imagen destacada si se generó (ignora el error si no existe):
+git add public/blog/[slug].jpg 2>/dev/null || true
 git commit -m "content: artículo #[id] — [titulo]
 
 keyword: [keyword]
