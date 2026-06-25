@@ -1,0 +1,80 @@
+name: Build y Deploy a Vercel
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'src/content/blog/**'
+      - 'src/pages/**'
+      - 'src/components/**'
+      - 'src/layouts/**'
+      - 'astro.config.mjs'
+      - 'package.json'
+
+jobs:
+  build-and-deploy:
+    name: Validar + Build + Deploy
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      - name: Validar frontmatter EEAT
+        run: node scripts/validate-frontmatter.mjs
+
+      - name: Build Astro
+        run: npm run build
+
+      - name: Deploy a Vercel
+        uses: amondnet/vercel-action@v25
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          vercel-args: '--prod'
+
+      - name: Smoke test — verificar HTTP 200
+        run: |
+          sleep 15
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" https://tujubilacionanticipada.com)
+          echo "HTTP status: $STATUS"
+          if [ "$STATUS" != "200" ]; then
+            echo "El site devolvió HTTP $STATUS"
+            exit 1
+          fi
+
+      - name: Email — deploy exitoso
+        if: success()
+        run: |
+          curl -s -X POST 'https://api.resend.com/emails' \
+            -H 'Authorization: Bearer ${{ secrets.RESEND_API_KEY }}' \
+            -H 'Content-Type: application/json' \
+            -d '{
+              "from": "Pipeline TJA <onboarding@resend.dev>",
+              "to": "${{ secrets.ALERT_EMAIL }}",
+              "subject": "✅ tujubilacionanticipada.com — Artículo publicado",
+              "text": "Nuevo artículo publicado correctamente.\n\n${{ github.event.head_commit.message }}\n\nFecha: ${{ github.event.head_commit.timestamp }}\nVer en: https://tujubilacionanticipada.com/blog\nLogs: https://github.com/${{ github.repository }}/actions"
+            }'
+
+      - name: Email — fallo en el pipeline
+        if: failure()
+        run: |
+          curl -s -X POST 'https://api.resend.com/emails' \
+            -H 'Authorization: Bearer ${{ secrets.RESEND_API_KEY }}' \
+            -H 'Content-Type: application/json' \
+            -d '{
+              "from": "Pipeline TJA <onboarding@resend.dev>",
+              "to": "${{ secrets.ALERT_EMAIL }}",
+              "subject": "❌ tujubilacionanticipada.com — Fallo en el pipeline",
+              "text": "Ha fallado algún paso del pipeline de publicación.\n\nCommit: ${{ github.event.head_commit.message }}\nFecha: ${{ github.event.head_commit.timestamp }}\n\nRevisa los logs:\nhttps://github.com/${{ github.repository }}/actions"
+            }'
