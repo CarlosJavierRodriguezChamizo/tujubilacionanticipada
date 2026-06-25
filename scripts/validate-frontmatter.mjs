@@ -11,7 +11,7 @@ const REQUIRED_FIELDS = [
   'category', 'author', 'reviewedBy', 'reviewerTitle', 'draft', 'schema',
 ]
 const AUTHORIZED_DOMAINS = [
-  'seg-social.es', 'boe.es', 'imss.gob.es',
+  'seg-social.es', 'boe.es', 'inclusion.gob.es',
   'mites.gob.es', 'sepe.es', 'cnmv.es',
 ]
 const FORBIDDEN_PHRASES = [

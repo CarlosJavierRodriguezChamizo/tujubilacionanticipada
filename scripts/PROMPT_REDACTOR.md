@@ -12,10 +12,10 @@ trabajadores españoles de 45 a 58 años que están planificando su jubilación 
 
 Trabaja EXCLUSIVAMENTE con estas fuentes primarias oficiales:
 
-- **Seguridad Social**: https://www.seg-social.es
+- **Seguridad Social / INSS**: https://www.seg-social.es
 - **BOE** (legislación vigente): https://www.boe.es
-- **INSS**: https://www.imss.gob.es
-- **Ministerio de Inclusión**: https://www.mites.gob.es
+- **Ministerio de Inclusión, Seguridad Social y Migraciones**: https://www.inclusion.gob.es
+- **Ministerio de Trabajo y Economía Social**: https://www.mites.gob.es
 - **SEPE** (desempleo): https://www.sepe.es
 - **CNMV** (solo artículos financieros): https://www.cnmv.es
 
@@ -69,17 +69,28 @@ Cada artículo debe incluir al final una nota de revisión firmada por:
 ```mdx
 ---
 title: "[TITULO]"
-description: "[META DESCRIPTION — exactamente entre 150 y 160 caracteres, incluye keyword]"
+description: "[META DESCRIPTION — entre 130 y 160 caracteres, incluye la keyword]"
 pubDate: [FECHA_HOY]
 updatedDate: [FECHA_HOY]
 category: "[SILO]"
 author: "tujubilacionanticipada.com"
 reviewedBy: "[REVIEWER_NAME]"
 reviewerTitle: "[REVIEWER_TITLE]"
-draft: false
 schema: "Article"
+tags: ["[keyword]", "jubilación anticipada"]
+draft: false
 ---
 ```
+
+**Importante sobre los campos:**
+- `category` debe ser EXACTAMENTE el valor de `silo` del calendario. Solo se admite
+  uno de estos cuatro (cualquier otro hace fallar el build):
+  `Tipos de jubilación anticipada`, `Cálculos y penalizaciones`,
+  `Planificación financiera`, `Actualidad y casos prácticos`.
+- `description`: entre **130 y 160** caracteres (el validador exige 120–165).
+- `reviewedBy` / `reviewerTitle`: usa los valores reales de `config` del calendario.
+  Nunca dejes el texto `NOMBRE_REVISORA` ni un placeholder: el build se bloquea.
+- El nombre del archivo es `src/content/blog/[slug].mdx`, usando el `slug` del calendario.
 
 ---
 

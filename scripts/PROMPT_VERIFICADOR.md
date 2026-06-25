@@ -15,10 +15,10 @@ de personas reales — sé riguroso.
 Comprueba que existen TODOS estos campos y tienen valor real (no vacío, no placeholder):
 
 - `title` — no vacío
-- `description` — entre 150 y 160 caracteres exactos
+- `description` — entre 130 y 160 caracteres (el validador automático exige 120–165)
 - `pubDate` — fecha válida en formato YYYY-MM-DD
 - `updatedDate` — fecha válida
-- `category` — no vacío
+- `category` — uno de: Tipos de jubilación anticipada, Cálculos y penalizaciones, Planificación financiera, Actualidad y casos prácticos
 - `author` — "tujubilacionanticipada.com"
 - `reviewedBy` — nombre real de la revisora (no "NOMBRE_REVISORA" sin sustituir)
 - `reviewerTitle` — cargo real (no placeholder)
@@ -36,7 +36,7 @@ Comprueba que existen TODOS estos campos y tienen valor real (no vacío, no plac
 ### 3. Calidad EEAT/YMYL
 - [ ] NINGÚN dato numérico (importe, porcentaje, año, edad) sin enlace a fuente oficial
 - [ ] Todas las fuentes enlazadas pertenecen a dominios autorizados:
-      seg-social.es, boe.es, imss.gob.es, mites.gob.es, sepe.es, cnmv.es
+      seg-social.es, boe.es, inclusion.gob.es, mites.gob.es, sepe.es, cnmv.es
 - [ ] NINGUNA frase del tipo: "según algunos expertos", "se estima que", "dicen que",
       "es sabido que", "en general se considera"
 - [ ] Sin afirmaciones absolutas sobre casos individuales ("tú cobrarás X")

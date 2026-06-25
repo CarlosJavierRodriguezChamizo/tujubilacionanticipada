@@ -15,10 +15,14 @@ exhaustivamente y hacer push al repositorio para que GitHub Actions lo despliegu
 ## Paso 1 — Identificar el artículo de hoy
 
 Lee el archivo `scripts/calendario.json`.
-Busca el artículo cuya `fecha` coincida con la fecha de hoy y tenga `"publicado": false`.
+Selecciona el artículo con `"publicado": false` y la `fecha` más antigua que sea
+**menor o igual a la fecha de hoy**. (Así, si algún día la routine no se ejecutó,
+el artículo pendiente se recupera al día siguiente en vez de quedar huérfano.)
 
-Si no encuentras ninguno: termina sin hacer nada y escribe en el log:
-"No hay artículo programado para hoy o todos están publicados."
+Publica **como máximo un artículo por ejecución**.
+
+Si no hay ningún artículo pendiente con fecha ≤ hoy: termina sin hacer nada y escribe
+en el log: "No hay artículo pendiente para hoy o todos están publicados."
 
 Si encuentras el artículo, extrae estos campos:
 - titulo, keyword, volumen, kd, slug, silo, fuente_principal, intencion, id
