@@ -11,7 +11,7 @@
   "articulos": [
     {
       "id": 1,
-      "fecha": "2026-06-30",
+      "fecha": "2026-06-25",
       "silo_code": "S1",
       "silo": "Tipos de jubilación anticipada",
       "titulo": "Qué es la jubilación anticipada: tipos, diferencias y quién puede solicitarla",
@@ -25,7 +25,7 @@
     },
     {
       "id": 2,
-      "fecha": "2026-07-01",
+      "fecha": "2026-06-26",
       "silo_code": "S1",
       "silo": "Tipos de jubilación anticipada",
       "titulo": "Jubilación anticipada voluntaria: requisitos, penalizaciones y cómo solicitarla",
@@ -39,7 +39,7 @@
     },
     {
       "id": 3,
-      "fecha": "2026-07-02",
+      "fecha": "2026-06-27",
       "silo_code": "S1",
       "silo": "Tipos de jubilación anticipada",
       "titulo": "Jubilación anticipada involuntaria (forzosa): cuándo se aplica y cómo tramitarla",
@@ -53,7 +53,7 @@
     },
     {
       "id": 4,
-      "fecha": "2026-07-03",
+      "fecha": "2026-06-28",
       "silo_code": "S1",
       "silo": "Tipos de jubilación anticipada",
       "titulo": "Jubilación anticipada por discapacidad: requisitos y coeficientes reductores especiales",
@@ -67,7 +67,7 @@
     },
     {
       "id": 5,
-      "fecha": "2026-07-04",
+      "fecha": "2026-06-29",
       "silo_code": "S1",
       "silo": "Tipos de jubilación anticipada",
       "titulo": "Jubilación anticipada para transportistas y conductores profesionales: condiciones 2026",
@@ -81,7 +81,7 @@
     },
     {
       "id": 6,
-      "fecha": "2026-07-05",
+      "fecha": "2026-06-30",
       "silo_code": "S1",
       "silo": "Tipos de jubilación anticipada",
       "titulo": "Jubilación anticipada para funcionarios: diferencias con el régimen general",
@@ -95,7 +95,7 @@
     },
     {
       "id": 7,
-      "fecha": "2026-07-06",
+      "fecha": "2026-07-01",
       "silo_code": "S1",
       "silo": "Tipos de jubilación anticipada",
       "titulo": "Jubilación anticipada para autónomos: requisitos y particularidades del RETA",
@@ -109,7 +109,7 @@
     },
     {
       "id": 8,
-      "fecha": "2026-07-07",
+      "fecha": "2026-07-02",
       "silo_code": "S1",
       "silo": "Tipos de jubilación anticipada",
       "titulo": "Profesiones de riesgo con derecho a jubilación anticipada en España",
@@ -123,7 +123,7 @@
     },
     {
       "id": 9,
-      "fecha": "2026-07-08",
+      "fecha": "2026-07-03",
       "silo_code": "S1",
       "silo": "Tipos de jubilación anticipada",
       "titulo": "Jubilación anticipada 2025 vs 2026: qué ha cambiado con la reforma de pensiones",
@@ -137,7 +137,7 @@
     },
     {
       "id": 10,
-      "fecha": "2026-07-09",
+      "fecha": "2026-07-04",
       "silo_code": "S1",
       "silo": "Tipos de jubilación anticipada",
       "titulo": "Jubilación activa: trabajar y cobrar pensión a la vez, ¿es posible?",
@@ -151,7 +151,7 @@
     },
     {
       "id": 11,
-      "fecha": "2026-07-10",
+      "fecha": "2026-07-05",
       "silo_code": "S2",
       "silo": "Cálculos y penalizaciones",
       "titulo": "Cómo calcular tu pensión de jubilación paso a paso (con ejemplos reales)",
@@ -165,7 +165,7 @@
     },
     {
       "id": 12,
-      "fecha": "2026-07-11",
+      "fecha": "2026-07-06",
       "silo_code": "S2",
       "silo": "Cálculos y penalizaciones",
       "titulo": "Qué es la base reguladora y cómo afecta a tu pensión de jubilación",
@@ -179,7 +179,7 @@
     },
     {
       "id": 13,
-      "fecha": "2026-07-12",
+      "fecha": "2026-07-07",
       "silo_code": "S2",
       "silo": "Cálculos y penalizaciones",
       "titulo": "Tabla de jubilación por años cotizados: todo lo que necesitas saber en 2026",
@@ -193,7 +193,7 @@
     },
     {
       "id": 14,
-      "fecha": "2026-07-13",
+      "fecha": "2026-07-08",
       "silo_code": "S2",
       "silo": "Cálculos y penalizaciones",
       "titulo": "Coeficientes reductores jubilación anticipada: tablas oficiales y cómo aplicarlos",
@@ -207,7 +207,7 @@
     },
     {
       "id": 15,
-      "fecha": "2026-07-14",
+      "fecha": "2026-07-09",
       "silo_code": "S2",
       "silo": "Cálculos y penalizaciones",
       "titulo": "Penalización por jubilación anticipada voluntaria: cuánto pierdes realmente",
@@ -221,7 +221,7 @@
     },
     {
       "id": 16,
-      "fecha": "2026-07-15",
+      "fecha": "2026-07-10",
       "silo_code": "S2",
       "silo": "Cálculos y penalizaciones",
       "titulo": "Tabla penalización jubilación anticipada: coeficientes trimestre a trimestre",
@@ -235,7 +235,7 @@
     },
     {
       "id": 17,
-      "fecha": "2026-07-16",
+      "fecha": "2026-07-11",
       "silo_code": "S2",
       "silo": "Cálculos y penalizaciones",
       "titulo": "Cuántos años hay que cotizar para jubilarse: tabla completa 2026",
@@ -249,7 +249,7 @@
     },
     {
       "id": 18,
-      "fecha": "2026-07-17",
+      "fecha": "2026-07-12",
       "silo_code": "S2",
       "silo": "Cálculos y penalizaciones",
       "titulo": "Pensión mínima de jubilación 2026: importes, complementos y quién los cobra",
@@ -263,7 +263,7 @@
     },
     {
       "id": 19,
-      "fecha": "2026-07-18",
+      "fecha": "2026-07-13",
       "silo_code": "S2",
       "silo": "Cálculos y penalizaciones",
       "titulo": "Pensión máxima de jubilación 2026: límites y cómo afecta a tu base reguladora",
@@ -277,7 +277,7 @@
     },
     {
       "id": 20,
-      "fecha": "2026-07-19",
+      "fecha": "2026-07-14",
       "silo_code": "S2",
       "silo": "Cálculos y penalizaciones",
       "titulo": "Cómo pedir tu vida laboral y verificar los años cotizados en la Seguridad Social",
@@ -291,7 +291,7 @@
     },
     {
       "id": 21,
-      "fecha": "2026-07-20",
+      "fecha": "2026-07-15",
       "silo_code": "S2",
       "silo": "Cálculos y penalizaciones",
       "titulo": "Simulador de jubilación: cómo interpretar los resultados del simulador oficial",
@@ -305,7 +305,7 @@
     },
     {
       "id": 22,
-      "fecha": "2026-07-21",
+      "fecha": "2026-07-16",
       "silo_code": "S2",
       "silo": "Cálculos y penalizaciones",
       "titulo": "Jubilarse a los 63 años: qué pensión cobrarías y qué penalización tendrías",
@@ -319,7 +319,7 @@
     },
     {
       "id": 23,
-      "fecha": "2026-07-22",
+      "fecha": "2026-07-17",
       "silo_code": "S2",
       "silo": "Cálculos y penalizaciones",
       "titulo": "Jubilarse a los 52 años: ¿es posible? Requisitos y alternativas reales",
@@ -333,7 +333,7 @@
     },
     {
       "id": 24,
-      "fecha": "2026-07-23",
+      "fecha": "2026-07-18",
       "silo_code": "S2",
       "silo": "Cálculos y penalizaciones",
       "titulo": "Reforma de pensiones y años cotizados: cómo te afecta el bono de cotización",
@@ -347,7 +347,7 @@
     },
     {
       "id": 25,
-      "fecha": "2026-07-24",
+      "fecha": "2026-07-19",
       "silo_code": "S2",
       "silo": "Cálculos y penalizaciones",
       "titulo": "Lagunas de cotización: qué son y cómo afectan al cálculo de tu pensión",
@@ -361,7 +361,7 @@
     },
     {
       "id": 26,
-      "fecha": "2026-07-25",
+      "fecha": "2026-07-20",
       "silo_code": "S3",
       "silo": "Planificación financiera",
       "titulo": "Cómo cubrir el gap económico entre jubilarte antes y cobrar la pensión completa",
@@ -375,7 +375,7 @@
     },
     {
       "id": 27,
-      "fecha": "2026-07-26",
+      "fecha": "2026-07-21",
       "silo_code": "S3",
       "silo": "Planificación financiera",
       "titulo": "Plan de pensiones: qué es, cómo funciona y si merece la pena en 2026",
@@ -389,7 +389,7 @@
     },
     {
       "id": 28,
-      "fecha": "2026-07-27",
+      "fecha": "2026-07-22",
       "silo_code": "S3",
       "silo": "Planificación financiera",
       "titulo": "Cuánto desgrava un plan de pensiones: guía fiscal completa para 2026",
@@ -403,7 +403,7 @@
     },
     {
       "id": 29,
-      "fecha": "2026-07-28",
+      "fecha": "2026-07-23",
       "silo_code": "S3",
       "silo": "Planificación financiera",
       "titulo": "Cómo rescatar un plan de pensiones: modalidades, fiscalidad y cuándo conviene",
@@ -417,7 +417,7 @@
     },
     {
       "id": 30,
-      "fecha": "2026-07-29",
+      "fecha": "2026-07-24",
       "silo_code": "S3",
       "silo": "Planificación financiera",
       "titulo": "Fondos indexados para la jubilación: alternativa real a los planes de pensiones",
@@ -431,7 +431,7 @@
     },
     {
       "id": 31,
-      "fecha": "2026-07-30",
+      "fecha": "2026-07-25",
       "silo_code": "S3",
       "silo": "Planificación financiera",
       "titulo": "Plan de pensiones para autónomos: aportaciones, deducciones y límites 2026",
@@ -445,7 +445,7 @@
     },
     {
       "id": 32,
-      "fecha": "2026-07-31",
+      "fecha": "2026-07-26",
       "silo_code": "S3",
       "silo": "Planificación financiera",
       "titulo": "Aportación máxima al plan de pensiones: límites legales y estrategia fiscal",
@@ -459,7 +459,7 @@
     },
     {
       "id": 33,
-      "fecha": "2026-08-01",
+      "fecha": "2026-07-27",
       "silo_code": "S3",
       "silo": "Planificación financiera",
       "titulo": "Trucos legales para rescatar el plan de pensiones con menos impuestos",
@@ -473,7 +473,7 @@
     },
     {
       "id": 34,
-      "fecha": "2026-08-02",
+      "fecha": "2026-07-28",
       "silo_code": "S3",
       "silo": "Planificación financiera",
       "titulo": "Cuánto necesitas ahorrar para jubilarte anticipadamente: simulación real",
@@ -487,7 +487,7 @@
     },
     {
       "id": 35,
-      "fecha": "2026-08-03",
+      "fecha": "2026-07-29",
       "silo_code": "S3",
       "silo": "Planificación financiera",
       "titulo": "Revalorización de pensiones 2026: cuánto sube tu pensión este año",
@@ -501,7 +501,7 @@
     },
     {
       "id": 36,
-      "fecha": "2026-08-04",
+      "fecha": "2026-07-30",
       "silo_code": "S4",
       "silo": "Actualidad y casos prácticos",
       "titulo": "Jubilación anticipada 2026: últimas novedades y cambios normativos",
@@ -515,7 +515,7 @@
     },
     {
       "id": 37,
-      "fecha": "2026-08-05",
+      "fecha": "2026-07-31",
       "silo_code": "S4",
       "silo": "Actualidad y casos prácticos",
       "titulo": "Tengo 52 años y no tengo 15 años cotizados: ¿qué opciones tengo?",
@@ -529,7 +529,7 @@
     },
     {
       "id": 38,
-      "fecha": "2026-08-06",
+      "fecha": "2026-08-01",
       "silo_code": "S4",
       "silo": "Actualidad y casos prácticos",
       "titulo": "¿Puedo jubilarme con 60 años y 25 cotizados? Respuesta con datos reales",
@@ -543,7 +543,7 @@
     },
     {
       "id": 39,
-      "fecha": "2026-08-07",
+      "fecha": "2026-08-02",
       "silo_code": "S4",
       "silo": "Actualidad y casos prácticos",
       "titulo": "¿Puedo jubilarme con 65 años y 35 años cotizados? Cálculo y penalización",
@@ -557,7 +557,7 @@
     },
     {
       "id": 40,
-      "fecha": "2026-08-08",
+      "fecha": "2026-08-03",
       "silo_code": "S4",
       "silo": "Actualidad y casos prácticos",
       "titulo": "Jubilarse con 40 años cotizados sin penalización: ¿es posible en 2026?",
@@ -571,7 +571,7 @@
     },
     {
       "id": 41,
-      "fecha": "2026-08-09",
+      "fecha": "2026-08-04",
       "silo_code": "S4",
       "silo": "Actualidad y casos prácticos",
       "titulo": "Jubilarse a los 55 con 30 años cotizados: qué dice la ley y qué alternativas tienes",
@@ -585,7 +585,7 @@
     },
     {
       "id": 42,
-      "fecha": "2026-08-10",
+      "fecha": "2026-08-05",
       "silo_code": "S4",
       "silo": "Actualidad y casos prácticos",
       "titulo": "Pensión contributiva vs no contributiva: diferencias clave y a cuál tienes derecho",
@@ -599,7 +599,7 @@
     },
     {
       "id": 43,
-      "fecha": "2026-08-11",
+      "fecha": "2026-08-06",
       "silo_code": "S4",
       "silo": "Actualidad y casos prácticos",
       "titulo": "Pensión mínima con 15 años cotizados: importes 2026 y complementos a mínimos",
@@ -613,7 +613,7 @@
     },
     {
       "id": 44,
-      "fecha": "2026-08-12",
+      "fecha": "2026-08-07",
       "silo_code": "S4",
       "silo": "Actualidad y casos prácticos",
       "titulo": "Nuevas enfermedades con derecho a jubilación anticipada: lista actualizada 2026",
@@ -627,7 +627,7 @@
     },
     {
       "id": 45,
-      "fecha": "2026-08-13",
+      "fecha": "2026-08-08",
       "silo_code": "S4",
       "silo": "Actualidad y casos prácticos",
       "titulo": "Convenio especial con la Seguridad Social: qué es y cuándo compensa suscribirlo",
@@ -641,7 +641,7 @@
     },
     {
       "id": 46,
-      "fecha": "2026-08-14",
+      "fecha": "2026-08-09",
       "silo_code": "S4",
       "silo": "Actualidad y casos prácticos",
       "titulo": "Cómo solicitar la jubilación anticipada: documentación, plazos y dónde presentarla",
@@ -655,7 +655,7 @@
     },
     {
       "id": 47,
-      "fecha": "2026-08-15",
+      "fecha": "2026-08-10",
       "silo_code": "S4",
       "silo": "Actualidad y casos prácticos",
       "titulo": "Jubilación anticipada y ERE: cómo afecta el despido colectivo a tu pensión",
@@ -669,7 +669,7 @@
     },
     {
       "id": 48,
-      "fecha": "2026-08-16",
+      "fecha": "2026-08-11",
       "silo_code": "S4",
       "silo": "Actualidad y casos prácticos",
       "titulo": "Incapacidad permanente vs jubilación anticipada: cuál te conviene más económicamente",
@@ -683,7 +683,7 @@
     },
     {
       "id": 49,
-      "fecha": "2026-08-17",
+      "fecha": "2026-08-12",
       "silo_code": "S4",
       "silo": "Actualidad y casos prácticos",
       "titulo": "Jubilación anticipada y paro: puedo cobrar el desempleo antes de jubilarme",
@@ -697,7 +697,7 @@
     },
     {
       "id": 50,
-      "fecha": "2026-08-18",
+      "fecha": "2026-08-13",
       "silo_code": "S4",
       "silo": "Actualidad y casos prácticos",
       "titulo": "Complemento por brecha de género en las pensiones: quién lo cobra y cuánto",
@@ -711,7 +711,7 @@
     },
     {
       "id": 51,
-      "fecha": "2026-08-19",
+      "fecha": "2026-08-14",
       "silo_code": "S4",
       "silo": "Actualidad y casos prácticos",
       "titulo": "Jubilación parcial: trabajar a tiempo parcial y cobrar parte de la pensión",
@@ -725,7 +725,7 @@
     },
     {
       "id": 52,
-      "fecha": "2026-08-20",
+      "fecha": "2026-08-15",
       "silo_code": "S4",
       "silo": "Actualidad y casos prácticos",
       "titulo": "Integración de lagunas en la base reguladora: cómo minimizar el impacto",
@@ -739,7 +739,7 @@
     },
     {
       "id": 53,
-      "fecha": "2026-08-21",
+      "fecha": "2026-08-16",
       "silo_code": "S4",
       "silo": "Actualidad y casos prácticos",
       "titulo": "Cotización a tiempo parcial y jubilación: cómo se computan los años",
@@ -753,7 +753,7 @@
     },
     {
       "id": 54,
-      "fecha": "2026-08-22",
+      "fecha": "2026-08-17",
       "silo_code": "S4",
       "silo": "Actualidad y casos prácticos",
       "titulo": "Período de carencia para la jubilación: qué es y cómo se calcula",
@@ -767,7 +767,7 @@
     },
     {
       "id": 55,
-      "fecha": "2026-08-23",
+      "fecha": "2026-08-18",
       "silo_code": "S4",
       "silo": "Actualidad y casos prácticos",
       "titulo": "Jubilación anticipada en el sector minero: condiciones especiales y coeficientes",
@@ -781,7 +781,7 @@
     },
     {
       "id": 56,
-      "fecha": "2026-08-24",
+      "fecha": "2026-08-19",
       "silo_code": "S4",
       "silo": "Actualidad y casos prácticos",
       "titulo": "Trabajadores del mar y jubilación anticipada: régimen especial explicado",
@@ -795,7 +795,7 @@
     },
     {
       "id": 57,
-      "fecha": "2026-08-25",
+      "fecha": "2026-08-20",
       "silo_code": "S4",
       "silo": "Actualidad y casos prácticos",
       "titulo": "Cómo afecta el trabajo en el extranjero a tu pensión en España",
@@ -809,7 +809,7 @@
     },
     {
       "id": 58,
-      "fecha": "2026-08-26",
+      "fecha": "2026-08-21",
       "silo_code": "S4",
       "silo": "Actualidad y casos prácticos",
       "titulo": "Totalización de períodos cotizados en la UE: cómo sumar años en varios países",
@@ -823,7 +823,7 @@
     },
     {
       "id": 59,
-      "fecha": "2026-08-27",
+      "fecha": "2026-08-22",
       "silo_code": "S4",
       "silo": "Actualidad y casos prácticos",
       "titulo": "Guía completa para planificar tu jubilación anticipada en España: resumen 2026",
@@ -837,7 +837,7 @@
     },
     {
       "id": 60,
-      "fecha": "2026-08-28",
+      "fecha": "2026-08-23",
       "silo_code": "S4",
       "silo": "Actualidad y casos prácticos",
       "titulo": "Preguntas frecuentes sobre jubilación anticipada: todo lo que necesitas saber",
