@@ -53,7 +53,7 @@
     },
     {
       "id": 4,
-      "fecha": "2026-07-01",
+      "fecha": "2026-06-30",
       "silo_code": "S1",
       "silo": "Tipos de jubilación anticipada",
       "titulo": "Jubilación anticipada por discapacidad: requisitos y coeficientes reductores especiales",
@@ -63,7 +63,7 @@
       "slug": "jubilacion-anticipada-discapacidad",
       "fuente_principal": "https://www.seg-social.es",
       "intencion": "informacional",
-      "publicado": false
+      "publicado": true
     },
     {
       "id": 5,
