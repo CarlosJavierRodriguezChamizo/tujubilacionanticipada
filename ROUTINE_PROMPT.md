@@ -105,33 +105,41 @@ que acabas de guardar en `src/content/blog/[slug].mdx`.
   "FALLO VERIFICACIÓN: [slug] — no superó los 3 intentos. Requiere revisión manual."
   Y termina aquí.
 
-## Paso 5 — Git commit y push
+## Paso 5 — Marcar como publicado y push a la rama de auto-publicación
 
-Si el artículo ha sido aprobado:
+Si el artículo ha sido aprobado.
+
+**IMPORTANTE:** esta routine NO pushea a `main` directamente. Pushea a la rama
+`claude/auto-publish` (permiso por defecto de Claude sobre ramas `claude/*`), y el
+GitHub Action (`.github/workflows/deploy.yml`) valida, despliega a Vercel y promociona
+el commit a `main` automáticamente tras un deploy con HTTP 200. Así no hace falta el
+permiso "Allow unrestricted branch pushes".
+
+Primero marca el artículo como publicado en el calendario (irá en el mismo commit):
+actualiza `scripts/calendario.json` cambiando `"publicado": false` a `"publicado": true`
+en el artículo procesado (busca por `id`).
 
 ```bash
+# Parte siempre de main actualizado y crea/resetea la rama de auto-publicación:
+git checkout main
+git pull --ff-only origin main
+git checkout -B claude/auto-publish
+
 git add src/content/blog/[slug].mdx
-# Incluye la imagen destacada si se generó (ignora el error si no existe):
-git add public/blog/[slug].jpg 2>/dev/null || true
+git add public/blog/[slug].jpg 2>/dev/null || true   # imagen destacada si se generó
+git add scripts/calendario.json
 git commit -m "content: artículo #[id] — [titulo]
 
 keyword: [keyword]
 silo: [silo]
-verificado: sí"
+verificado: sí
+publicado: sí"
 
-git push origin main
+# Push a la rama claude/* (permiso por defecto). El Action despliega y promociona a main.
+git push -f origin claude/auto-publish
 ```
 
-## Paso 6 — Marcar como publicado
-
-Actualiza `scripts/calendario.json`: cambia `"publicado": false` a `"publicado": true`
-en el artículo que acaba de procesarse (busca por `id`).
-
-```bash
-git add scripts/calendario.json
-git commit -m "chore: artículo #[id] marcado como publicado"
-git push origin main
-```
+No hagas ningún `git push origin main` tú mismo: de eso se encarga el workflow.
 
 ## Paso 7 — Log final
 
@@ -148,5 +156,6 @@ Escribe un resumen de lo que has hecho:
 - Nunca publiques un artículo que no haya superado la verificación
 - Nunca inventes datos o fuentes — solo fuentes oficiales (seg-social.es, boe.es, etc.)
 - Si hay algún error de git o de escritura de archivo, para y escríbelo en el log
-- Esta routine usa la rama `main` — asegúrate de hacer pull antes de cualquier cambio
-  para evitar conflictos si hubiera commits manuales recientes
+- Esta routine publica a través de la rama `claude/auto-publish` (el Action la promociona
+  a `main`). Parte siempre de `main` actualizado (`git pull --ff-only origin main`) antes de
+  crear la rama, para evitar conflictos si hubiera commits manuales recientes.

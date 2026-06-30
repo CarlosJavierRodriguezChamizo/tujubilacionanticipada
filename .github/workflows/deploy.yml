@@ -2,7 +2,10 @@ name: Build y Deploy a Vercel
 
 on:
   push:
-    branches: [main]
+    # `main`: despliegues directos (ediciones manuales).
+    # `claude/auto-publish`: rama donde la routine publica sin necesitar permiso
+    # de push directo a `main`; este workflow la promociona a `main` tras un deploy OK.
+    branches: [main, "claude/auto-publish"]
     paths:
       - 'src/content/blog/**'
       - 'src/pages/**'
@@ -18,10 +21,16 @@ jobs:
   build-and-deploy:
     name: Validar + Build + Deploy
     runs-on: ubuntu-latest
+    # Necesario para que el paso "Promover a main" pueda hacer push con GITHUB_TOKEN.
+    permissions:
+      contents: write
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          # Historia completa para poder hacer fast-forward de main.
+          fetch-depth: 0
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -71,6 +80,19 @@ jobs:
           done
           echo "El despliegue no devolvió 200 tras varios intentos (último: $STATUS)"
           exit 1
+
+      # Auto-merge: si el deploy desde la rama de la routine fue exitoso y el sitio
+      # responde 200, promociona el commit a `main` (fast-forward). Así la routine
+      # NUNCA necesita permiso de push directo a `main`: pushea a `claude/auto-publish`
+      # y este paso lo lleva a `main`. El push con GITHUB_TOKEN no re-dispara el workflow,
+      # por lo que no se produce un bucle de despliegues.
+      - name: Promover a main (auto-merge)
+        if: success() && github.ref == 'refs/heads/claude/auto-publish'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          echo "Promocionando ${GITHUB_SHA} a main (fast-forward)…"
+          git push origin "HEAD:main"
 
       - name: Email — deploy exitoso
         if: success()
