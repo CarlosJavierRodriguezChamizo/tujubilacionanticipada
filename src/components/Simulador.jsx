@@ -221,7 +221,7 @@ export default function Simulador({ disclaimer, guiaHref = '/guia-jubilacion-ant
       <form
         onSubmit={handleSubmit}
         noValidate
-        className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm sm:p-8"
+        className="rounded-2xl border border-paper-200 bg-paper-50 p-6 shadow-card sm:p-8"
       >
         <div className="grid gap-5 sm:grid-cols-3">
           <Field
@@ -273,7 +273,7 @@ export default function Simulador({ disclaimer, guiaHref = '/guia-jubilacion-ant
       {/* Resultados */}
       {resultado && (
         <div id="resultado-simulador" className="scroll-mt-24 space-y-6">
-          <div className="rounded-xl bg-gray-50 p-5 text-sm text-ink-soft">
+          <div className="rounded-xl border border-paper-200 bg-paper-100 p-5 text-sm text-ink-soft">
             Tu <strong>edad legal de jubilación estimada</strong> es{' '}
             <strong className="text-ink">{formatEdad(resultado.edadLegal)}</strong>. A
             partir de ahí calculamos los adelantos posibles.
@@ -310,8 +310,8 @@ export default function Simulador({ disclaimer, guiaHref = '/guia-jubilacion-ant
             </div>
           )}
 
-          {/* Captura de email */}
-          {!emailEnviado ? (
+          {/* Captura de email — oculta temporalmente junto con la guía (producto sin definir) */}
+          {false && (!emailEnviado ? (
             <div className="rounded-2xl border border-brand-200 bg-brand-50 p-6 sm:p-8">
               <h3 className="text-xl font-bold text-ink">
                 Recibe la guía completa con todos los pasos para planificar tu
@@ -358,7 +358,7 @@ export default function Simulador({ disclaimer, guiaHref = '/guia-jubilacion-ant
                 Ver la guía
               </a>
             </div>
-          )}
+          ))}
         </div>
       )}
     </div>
@@ -372,7 +372,7 @@ function Field({ label, suffix, id, value, onChange, error, placeholder, min, ma
       <label htmlFor={id} className="block text-sm font-medium text-ink">
         {label}
       </label>
-      <div className="mt-1.5 flex items-center rounded-lg border border-gray-300 focus-within:border-brand-500 focus-within:ring-2 focus-within:ring-brand-500">
+      <div className="mt-1.5 flex items-center rounded-lg border border-paper-300 bg-paper-50 focus-within:border-clay-400 focus-within:ring-2 focus-within:ring-clay-500">
         <input
           id={id}
           type="number"
@@ -406,7 +406,9 @@ function EscenarioCard({ titulo, etiqueta, tono, escenario }) {
     <div
       className={[
         'flex h-full flex-col rounded-2xl border p-6',
-        destacado ? 'border-brand-200 bg-white' : 'border-gray-200 bg-white',
+        destacado
+          ? 'border-clay-300 bg-paper-50 ring-1 ring-clay-200'
+          : 'border-paper-200 bg-paper-50',
       ].join(' ')}
     >
       <div className="flex items-start justify-between gap-2">
@@ -415,7 +417,7 @@ function EscenarioCard({ titulo, etiqueta, tono, escenario }) {
       <p className="mt-0.5 text-xs text-ink-muted">{etiqueta}</p>
 
       {sinDerecho ? (
-        <div className="mt-4 flex-1 rounded-lg bg-gray-50 p-4 text-sm text-ink-soft">
+        <div className="mt-4 flex-1 rounded-lg bg-paper-100 p-4 text-sm text-ink-soft">
           Con los datos introducidos no se alcanzarían los{' '}
           {MIN_COTIZACION_PENSION} años mínimos de cotización para una pensión
           contributiva en este escenario.

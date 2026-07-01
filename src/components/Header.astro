@@ -9,16 +9,28 @@ function isActive(href: string): boolean {
 }
 ---
 
-<header class="sticky top-0 z-40 border-b border-gray-200 bg-white/90 backdrop-blur">
+<header class="sticky top-0 z-40 border-b border-paper-200 bg-paper-50/85 backdrop-blur">
   <div class="container-prose flex h-16 items-center justify-between gap-4">
-    <a href="/" class="flex items-center gap-2 text-ink no-underline">
-      <span
-        class="grid h-8 w-8 place-items-center rounded-md bg-brand-600 text-sm font-bold text-white"
-        aria-hidden="true"
-      >
-        TJ
-      </span>
-      <span class="text-base font-semibold tracking-tight sm:text-lg">
+    <a href="/" class="flex items-center gap-2.5 text-ink no-underline">
+      <svg class="h-9 w-9 shrink-0" viewBox="0 0 64 64" aria-hidden="true" focusable="false">
+        <defs>
+          <clipPath id="disc-h"><circle cx="32" cy="32" r="30" /></clipPath>
+          <filter id="grain-h" x="0" y="0" width="100%" height="100%">
+            <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" stitchTiles="stitch" result="n" />
+            <feColorMatrix in="n" type="saturate" values="0" />
+          </filter>
+        </defs>
+        <circle cx="32" cy="32" r="30" fill="#f6efe1" />
+        <g clip-path="url(#disc-h)">
+          <circle cx="32" cy="37" r="12.5" fill="#bb6038" />
+          <path d="M-2,35.5 C 8,30.5 18,32.5 30,33.5 C 44,34.7 54,30 66,32.5 L66,66 L-2,66 Z" fill="#2c3a59" />
+          <path d="M-2,45 C 10,40 22,43 34,45 C 46,47 55,43 66,46" fill="none" stroke="#f6efe1" stroke-width="1.7" />
+          <path d="M-2,46.4 C 10,41.4 22,44.4 34,46.4 C 46,48.4 55,44.4 66,47.4 L66,66 L-2,66 Z" fill="#20293f" />
+          <rect x="0" y="0" width="64" height="64" filter="url(#grain-h)" opacity="0.07" />
+        </g>
+        <circle cx="32" cy="32" r="30" fill="none" stroke="#26324e" stroke-width="1.6" />
+      </svg>
+      <span class="font-serif text-base font-semibold tracking-tight text-brand-700 sm:text-lg">
         {SITE.name}
       </span>
     </a>
@@ -33,7 +45,7 @@ function isActive(href: string): boolean {
               'rounded-md px-3 py-2 text-sm font-medium no-underline transition-colors',
               isActive(link.href)
                 ? 'bg-brand-50 text-brand-700'
-                : 'text-ink-soft hover:bg-gray-50 hover:text-ink',
+                : 'text-ink-soft hover:bg-paper-100 hover:text-ink',
             ]}
             aria-current={isActive(link.href) ? 'page' : undefined}
           >
@@ -41,7 +53,7 @@ function isActive(href: string): boolean {
           </a>
         ))
       }
-      <a href="/simulador" class="btn-primary ml-2 px-4 py-2 text-sm no-underline">
+      <a href="/simulador" class="btn-accent ml-2 px-4 py-2 text-sm no-underline">
         Calcular ahora
       </a>
     </nav>
@@ -49,7 +61,7 @@ function isActive(href: string): boolean {
     <!-- Menú móvil (details/summary, sin JS) -->
     <details class="relative md:hidden">
       <summary
-        class="flex h-10 w-10 cursor-pointer list-none items-center justify-center rounded-md border border-gray-300 [&::-webkit-details-marker]:hidden"
+        class="flex h-10 w-10 cursor-pointer list-none items-center justify-center rounded-md border border-paper-300 text-brand-700 [&::-webkit-details-marker]:hidden"
         aria-label="Abrir menú"
       >
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
@@ -59,7 +71,7 @@ function isActive(href: string): boolean {
         </svg>
       </summary>
       <nav
-        class="absolute right-0 mt-2 w-56 rounded-lg border border-gray-200 bg-white p-2 shadow-lg"
+        class="absolute right-0 mt-2 w-56 rounded-lg border border-paper-200 bg-paper-50 p-2 shadow-card"
         aria-label="Móvil"
       >
         {
@@ -70,7 +82,7 @@ function isActive(href: string): boolean {
                 'block rounded-md px-3 py-2 text-sm font-medium no-underline',
                 isActive(link.href)
                   ? 'bg-brand-50 text-brand-700'
-                  : 'text-ink-soft hover:bg-gray-50',
+                  : 'text-ink-soft hover:bg-paper-100',
               ]}
               aria-current={isActive(link.href) ? 'page' : undefined}
             >
@@ -78,7 +90,7 @@ function isActive(href: string): boolean {
             </a>
           ))
         }
-        <a href="/simulador" class="btn-primary mt-1 w-full px-3 py-2 text-sm no-underline">
+        <a href="/simulador" class="btn-accent mt-1 w-full px-3 py-2 text-sm no-underline">
           Calcular ahora
         </a>
       </nav>

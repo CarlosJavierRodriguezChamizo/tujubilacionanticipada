@@ -10,7 +10,7 @@ const { post } = Astro.props;
 const { data } = post;
 ---
 
-<article class="group relative flex h-full flex-col overflow-hidden rounded-xl border border-gray-200 bg-white transition-shadow hover:shadow-md">
+<article class="group relative flex h-full flex-col overflow-hidden rounded-xl border border-paper-200 bg-paper-50 transition-shadow hover:shadow-card">
   {
     data.heroImage && (
       <a href={`/blog/${post.slug}`} class="block" tabindex="-1" aria-hidden="true">
@@ -20,23 +20,23 @@ const { data } = post;
           width="1200"
           height="675"
           loading="lazy"
-          class="aspect-video w-full object-cover"
+          class="aspect-video w-full border-b border-paper-200 object-cover"
         />
       </a>
     )
   }
   <div class="flex flex-1 flex-col p-6">
-  <div class="flex items-center gap-2 text-xs text-ink-muted">
-    <span class="rounded-full bg-brand-50 px-2.5 py-0.5 font-medium text-brand-700">
+  <div class="flex items-center gap-2.5 text-xs text-ink-muted">
+    <span class="rounded-full bg-clay-50 px-2.5 py-0.5 font-semibold uppercase tracking-wide text-clay-700">
       {data.category}
     </span>
     <time datetime={toISO(data.pubDate)}>{formatDate(data.pubDate)}</time>
   </div>
 
-  <h3 class="mt-3 text-lg font-semibold leading-snug">
+  <h3 class="mt-3 font-serif text-lg font-semibold leading-snug">
     <a
       href={`/blog/${post.slug}`}
-      class="text-ink no-underline after:absolute after:inset-0 hover:text-brand-600"
+      class="text-ink no-underline after:absolute after:inset-0 hover:text-clay-700"
     >
       {data.title}
     </a>
@@ -46,7 +46,7 @@ const { data } = post;
     {data.description}
   </p>
 
-  <span class="mt-4 text-sm font-medium text-brand-600 group-hover:text-brand-700">
+  <span class="mt-4 text-sm font-semibold text-clay-700 group-hover:text-clay-800">
     Leer artículo →
   </span>
   </div>

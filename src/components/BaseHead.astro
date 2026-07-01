@@ -1,5 +1,5 @@
 ---
-import { SITE } from '../consts';
+import { SITE, GA_MEASUREMENT_ID, COOKIE_CONSENT } from '../consts';
 
 interface Props {
   title: string;
@@ -35,6 +35,68 @@ const fullTitle = title === SITE.name ? title : `${title} | ${SITE.name}`;
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <meta name="generator" content={Astro.generator} />
+
+<!--
+  Google Consent Mode v2 — estado por defecto DENEGADO.
+  Debe ejecutarse ANTES de cargar cualquier tag de Google. Reaplica el
+  consentimiento previo del usuario (cookie) para evitar parpadeos y
+  respetar su elección en visitas recurrentes.
+-->
+<script is:inline define:vars={{ cookieName: COOKIE_CONSENT.cookieName, version: COOKIE_CONSENT.version }}>
+  window.dataLayer = window.dataLayer || [];
+  function gtag() {
+    dataLayer.push(arguments);
+  }
+  window.gtag = gtag;
+
+  gtag('consent', 'default', {
+    ad_storage: 'denied',
+    ad_user_data: 'denied',
+    ad_personalization: 'denied',
+    analytics_storage: 'denied',
+    functionality_storage: 'denied',
+    personalization_storage: 'denied',
+    security_storage: 'granted',
+    wait_for_update: 500,
+  });
+
+  try {
+    var match = document.cookie.match(
+      new RegExp('(?:^|;\\s*)' + cookieName + '=([^;]+)')
+    );
+    if (match) {
+      var stored = JSON.parse(decodeURIComponent(match[1]));
+      if (stored && stored.v === version && stored.categories) {
+        var c = stored.categories;
+        gtag('consent', 'update', {
+          ad_storage: c.marketing ? 'granted' : 'denied',
+          ad_user_data: c.marketing ? 'granted' : 'denied',
+          ad_personalization: c.marketing ? 'granted' : 'denied',
+          analytics_storage: c.analytics ? 'granted' : 'denied',
+          functionality_storage: c.preferences ? 'granted' : 'denied',
+          personalization_storage: c.preferences ? 'granted' : 'denied',
+        });
+      }
+    }
+  } catch (e) {
+    /* cookie ilegible: se mantiene el estado denegado por defecto */
+  }
+</script>
+{
+  GA_MEASUREMENT_ID && (
+    <>
+      <script
+        is:inline
+        async
+        src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
+      />
+      <script is:inline define:vars={{ id: GA_MEASUREMENT_ID }}>
+        gtag('js', new Date());
+        gtag('config', id, { anonymize_ip: true });
+      </script>
+    </>
+  )
+}
 <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 <link rel="sitemap" href="/sitemap-index.xml" />
 
@@ -76,5 +138,5 @@ const fullTitle = title === SITE.name ? title : `${title} | ${SITE.name}`;
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link
   rel="stylesheet"
-  href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+  href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap"
 />

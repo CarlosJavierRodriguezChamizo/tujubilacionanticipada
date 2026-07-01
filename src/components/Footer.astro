@@ -4,13 +4,33 @@ import { SITE, NAV_LINKS, FOOTER_LEGAL_LINKS } from '../consts';
 const year = new Date().getFullYear();
 ---
 
-<footer class="mt-16 border-t border-gray-200 bg-gray-50">
-  <div class="container-prose py-12">
+<footer class="mt-20 bg-brand-800 text-paper-200">
+  <div class="container-prose py-14">
     <div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
       <div class="lg:col-span-2">
-        <p class="text-base font-semibold text-ink">{SITE.name}</p>
-        <p class="mt-2 max-w-sm text-sm text-ink-muted">{SITE.tagline}</p>
-        <p class="mt-4 max-w-sm text-xs leading-relaxed text-ink-muted">
+        <div class="flex items-center gap-2.5">
+          <svg class="h-9 w-9 shrink-0" viewBox="0 0 64 64" aria-hidden="true" focusable="false">
+            <defs>
+              <clipPath id="disc-f"><circle cx="32" cy="32" r="30" /></clipPath>
+              <filter id="grain-f" x="0" y="0" width="100%" height="100%">
+                <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" stitchTiles="stitch" result="n" />
+                <feColorMatrix in="n" type="saturate" values="0" />
+              </filter>
+            </defs>
+            <circle cx="32" cy="32" r="30" fill="#f6efe1" />
+            <g clip-path="url(#disc-f)">
+              <circle cx="32" cy="37" r="12.5" fill="#bb6038" />
+              <path d="M-2,35.5 C 8,30.5 18,32.5 30,33.5 C 44,34.7 54,30 66,32.5 L66,66 L-2,66 Z" fill="#2c3a59" />
+              <path d="M-2,45 C 10,40 22,43 34,45 C 46,47 55,43 66,46" fill="none" stroke="#f6efe1" stroke-width="1.7" />
+              <path d="M-2,46.4 C 10,41.4 22,44.4 34,46.4 C 46,48.4 55,44.4 66,47.4 L66,66 L-2,66 Z" fill="#20293f" />
+              <rect x="0" y="0" width="64" height="64" filter="url(#grain-f)" opacity="0.07" />
+            </g>
+            <circle cx="32" cy="32" r="30" fill="none" stroke="#4f608a" stroke-width="1.6" />
+          </svg>
+          <p class="font-serif text-lg font-semibold text-paper-50">{SITE.name}</p>
+        </div>
+        <p class="mt-3 max-w-sm text-sm text-paper-300">{SITE.tagline}</p>
+        <p class="mt-4 max-w-sm text-xs leading-relaxed text-brand-200">
           Portal informativo independiente. El contenido es orientativo y no
           sustituye el asesoramiento profesional ni la información oficial de la
           Seguridad Social.
@@ -18,14 +38,16 @@ const year = new Date().getFullYear();
       </div>
 
       <div>
-        <p class="text-sm font-semibold text-ink">Navegación</p>
-        <ul class="mt-3 space-y-2">
+        <p class="text-xs font-semibold uppercase tracking-[0.14em] text-clay-300">
+          Navegación
+        </p>
+        <ul class="mt-4 space-y-2.5">
           {
             NAV_LINKS.map((link) => (
               <li>
                 <a
                   href={link.href}
-                  class="text-sm text-ink-soft no-underline hover:text-brand-600"
+                  class="text-sm text-paper-200 no-underline transition-colors hover:text-white"
                 >
                   {link.label}
                 </a>
@@ -36,28 +58,39 @@ const year = new Date().getFullYear();
       </div>
 
       <div>
-        <p class="text-sm font-semibold text-ink">Legal</p>
-        <ul class="mt-3 space-y-2">
+        <p class="text-xs font-semibold uppercase tracking-[0.14em] text-clay-300">
+          Legal
+        </p>
+        <ul class="mt-4 space-y-2.5">
           {
             FOOTER_LEGAL_LINKS.map((link) => (
               <li>
                 <a
                   href={link.href}
-                  class="text-sm text-ink-soft no-underline hover:text-brand-600"
+                  class="text-sm text-paper-200 no-underline transition-colors hover:text-white"
                 >
                   {link.label}
                 </a>
               </li>
             ))
           }
+          <li>
+            <button
+              type="button"
+              data-cc-open
+              class="text-sm text-paper-200 no-underline transition-colors hover:text-white"
+            >
+              Preferencias de cookies
+            </button>
+          </li>
         </ul>
       </div>
     </div>
 
-    <div class="mt-10 flex flex-col gap-2 border-t border-gray-200 pt-6 text-xs text-ink-muted sm:flex-row sm:items-center sm:justify-between">
+    <div class="mt-12 flex flex-col gap-2 border-t border-brand-700 pt-6 text-xs text-brand-200 sm:flex-row sm:items-center sm:justify-between">
       <p>© {year} {SITE.domain}. Todos los derechos reservados.</p>
       <p>
-        <a href={`mailto:${SITE.email}`} class="hover:text-brand-600">
+        <a href={`mailto:${SITE.email}`} class="text-paper-300 transition-colors hover:text-white">
           {SITE.email}
         </a>
       </p>

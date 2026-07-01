@@ -34,7 +34,8 @@ export const SOCIAL_PROFILES: string[] = [
 
 export const NAV_LINKS = [
   { href: '/simulador', label: 'Simulador' },
-  { href: '/guia-jubilacion-anticipada', label: 'Guía' },
+  // Guía oculta temporalmente hasta que el producto esté definido.
+  // { href: '/guia-jubilacion-anticipada', label: 'Guía' },
   { href: '/blog', label: 'Blog' },
   { href: '/sobre-este-sitio', label: 'Sobre el sitio' },
 ] as const;
@@ -48,6 +49,26 @@ export const FOOTER_LEGAL_LINKS = [
 
 /** Nº de artículos por página en el listado del blog */
 export const POSTS_PER_PAGE = 6;
+
+/**
+ * ID de medición de Google (GA4: "G-XXXXXXX"; Ads: "AW-XXXXXXX").
+ * Vacío = no se carga ningún tag de Google. El banner de consentimiento
+ * funciona igual y, en cuanto rellenes este ID, el tag respetará el
+ * consentimiento vía Google Consent Mode v2.
+ */
+export const GA_MEASUREMENT_ID = 'G-9K6WR2TR7M';
+
+/**
+ * Configuración del banner de consentimiento (CMP).
+ * Sube `version` si cambian las categorías: invalida los consentimientos
+ * antiguos y se vuelve a preguntar al usuario.
+ */
+export const COOKIE_CONSENT = {
+  cookieName: 'tja_consent',
+  version: 1,
+  /** Vigencia del consentimiento en días (AEPD recomienda ≤ 24 meses; usamos 6 meses). */
+  maxAgeDays: 180,
+} as const;
 
 /** Precio de la guía PDF (en euros) */
 export const GUIA_PRECIO = 29;
