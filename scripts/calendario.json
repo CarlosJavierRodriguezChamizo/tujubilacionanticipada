@@ -67,7 +67,7 @@
     },
     {
       "id": 5,
-      "fecha": "2026-07-02",
+      "fecha": "2026-07-01",
       "silo_code": "S1",
       "silo": "Tipos de jubilación anticipada",
       "titulo": "Jubilación anticipada para transportistas y conductores profesionales: condiciones 2026",
@@ -77,7 +77,7 @@
       "slug": "jubilacion-anticipada-transportistas",
       "fuente_principal": "https://www.seg-social.es",
       "intencion": "informacional",
-      "publicado": false
+      "publicado": true
     },
     {
       "id": 6,
