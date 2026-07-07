@@ -141,6 +141,23 @@ git push -f origin claude/auto-publish
 
 No hagas ningún `git push origin main` tú mismo: de eso se encarga el workflow.
 
+## Paso 6c — Notificar a los suscriptores (push)
+
+Tras publicar y marcar el artículo, avisa a los suscriptores de notificaciones. Espera
+~60 segundos (para dar tiempo al despliegue) y llama al endpoint de envío:
+
+```bash
+sleep 60
+curl -s -X POST https://tujubilacionanticipada.com/api/push-send \
+  -H "Authorization: Bearer $PUSH_SEND_SECRET" \
+  -H "Content-Type: application/json" \
+  -d "{\"title\":\"Nuevo artículo: [titulo]\",\"body\":\"Ya disponible en el blog\",\"url\":\"/blog/[slug]\"}"
+```
+
+`PUSH_SEND_SECRET` debe estar disponible como variable de entorno de la routine.
+Si el endpoint responde error o no está configurado, anótalo en el log y continúa
+(la publicación ya se ha realizado; la notificación es secundaria).
+
 ## Paso 7 — Log final
 
 Escribe un resumen de lo que has hecho:

@@ -4,6 +4,7 @@ import BaseHead from '../components/BaseHead.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import CookieConsent from '../components/CookieConsent.astro';
+import NotificationsPrompt from '../components/NotificationsPrompt.astro';
 import { SITE } from '../consts';
 import { organizationSchema, websiteSchema } from '../lib/schema';
 
@@ -70,6 +71,7 @@ const schemaList = [
     </main>
     <Footer />
     <CookieConsent />
+    <NotificationsPrompt />
 
     <!--
       Analítica: delega los clics en cualquier elemento con [data-ga-event]

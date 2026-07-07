@@ -2,12 +2,12 @@
 import type { CollectionEntry } from 'astro:content';
 import Base from './Base.astro';
 // Guía oculta temporalmente: import CTAGuia from '../components/CTAGuia.astro';
-import { formatDate, toISO } from '../lib/posts';
+import { formatDate, toISO, readingTimeMinutes } from '../lib/posts';
 import { blogPostingSchema, breadcrumbSchema } from '../lib/schema';
 import ShareButtons from '../components/ShareButtons.astro';
 import RelatedArticles from '../components/RelatedArticles.astro';
 import AsesoramientoCard from '../components/AsesoramientoCard.astro';
-import { SITE } from '../consts';
+import { SITE, REVIEWERS } from '../consts';
 
 interface Props {
   post: CollectionEntry<'blog'>;
@@ -17,6 +17,8 @@ const { post } = Astro.props;
 const { data } = post;
 const path = `/blog/${post.slug}`;
 const shareUrl = new URL(path, SITE.url).toString();
+const minutos = readingTimeMinutes(post.body);
+const reviewerImg = data.reviewedBy ? REVIEWERS[data.reviewedBy] : undefined;
 
 const articleSchema = blogPostingSchema(post);
 const breadcrumb = breadcrumbSchema([
@@ -53,6 +55,8 @@ const breadcrumb = breadcrumbSchema([
         <span>{data.author}</span>
         <span aria-hidden="true">·</span>
         <time datetime={toISO(data.pubDate)}>{formatDate(data.pubDate)}</time>
+        <span aria-hidden="true">·</span>
+        <span>{minutos} min de lectura</span>
         {
           data.updatedDate && (
             <>
@@ -93,6 +97,32 @@ const breadcrumb = breadcrumbSchema([
     </div>
     */}
 
+    {
+      data.reviewedBy && (
+        <aside class="mx-auto mt-12 flex max-w-prose items-center gap-4 rounded-xl border border-paper-200 bg-paper-100 p-5">
+          {reviewerImg && (
+            <img
+              src={reviewerImg}
+              alt={`Foto de ${data.reviewedBy}`}
+              width="64"
+              height="64"
+              loading="lazy"
+              class="h-16 w-16 shrink-0 rounded-full border border-paper-300 object-cover"
+            />
+          )}
+          <div>
+            <p class="text-xs font-semibold uppercase tracking-wide text-clay-700">
+              Revisado por
+            </p>
+            <p class="font-serif text-base font-semibold text-ink">{data.reviewedBy}</p>
+            {data.reviewerTitle && (
+              <p class="mt-0.5 text-sm text-ink-soft">{data.reviewerTitle}</p>
+            )}
+          </div>
+        </aside>
+      )
+    }
+
     <div class="mx-auto mt-10 max-w-prose border-t border-paper-300 pt-6">
       <a href="/blog" class="text-sm font-semibold text-clay-700 hover:text-clay-800">
         ← Volver al blog
@@ -101,9 +131,6 @@ const breadcrumb = breadcrumbSchema([
   </article>
 
   <RelatedArticles post={post} />
-
-  <!-- Espaciador para que la barra sticky móvil no tape el contenido/pie -->
-  <div class="h-24 lg:hidden" aria-hidden="true"></div>
 
   <AsesoramientoCard />
 </Base>

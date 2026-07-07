@@ -31,3 +31,17 @@ export function formatDate(date: Date): string {
 export function toISO(date: Date): string {
   return date.toISOString();
 }
+
+/**
+ * Tiempo de lectura estimado en minutos (200 palabras/min).
+ * `body` es el markdown crudo del artículo (post.body).
+ */
+export function readingTimeMinutes(body: string): number {
+  const words = (body || '')
+    .replace(/```[\s\S]*?```/g, ' ') // ignora bloques de código
+    .replace(/[#>*_`~\-|]/g, ' ')
+    .trim()
+    .split(/\s+/)
+    .filter(Boolean).length;
+  return Math.max(1, Math.round(words / 200));
+}

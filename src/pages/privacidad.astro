@@ -23,13 +23,12 @@ import { SITE, LEGAL } from '../consts';
       </p>
 
       <h2>1. Responsable del tratamiento</h2>
-      <ul>
-        <li><strong>Titular:</strong> {LEGAL.titular}</li>
-        <li><strong>NIF/CIF:</strong> {LEGAL.nif}</li>
-        <li><strong>Domicilio a efectos de notificaciones:</strong> {LEGAL.domicilio}</li>
-        <li><strong>Correo electrónico de contacto:</strong> <a href={`mailto:${LEGAL.email}`}>{LEGAL.email}</a></li>
-        <li><strong>Sitio web:</strong> {SITE.url}</li>
-      </ul>
+      <p>
+        El responsable del tratamiento de tus datos es el titular del sitio web
+        <strong>{SITE.domain}</strong>. Puedes contactar con nosotros, y ejercer tus
+        derechos, a través del correo electrónico
+        <a href={`mailto:${LEGAL.email}`}>{LEGAL.email}</a>.
+      </p>
 
       <h2>2. Datos que tratamos y cómo los obtenemos</h2>
       <p>Tratamos las siguientes categorías de datos:</p>

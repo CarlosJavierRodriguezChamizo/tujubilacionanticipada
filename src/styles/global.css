@@ -38,7 +38,7 @@
 
   /* Botones: esquinas más sobrias (rounded-md) y transiciones suaves. */
   .btn {
-    @apply inline-flex items-center justify-center gap-2 rounded-md px-5 py-3 text-base font-medium transition-colors duration-150 focus-visible:ring-2 focus-visible:ring-clay-500 focus-visible:ring-offset-2 focus-visible:ring-offset-paper-50;
+    @apply inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md px-5 py-3 text-base font-medium transition-colors duration-150 focus-visible:ring-2 focus-visible:ring-clay-500 focus-visible:ring-offset-2 focus-visible:ring-offset-paper-50;
   }
 
   /* Acción estructural: navy. */
@@ -84,6 +84,31 @@
   }
   .article-toc .toc-h3 a {
     @apply font-normal text-ink-soft;
+  }
+
+  /* CTA de asesor intercalado en el artículo */
+  .inline-cta {
+    @apply my-8 flex flex-col gap-3 rounded-xl border border-clay-200 bg-clay-50 p-5 sm:flex-row sm:items-center sm:justify-between;
+  }
+  .inline-cta__text {
+    @apply m-0 text-sm font-medium text-ink;
+  }
+  .inline-cta__link {
+    @apply shrink-0 whitespace-nowrap rounded-md bg-clay-600 px-4 py-2 text-sm font-semibold text-white no-underline hover:bg-clay-700;
+  }
+
+  /* Lectura recomendada intercalada */
+  .inline-reco {
+    @apply my-8 rounded-xl border border-paper-300 bg-paper-100 p-5;
+  }
+  .inline-reco__label {
+    @apply m-0 text-xs font-semibold uppercase tracking-[0.12em] text-clay-700;
+  }
+  .inline-reco__link {
+    @apply mt-1 block font-serif text-lg font-semibold text-ink no-underline hover:text-clay-700;
+  }
+  .inline-reco__desc {
+    @apply m-0 mt-1 text-sm text-ink-soft;
   }
 }
 

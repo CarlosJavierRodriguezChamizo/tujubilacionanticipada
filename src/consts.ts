@@ -38,7 +38,6 @@ export const NAV_LINKS = [
   // { href: '/guia-jubilacion-anticipada', label: 'Guía' },
   { href: '/blog', label: 'Blog' },
   { href: '/asesoramiento', label: 'Asesoramiento' },
-  { href: '/sobre-este-sitio', label: 'Sobre el sitio' },
 ] as const;
 
 export const FOOTER_LEGAL_LINKS = [
@@ -73,6 +72,20 @@ export const COOKIE_CONSENT = {
 
 /** Precio de la guía PDF (en euros) */
 export const GUIA_PRECIO = 29;
+
+/** Foto de perfil de los revisores del contenido (por nombre). */
+export const REVIEWERS: Record<string, string> = {
+  'Javier Rodríguez': '/equipo/javier-rodriguez.jpg',
+};
+
+/**
+ * Notificaciones push (Web Push).
+ * Clave pública VAPID (no es secreta; se usa en el navegador). La privada va
+ * en la variable de entorno VAPID_PRIVATE_KEY de Vercel (nunca en el código).
+ * Vacío = no se muestra el popup de suscripción.
+ */
+export const VAPID_PUBLIC_KEY =
+  'BMIM62yKsoHu4_ErKWKv1KL8_TT9mvkWbWuLvIJ_Dd_7_mM-WijmiJvTkwhn2JIKYd7NqTriy7CG4wXdVVsA4gs';
 
 /**
  * Configuración del CTA de asesoramiento y su prueba social (principios de Cialdini).
