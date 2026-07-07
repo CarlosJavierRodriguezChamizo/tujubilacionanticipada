@@ -62,8 +62,13 @@ export default async function handler(req, res) {
   const from = process.env.CONTACT_FROM || 'Asesoramiento TJA <onboarding@resend.dev>';
 
   if (!apiKey || !to) {
-    console.error('Faltan RESEND_API_KEY o CONTACT_TO_EMAIL en el entorno.');
-    return res.status(500).json({ ok: false, error: 'Configuración del servidor incompleta.' });
+    const missing = [!apiKey && 'RESEND_API_KEY', !to && 'CONTACT_TO_EMAIL']
+      .filter(Boolean)
+      .join(', ');
+    console.error('Faltan variables de entorno:', missing);
+    return res
+      .status(500)
+      .json({ ok: false, error: 'Configuración del servidor incompleta.', missing });
   }
 
   const html = `
