@@ -10,12 +10,10 @@
  *   - VAPID_PUBLIC_KEY, VAPID_PRIVATE_KEY  (par generado con web-push)
  *   - PUSH_SEND_SECRET                     (token para autorizar el envío)
  *   - CONTACT_TO_EMAIL (opcional)          (para el campo mailto de VAPID)
- *   - Vercel KV habilitado                 (almacén de suscripciones)
+ *   - Almacén Redis (Vercel KV / Upstash)  (KV_REST_API_* o UPSTASH_REDIS_REST_*)
  */
 import webpush from 'web-push';
-import { kv } from '@vercel/kv';
-
-const KEY = 'push_subs';
+import { getRedis, SUBS_KEY } from './_redis.js';
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -33,6 +31,11 @@ export default async function handler(req, res) {
   const priv = process.env.VAPID_PRIVATE_KEY;
   if (!pub || !priv) {
     return res.status(500).json({ ok: false, error: 'Faltan claves VAPID.' });
+  }
+
+  const redis = getRedis();
+  if (!redis) {
+    return res.status(500).json({ ok: false, error: 'Almacén Redis no configurado.' });
   }
 
   let body = req.body;
@@ -59,9 +62,9 @@ export default async function handler(req, res) {
 
   let subs = [];
   try {
-    subs = (await kv.smembers(KEY)) || [];
+    subs = (await redis.smembers(SUBS_KEY)) || [];
   } catch (err) {
-    console.error('KV no disponible al leer suscripciones:', err && err.message);
+    console.error('Error leyendo suscripciones:', err && err.message);
     return res.status(500).json({ ok: false, error: 'Almacén no disponible.' });
   }
 
@@ -75,7 +78,7 @@ export default async function handler(req, res) {
     } catch (err) {
       if (err && (err.statusCode === 404 || err.statusCode === 410)) {
         try {
-          await kv.srem(KEY, s);
+          await redis.srem(SUBS_KEY, s);
         } catch {}
         removed++;
       }

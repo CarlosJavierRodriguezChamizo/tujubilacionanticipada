@@ -1,11 +1,9 @@
 /**
- * Guarda una suscripción de notificaciones push.
- * Almacena en Vercel KV (requiere KV habilitado en el proyecto). Si KV no está
- * configurado, responde OK igualmente para no romper el frontend (pero no persiste).
+ * Guarda una suscripción de notificaciones push en Redis (Upstash / Vercel KV).
+ * Si el almacén no está configurado, responde OK igualmente para no romper el
+ * frontend (pero no persiste; no se podrán enviar notificaciones a ese usuario).
  */
-import { kv } from '@vercel/kv';
-
-const KEY = 'push_subs';
+import { getRedis, SUBS_KEY } from './_redis.js';
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -26,12 +24,17 @@ export default async function handler(req, res) {
     return res.status(400).json({ ok: false, error: 'Suscripción no válida.' });
   }
 
+  const redis = getRedis();
+  if (!redis) {
+    console.warn('Redis no configurado: la suscripción no se ha persistido.');
+    return res.status(200).json({ ok: true, stored: false });
+  }
+
   try {
-    await kv.sadd(KEY, JSON.stringify(sub));
+    await redis.sadd(SUBS_KEY, JSON.stringify(sub));
     return res.status(200).json({ ok: true });
   } catch (err) {
-    console.error('KV no disponible al guardar suscripción:', err && err.message);
-    // No bloqueamos al usuario; simplemente no se ha persistido.
+    console.error('Error guardando suscripción:', err && err.message);
     return res.status(200).json({ ok: true, stored: false });
   }
 }
