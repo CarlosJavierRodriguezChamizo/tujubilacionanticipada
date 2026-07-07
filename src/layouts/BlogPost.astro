@@ -4,6 +4,9 @@ import Base from './Base.astro';
 // Guía oculta temporalmente: import CTAGuia from '../components/CTAGuia.astro';
 import { formatDate, toISO } from '../lib/posts';
 import { blogPostingSchema, breadcrumbSchema } from '../lib/schema';
+import ShareButtons from '../components/ShareButtons.astro';
+import RelatedArticles from '../components/RelatedArticles.astro';
+import { SITE } from '../consts';
 
 interface Props {
   post: CollectionEntry<'blog'>;
@@ -12,6 +15,7 @@ interface Props {
 const { post } = Astro.props;
 const { data } = post;
 const path = `/blog/${post.slug}`;
+const shareUrl = new URL(path, SITE.url).toString();
 
 const articleSchema = blogPostingSchema(post);
 const breadcrumb = breadcrumbSchema([
@@ -74,6 +78,8 @@ const breadcrumb = breadcrumbSchema([
       )
     }
 
+    <ShareButtons url={shareUrl} title={data.title} />
+
     <hr class="mx-auto mt-8 max-w-prose border-paper-300" />
 
     <div class="prose prose-lg mx-auto mt-8 prose-a:font-medium">
@@ -92,4 +98,6 @@ const breadcrumb = breadcrumbSchema([
       </a>
     </div>
   </article>
+
+  <RelatedArticles post={post} />
 </Base>

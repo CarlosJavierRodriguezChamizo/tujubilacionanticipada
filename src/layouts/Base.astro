@@ -70,5 +70,25 @@ const schemaList = [
     </main>
     <Footer />
     <CookieConsent />
+
+    <!--
+      Analítica: delega los clics en cualquier elemento con [data-ga-event]
+      y envía el evento a GA4 (respeta el Consent Mode configurado en BaseHead).
+      Los atributos data-ga-* extra se pasan como parámetros del evento.
+    -->
+    <script is:inline>
+      document.addEventListener('click', function (e) {
+        var t = e.target.closest('[data-ga-event]');
+        if (!t || typeof window.gtag !== 'function') return;
+        var params = {};
+        for (var i = 0; i < t.attributes.length; i++) {
+          var a = t.attributes[i];
+          if (a.name.indexOf('data-ga-') === 0 && a.name !== 'data-ga-event') {
+            params[a.name.slice(8).replace(/-/g, '_')] = a.value;
+          }
+        }
+        window.gtag('event', t.getAttribute('data-ga-event'), params);
+      });
+    </script>
   </body>
 </html>

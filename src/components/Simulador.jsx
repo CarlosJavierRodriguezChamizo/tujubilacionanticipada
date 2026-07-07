@@ -193,6 +193,14 @@ export default function Simulador({ disclaimer, guiaHref = '/guia-jubilacion-ant
     setResultado({ edadLegal, ordinaria, voluntaria, forzosa });
     setEmailEnviado(false);
 
+    // Evento GA4: el usuario ha calculado su jubilación con el simulador.
+    if (typeof window !== 'undefined' && typeof window.gtag === 'function') {
+      window.gtag('event', 'simulador_calcular', {
+        edad_legal: edadLegal,
+        anios_cotizados: aniosCotizadosActuales,
+      });
+    }
+
     // Llevar el foco/scroll a los resultados.
     requestAnimationFrame(() => {
       document.getElementById('resultado-simulador')?.scrollIntoView({

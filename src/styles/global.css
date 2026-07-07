@@ -59,6 +59,32 @@
   .eyebrow {
     @apply text-sm font-semibold uppercase tracking-[0.14em] text-clay-700;
   }
+
+  /* Tabla de contenidos (inyectada por rehype antes del primer H2). */
+  .article-toc {
+    @apply my-8 rounded-lg border border-paper-300 bg-paper-100 p-5 sm:p-6;
+  }
+  .article-toc__title {
+    @apply mb-3 font-serif text-base font-semibold text-ink;
+  }
+  .article-toc__list {
+    @apply m-0 list-none space-y-1.5 p-0;
+  }
+  .article-toc .toc-item {
+    @apply m-0 p-0;
+  }
+  .article-toc .toc-item::before {
+    content: none;
+  }
+  .article-toc .toc-item a {
+    @apply text-sm font-medium text-brand-700 no-underline hover:text-clay-700 hover:underline;
+  }
+  .article-toc .toc-h3 {
+    @apply ml-4;
+  }
+  .article-toc .toc-h3 a {
+    @apply font-normal text-ink-soft;
+  }
 }
 
 @layer utilities {

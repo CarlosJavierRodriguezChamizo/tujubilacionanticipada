@@ -37,6 +37,7 @@ export const NAV_LINKS = [
   // Guía oculta temporalmente hasta que el producto esté definido.
   // { href: '/guia-jubilacion-anticipada', label: 'Guía' },
   { href: '/blog', label: 'Blog' },
+  { href: '/asesoramiento', label: 'Asesoramiento' },
   { href: '/sobre-este-sitio', label: 'Sobre el sitio' },
 ] as const;
 

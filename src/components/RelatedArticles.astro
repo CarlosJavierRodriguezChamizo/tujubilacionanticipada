@@ -1,0 +1,39 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import ArticleCard from './ArticleCard.astro';
+import { getPublishedPosts } from '../lib/posts';
+
+interface Props {
+  post: CollectionEntry<'blog'>;
+  max?: number;
+}
+
+const { post, max = 3 } = Astro.props;
+const all = await getPublishedPosts();
+const others = all.filter((p) => p.slug !== post.slug);
+
+// Prioriza misma categoría; completa con los más recientes si faltan.
+const sameCategory = others.filter(
+  (p) => p.data.category === post.data.category
+);
+const rest = others.filter((p) => p.data.category !== post.data.category);
+const related = [...sameCategory, ...rest].slice(0, max);
+---
+
+{
+  related.length > 0 && (
+    <section class="border-t border-paper-300 bg-paper-100">
+      <div class="container-prose py-14">
+        <h2 class="text-2xl font-semibold sm:text-3xl">Artículos relacionados</h2>
+        <p class="mt-2 text-ink-soft">
+          Sigue profundizando en tu jubilación anticipada.
+        </p>
+        <div class="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {related.map((p) => (
+            <ArticleCard post={p} />
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}
