@@ -1,238 +1,192 @@
-# SETUP COMPLETO — tujubilacionanticipada.com
-## Stack definitivo: Claude Code Routines + GitHub + Vercel + Gmail
+# SETUP — tujubilacionanticipada.com
+## Stack: Claude Code Routines + GitHub Actions + Vercel + Resend
+
+> Estado: pipeline verificado y operativo. Solo falta **crear la Routine** (PASO 6).
 
 ---
 
-## Arquitectura final
+## Arquitectura
 
 ```
-Claude Code Routine (nube Anthropic, 08:00 diario)
+Claude Code Routine (nube Anthropic, 08:00 diario Europe/Madrid)
     │
-    ├── Lee calendario.json → artículo del día
-    ├── Lee PROMPT_REDACTOR.md → genera MDX
+    ├── Lee calendario.json → artículo pendiente más antiguo con fecha <= hoy
+    ├── Lee PROMPT_REDACTOR.md → genera MDX (+ import BarChart y ≥1 gráfico de datos)
+    ├── Genera imagen destacada con Magnific (conector) → public/blog/<slug>.jpg
     ├── Lee PROMPT_VERIFICADOR.md → verifica (hasta 3 intentos)
     │     └── FALLO 3x → log de error → para (sin push)
     │
     └── APROBADO → git push → main
                        │
                        ▼
-               GitHub Actions
+               GitHub Actions (.github/workflows/deploy.yml)
                    ├── validate-frontmatter.mjs (EEAT check)
-                   ├── npm run build (Astro → dist/)
-                   ├── Deploy a Vercel (producción)
-                   ├── Smoke test HTTP 200
-                   └── Email: ✅ publicado o ❌ fallo
+                   ├── npm run build (astro check + build)
+                   ├── Deploy a Vercel con el CLI oficial (vercel pull/build/deploy)
+                   ├── Smoke test HTTP 200 sobre la URL real del deploy
+                   └── Email vía Resend: ✅ publicado / ❌ fallo
 ```
 
 ---
 
-## Archivos que van en el repositorio
+## Archivos del sistema (en el repo)
 
 ```
 tujubilacionanticipada/
 ├── scripts/
-│   ├── calendario.json           ← 60 artículos (30 jun – 28 ago 2026)
-│   ├── PROMPT_REDACTOR.md        ← instrucciones para el agente redactor
-│   ├── PROMPT_VERIFICADOR.md     ← checklist EEAT para el agente verificador
-│   └── validate-frontmatter.mjs  ← validador para GitHub Actions
-├── .github/
-│   └── workflows/
-│       └── deploy.yml            ← CI/CD: build + Vercel + email
-└── ROUTINE_PROMPT.md             ← prompt de la routine (referencia)
+│   ├── calendario.json           ← 60 artículos (25 jun – 23 ago 2026)
+│   ├── PROMPT_REDACTOR.md         ← instrucciones del agente redactor
+│   ├── PROMPT_VERIFICADOR.md      ← checklist EEAT del agente verificador
+│   └── validate-frontmatter.mjs   ← validador que corre en GitHub Actions
+├── .github/workflows/deploy.yml   ← CI/CD: validar + build + Vercel + email
+├── src/components/charts/BarChart.astro  ← gráfico de datos reutilizable
+└── ROUTINE_PROMPT.md              ← prompt de la Routine (se pega en claude.ai/code)
 ```
+
+**El "contrato" (4 archivos que deben ir sincronizados):** `src/content/config.ts`
+(schema Zod + categorías), `scripts/PROMPT_REDACTOR.md`, `scripts/validate-frontmatter.mjs`
+y `scripts/PROMPT_VERIFICADOR.md`. Si cambias campos del frontmatter o las categorías,
+actualiza los cuatro a la vez.
 
 ---
 
-## PASO 1 — Copiar los archivos al repositorio
+## PASO 1 — Repo (ya hecho)
 
-Copia todos los archivos de este zip a la raíz de tu repo local y haz push:
-
-```bash
-cd ~/Sites/tujubilacionanticipada   # tu ruta al repo
-cp -r ruta/al/zip/scripts .
-cp -r ruta/al/zip/.github .
-git add .
-git commit -m "chore: añadir sistema de publicación autónoma"
-git push origin main
-```
+El repo está en `https://github.com/CarlosJavierRodriguezChamizo/tujubilacionanticipada`
+y el push a `main` con credenciales guardadas en el keychain ya funciona.
 
 ---
 
-## PASO 2 — Configurar Vercel
+## PASO 2 — Vercel (ya conectado)
 
-Si aún no has conectado el repo a Vercel:
+El proyecto está enlazado (org `tujubilacionanticipada`, proyecto `tja`) y el deploy
+a producción funciona con el **CLI oficial de Vercel** desde GitHub Actions.
 
-```bash
-npm i -g vercel
-vercel login
-cd ~/Sites/tujubilacionanticipada
-vercel link        # conecta el repo al proyecto
-cat .vercel/project.json   # anota orgId y projectId
-```
+`astro.config.mjs` genera sitio **estático** (por defecto en Astro 4) con las
+integraciones: `react`, `tailwind`, `mdx`, `sitemap`.
 
-En vercel.com → Settings → Tokens → crear token → anota el valor.
-
-Asegúrate de que `astro.config.mjs` tiene `output: 'static'`:
-
-```js
-export default defineConfig({
-  site: 'https://tujubilacionanticipada.com',
-  output: 'static',
-  integrations: [react(), tailwind(), sitemap()],
-})
-```
+Pendiente por tu parte: **apuntar el dominio** `tujubilacionanticipada.com` al proyecto
+en Vercel → Settings → Domains, y configurar el DNS en tu registrador.
 
 ---
 
-## PASO 3 — Secrets en GitHub
+## PASO 3 — Secrets en GitHub (ya configurados)
 
-Ve a: tu repo en GitHub → **Settings → Secrets and variables → Actions → New repository secret**
-
-Añade estos 5 secrets:
+Repo → **Settings → Secrets and variables → Actions**. El workflow usa **5 secrets**:
 
 | Secret | Valor |
 |--------|-------|
-| `VERCEL_TOKEN` | Token de Vercel (paso anterior) |
-| `VERCEL_ORG_ID` | `orgId` del archivo `.vercel/project.json` |
-| `VERCEL_PROJECT_ID` | `projectId` del archivo `.vercel/project.json` |
-| `EMAIL_USERNAME` | Gmail que envía las alertas (ej: pipeline.tja@gmail.com) |
-| `EMAIL_APP_PASSWORD` | Contraseña de aplicación de Gmail (ver Paso 4) |
-| `ALERT_EMAIL` | Tu email donde recibirás las alertas |
+| `VERCEL_TOKEN` | Token de Vercel (vercel.com → Settings → Tokens) |
+| `VERCEL_ORG_ID` | `orgId` de `.vercel/project.json` |
+| `VERCEL_PROJECT_ID` | `projectId` de `.vercel/project.json` |
+| `RESEND_API_KEY` | API key de Resend (resend.com → API Keys) |
+| `ALERT_EMAIL` | Tu email donde recibes las alertas |
 
 ---
 
-## PASO 4 — Contraseña de aplicación Gmail
+## PASO 4 — Resend (emails de alerta)
 
-La cuenta Gmail que envía las alertas necesita una contraseña de aplicación
-(no la contraseña normal de Gmail).
+El pipeline envía los avisos con **Resend** (no Gmail).
 
-1. Entra en la cuenta Gmail que usará el pipeline
-2. Ve a: **Cuenta de Google → Seguridad → Verificación en 2 pasos** (actívala)
-3. Ve a: **Cuenta de Google → Seguridad → Contraseñas de aplicaciones**
-4. Selecciona: "Correo" + "Otro (nombre personalizado)" → escribe "Pipeline TJA"
-5. Copia los 16 caracteres generados → ese es `EMAIL_APP_PASSWORD`
+1. Crea cuenta en resend.com y genera una **API key** → secret `RESEND_API_KEY`.
+2. Remitente actual: `Pipeline TJA <onboarding@resend.dev>` (sandbox de Resend).
+   ⚠ El sandbox **solo entrega al email de tu propia cuenta Resend**. Para enviar a
+   cualquier dirección, **verifica un dominio** en Resend y cambia el `from` en
+   `.github/workflows/deploy.yml`.
 
 ---
 
-## PASO 5 — Sustituir el nombre de la revisora
+## PASO 5 — Revisor/a (ya configurado)
 
-Edita `scripts/calendario.json` y sustituye:
-- `"reviewer_name": "NOMBRE_REVISORA"` → nombre real y apellidos
-- `"reviewer_title": "Escalón 26, Seguridad Social — Gestión de pensiones de ex-funcionarios"` → ajusta si es necesario
+En `scripts/calendario.json` → `config`:
+- `reviewer_name`: **Javier Rodríguez**
+- `reviewer_title`: *Escalón 26, Seguridad Social — Gestión de pensiones de ex-funcionarios*
 
-También edita `scripts/PROMPT_REDACTOR.md` si quieres actualizar la referencia.
+Aparece públicamente como revisor del contenido y en el JSON-LD. Cámbialo si quieres
+otro revisor (debe ser una persona real que respalde la revisión — E-E-A-T).
 
 ---
 
 ## PASO 6 — Crear la Routine en Claude Code
 
-### Opción A — Desde la web (recomendado)
+1. Ve a **claude.ai/code** → **Routines** → **New routine**.
+2. **Name:** Publicar artículo diario — tujubilacionanticipada.com
+3. **Prompt:** copia y pega el contenido completo de `ROUTINE_PROMPT.md`.
+4. **Repositories:** selecciona `tujubilacionanticipada`, branch `main`.
+   - ⚠ Da **permiso de push a `main`**. Por defecto Claude solo puede pushear a
+     ramas `claude/*`; hay que permitir `main` en la configuración del repo de la routine
+     (si no, el deploy no se dispara).
+5. **Trigger:** Schedule → Daily → **08:00**, zona horaria **Europe/Madrid**.
+6. **Create**.
 
-1. Ve a **claude.ai/code/routines**
-2. Haz clic en **New routine**
-3. Rellena el formulario:
+### PASO 6b — Conectores (Magnific para las imágenes)
 
-   **Name:** Publicar artículo diario — tujubilacionanticipada.com
+Cada artículo lleva una **imagen destacada** generada con **Magnific** (ilustración
+de tinta plana, estilo fijo).
 
-   **Prompt:** Copia y pega el contenido completo de `ROUTINE_PROMPT.md`
-   (todo el texto, desde "Eres un agente..." hasta el final)
+- Magnific está conectado como **conector de claude.ai** (`https://mcp.magnific.com`),
+  no como servidor MCP local del CLI. Según la doc oficial de Claude Code, **los
+  conectores de claude.ai se incluyen por defecto en las Routines y su autenticación
+  viaja con ellos**; los MCP añadidos con `claude mcp add` NO se transfieren a la nube.
+- En el editor de la Routine, pestaña **Connectors**: verifica que **Magnific sigue
+  incluido** (lo está por defecto). Quita los que no uses.
+- Referencia: https://code.claude.com/docs/en/routines
 
-   **Repositories:** Selecciona tu repo de GitHub `tujubilacionanticipada`
-   - Branch: `main`
-   - Branch push: activa el permiso para push a `main`
-     ⚠ Por defecto Claude solo puede pushear a ramas `claude/*`.
-     Para pushear a `main` directamente, desactiva la restricción en la configuración del repo de la routine.
+**Degradación elegante:** si un run no pudiera generar la imagen, el artículo se publica
+**sin imagen** (el sitio lo soporta) en vez de romperse. Queda anotado en el log.
 
-   **Environment:** Sin variables especiales necesarias (git ya está autenticado)
-
-   **Trigger:** Schedule → Daily → 08:00 (selecciona zona horaria Europe/Madrid)
-
-4. Haz clic en **Create**
-
-### Opción B — Desde el CLI
-
-En cualquier sesión de Claude Code:
-```
-/schedule daily at 8am Europe/Madrid, [pega aquí el prompt de ROUTINE_PROMPT.md]
-```
-
----
-
-## PASO 7 — Test manual antes del primer día
-
-Antes de esperar al día siguiente, prueba el flujo completo:
-
-**7a. Simular la routine manualmente:**
-En Claude Code (sesión normal), pega el prompt de `ROUTINE_PROMPT.md` y
-cambia temporalmente la fecha del artículo #1 en `calendario.json` a hoy.
-Observa que:
-- ✅ Genera el MDX correctamente
-- ✅ El verificador lo aprueba (o corrige y reaprueba)
-- ✅ Hace git push a main
-
-**7b. Verificar GitHub Actions:**
-Ve a tu repo → pestaña **Actions** → comprueba que:
-- ✅ El workflow se ha disparado
-- ✅ `validate-frontmatter.mjs` pasa sin errores
-- ✅ El build de Astro termina correctamente
-- ✅ El deploy a Vercel es exitoso
-- ✅ El smoke test devuelve HTTP 200
-- ✅ Recibes el email de confirmación
-
-**7c. Verificar el site:**
-- Abre https://tujubilacionanticipada.com/blog
-- Confirma que el artículo aparece publicado
-
-**7d. Restaurar la fecha:**
-Vuelve a poner la fecha original del artículo #1 en `calendario.json`
-y haz push para que el sistema empiece limpio.
+**Plan B (solo si Magnific fallara en cron):** llamar a la API de imágenes por REST desde
+la Routine, con la API key como **variable de entorno del *environment*** (`${MAGNIFIC_API_KEY}`),
+o declarándola en un `.mcp.json` del repo con expansión de variables.
 
 ---
 
-## PASO 8 — Activar la routine
+## PASO 7 — Test manual (primer artículo)
 
-Una vez el test manual funciona:
-- Ve a **claude.ai/code/routines**
-- Confirma que la routine aparece con estado **Active**
-- El primer run automático será al día siguiente a las 08:00
+El calendario ya arranca **hoy (25 jun)**, así que hay artículo pendiente. Como las
+08:00 pueden haber pasado, lanza la Routine **manualmente una vez** (botón *Run now*).
+
+Comprueba:
+- **Routine:** genera el MDX, la imagen y el gráfico; el verificador aprueba; hace push.
+- **GitHub → Actions:** `validate-frontmatter` ✅ → build ✅ → deploy a Vercel ✅ →
+  smoke test HTTP 200 ✅ → email de Resend ✅.
+- **Site:** el artículo aparece en el blog (URL de Vercel, y en el dominio cuando lo conectes).
+- **Log:** confirma si la imagen se generó con Magnific o si publicó sin ella.
+
+No hace falta "restaurar fechas": el calendario ya está en su cadencia definitiva.
 
 ---
 
-## Emails que recibirás
+## PASO 8 — Activar
 
-| Situación | Asunto | Enviado por |
-|-----------|--------|-------------|
-| Artículo publicado | ✅ tujubilacionanticipada.com — Artículo publicado | GitHub Actions |
-| Fallo en CI/deploy | ❌ tujubilacionanticipada.com — Fallo en el pipeline | GitHub Actions |
-| Verificador falla 3x | Solo en el log de la routine | Routine (log interno) |
+Confirma que la Routine aparece **Active** en claude.ai/code. A partir de mañana
+publicará sola a las 08:00 el artículo pendiente más antiguo.
 
-⚠ El tercer caso (verificador falla 3x) no envía email automático — aparece
-en el log de la routine en claude.ai/code/routines. Revisa el log diariamente
-los primeros días para asegurarte de que todo funciona.
+---
 
-Si quieres email también en ese caso, puedes añadir un trigger API a la routine
-y llamarlo desde un script de monitorización, aunque para 60 días de prueba
-revisar el log manualmente es más que suficiente.
+## Emails que recibirás (vía Resend)
+
+| Situación | Asunto |
+|-----------|--------|
+| Artículo publicado | ✅ tujubilacionanticipada.com — Artículo publicado |
+| Fallo en CI/deploy | ❌ tujubilacionanticipada.com — Fallo en el pipeline |
+| Verificador falla 3x | (solo en el log de la Routine, sin email) |
 
 ---
 
 ## Seguimiento de los 60 días
 
-El campo `"publicado": true/false` en `calendario.json` es tu panel de control.
-Para ver el estado en cualquier momento:
+El campo `"publicado": true/false` en `calendario.json` es tu panel de control:
 
 ```bash
-cd ~/Sites/tujubilacionanticipada
 python3 -c "
 import json
-with open('scripts/calendario.json') as f:
-    data = json.load(f)
-publicados = [a for a in data['articulos'] if a['publicado']]
-pendientes = [a for a in data['articulos'] if not a['publicado']]
-print(f'Publicados: {len(publicados)}/60')
-print(f'Pendientes: {len(pendientes)}/60')
-if pendientes:
-    print(f'Próximo: {pendientes[0][\"fecha\"]} — {pendientes[0][\"titulo\"]}')
+data = json.load(open('scripts/calendario.json'))
+arts = data['articulos']
+pub = [a for a in arts if a['publicado']]
+pend = [a for a in arts if not a['publicado']]
+print(f'Publicados: {len(pub)}/60  |  Pendientes: {len(pend)}/60')
+if pend: print(f'Próximo: {pend[0][\"fecha\"]} — {pend[0][\"titulo\"]}')
 "
 ```
 
@@ -240,14 +194,9 @@ if pendientes:
 
 ## Mantenimiento
 
-**Si un artículo falla y quieres republicarlo manualmente:**
-1. Abre Claude Code
-2. Pega el prompt de `ROUTINE_PROMPT.md` con la fecha del artículo fallido
-3. Ejecuta manualmente
-
-**Si quieres pausar la routine:**
-- claude.ai/code/routines → tu routine → Toggle off
-
-**Si quieres añadir más artículos tras los 60 días:**
-- Añade nuevas entradas en `calendario.json` con fechas futuras
-- La routine los procesará automáticamente
+- **Republicar un artículo manualmente:** lanza la Routine con *Run now* (coge el pendiente
+  más antiguo), o pega el prompt de `ROUTINE_PROMPT.md` en una sesión de Claude Code.
+- **Pausar:** claude.ai/code → tu Routine → Toggle off.
+- **Añadir más artículos:** nuevas entradas en `calendario.json` con fechas futuras.
+- **Cambiar imagen/gráficos de forma retroactiva:** es un *backfill* (lote de una vez sobre
+  los artículos ya publicados), distinto de la Routine. Pídelo cuando lo necesites.
