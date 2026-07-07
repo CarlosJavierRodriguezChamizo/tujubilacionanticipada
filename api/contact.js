@@ -65,10 +65,11 @@ export default async function handler(req, res) {
     const missing = [!apiKey && 'RESEND_API_KEY', !to && 'CONTACT_TO_EMAIL']
       .filter(Boolean)
       .join(', ');
+    // El detalle solo va al log del servidor, nunca al cliente.
     console.error('Faltan variables de entorno:', missing);
     return res
       .status(500)
-      .json({ ok: false, error: 'Configuración del servidor incompleta.', missing });
+      .json({ ok: false, error: 'Configuración del servidor incompleta.' });
   }
 
   const html = `
