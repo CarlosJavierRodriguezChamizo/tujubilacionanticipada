@@ -6,6 +6,7 @@ import { formatDate, toISO } from '../lib/posts';
 import { blogPostingSchema, breadcrumbSchema } from '../lib/schema';
 import ShareButtons from '../components/ShareButtons.astro';
 import RelatedArticles from '../components/RelatedArticles.astro';
+import AsesoramientoCard from '../components/AsesoramientoCard.astro';
 import { SITE } from '../consts';
 
 interface Props {
@@ -100,4 +101,9 @@ const breadcrumb = breadcrumbSchema([
   </article>
 
   <RelatedArticles post={post} />
+
+  <!-- Espaciador para que la barra sticky móvil no tape el contenido/pie -->
+  <div class="h-24 lg:hidden" aria-hidden="true"></div>
+
+  <AsesoramientoCard />
 </Base>

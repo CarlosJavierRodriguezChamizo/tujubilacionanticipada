@@ -1,0 +1,124 @@
+---
+/**
+ * Tarjeta CTA de asesoramiento que aparece en los artículos.
+ * - Escritorio: tarjeta flotante fija en el lateral inferior derecho.
+ * - Móvil: barra sticky en la parte inferior.
+ * Aplica principios de Cialdini: prueba social (avatares + contador real),
+ * autoridad (equipo profesional) y reciprocidad (primera consulta sin compromiso).
+ * Descartable (se recuerda en localStorage durante la sesión).
+ */
+import { ASESORAMIENTO } from '../consts';
+
+const { href, socialProofCount, avatars } = ASESORAMIENTO;
+const hasProof = socialProofCount > 0;
+---
+
+<!-- Escritorio: tarjeta flotante lateral -->
+<div
+  id="ase-card-desktop"
+  class="ase-card fixed bottom-6 right-6 z-40 hidden w-72 rounded-2xl border border-paper-300 bg-paper-50 p-5 shadow-lg lg:block"
+  data-ase-card
+>
+  <button
+    type="button"
+    data-ase-dismiss
+    aria-label="Cerrar"
+    class="absolute right-3 top-3 grid h-6 w-6 place-items-center rounded-full text-ink-muted hover:bg-paper-100 hover:text-ink"
+  >
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+  </button>
+
+  <p class="eyebrow">Asesoramiento</p>
+  <p class="mt-1 font-serif text-lg font-semibold leading-snug text-ink">
+    ¿Dudas con tu jubilación anticipada?
+  </p>
+  <p class="mt-1.5 text-sm text-ink-soft">
+    Cuéntanos tu caso y te ayudamos a decidir con datos. Sin compromiso.
+  </p>
+
+  <div class="mt-4 flex items-center gap-2">
+    <div class="flex -space-x-2">
+      {
+        avatars.map((src) => (
+          <img
+            src={src}
+            alt=""
+            width="32"
+            height="32"
+            loading="lazy"
+            class="h-8 w-8 rounded-full border-2 border-paper-50 object-cover"
+          />
+        ))
+      }
+    </div>
+    <span class="text-xs text-ink-muted">
+      {hasProof ? `+${socialProofCount} ya han solicitado` : 'Atención personalizada 1-a-1'}
+    </span>
+  </div>
+
+  <a
+    href={href}
+    class="btn-accent mt-4 w-full text-sm no-underline"
+    data-ga-event="cta_asesoramiento"
+    data-ga-location="article_card_desktop"
+  >
+    Solicitar asesoramiento
+  </a>
+  <p class="mt-2 text-center text-xs text-ink-muted">Respuesta en 24–48 h</p>
+</div>
+
+<!-- Móvil: barra sticky inferior -->
+<div
+  id="ase-card-mobile"
+  class="ase-card fixed inset-x-0 bottom-0 z-40 border-t border-paper-300 bg-paper-50/95 backdrop-blur lg:hidden"
+  data-ase-card
+>
+  <div class="container-prose flex items-center gap-3 py-3">
+    <div class="min-w-0 flex-1">
+      <p class="truncate text-sm font-semibold text-ink">¿Dudas con tu jubilación?</p>
+      <p class="truncate text-xs text-ink-muted">
+        {hasProof ? `+${socialProofCount} ya han solicitado · sin compromiso` : 'Asesoramiento personalizado · sin compromiso'}
+      </p>
+    </div>
+    <a
+      href={href}
+      class="btn-accent shrink-0 px-4 py-2.5 text-sm no-underline"
+      data-ga-event="cta_asesoramiento"
+      data-ga-location="article_bar_mobile"
+    >
+      Solicitar
+    </a>
+    <button
+      type="button"
+      data-ase-dismiss
+      aria-label="Cerrar"
+      class="shrink-0 grid h-8 w-8 place-items-center rounded-full text-ink-muted hover:bg-paper-100"
+    >
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+    </button>
+  </div>
+</div>
+
+<script is:inline>
+  (function () {
+    var KEY = 'tja_ase_dismissed';
+    try {
+      if (sessionStorage.getItem(KEY) === '1') {
+        document.querySelectorAll('[data-ase-card]').forEach(function (el) {
+          el.style.display = 'none';
+        });
+        return;
+      }
+    } catch (e) {}
+    document.querySelectorAll('[data-ase-dismiss]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        document.querySelectorAll('[data-ase-card]').forEach(function (el) {
+          el.style.display = 'none';
+        });
+        try {
+          sessionStorage.setItem(KEY, '1');
+        } catch (e) {}
+      });
+    });
+  })();
+</script>

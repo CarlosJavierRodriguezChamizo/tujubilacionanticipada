@@ -1,16 +1,50 @@
 ---
 import Base from '../layouts/Base.astro';
+import BarChart from '../components/charts/BarChart.astro';
 import { breadcrumbSchema, webPageSchema } from '../lib/schema';
+import { ASESORAMIENTO } from '../consts';
 
 const path = '/asesoramiento';
 const descripcion =
-  'Asesoramiento personalizado sobre tu jubilación anticipada en España. Cuéntanos tu caso y te ayudamos a entender tus opciones, requisitos y penalizaciones.';
+  'Asesoramiento personalizado sobre tu jubilación anticipada en España. Analizamos tu caso concreto —edad, años cotizados y base reguladora— y te ayudamos a decidir cuándo jubilarte.';
+
+const { socialProofCount, avatars } = ASESORAMIENTO;
+const hasProof = socialProofCount > 0;
 
 const beneficios = [
-  'Analizamos tu caso concreto: edad, años cotizados y base reguladora.',
-  'Te explicamos tus opciones de jubilación anticipada y su coste real.',
-  'Resolvemos tus dudas sobre requisitos, plazos y trámites.',
-  'Trato cercano y confidencial, sin compromiso.',
+  {
+    icon: 'M12 2v20M2 12h20',
+    titulo: 'Analizamos tu caso real',
+    texto: 'Estudiamos tu edad, años cotizados y base reguladora para darte cifras concretas, no genéricas.',
+  },
+  {
+    icon: 'M20 6L9 17l-5-5',
+    titulo: 'Te decimos cuánto pierdes (o ganas)',
+    texto: 'Calculamos el coste real de adelantar tu jubilación y comparamos escenarios contigo.',
+  },
+  {
+    icon: 'M12 8v4l3 3',
+    titulo: 'Resolvemos tus dudas',
+    texto: 'Requisitos, plazos, trámites y estrategias para reducir la penalización. En lenguaje claro.',
+  },
+  {
+    icon: 'M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9',
+    titulo: 'Trato cercano y confidencial',
+    texto: 'Sin tecnicismos y sin compromiso. Tus datos solo se usan para responder a tu consulta.',
+  },
+];
+
+const pasos = [
+  { n: '01', t: 'Cuéntanos tu caso', d: 'Rellena el formulario con tu situación y tu duda principal.' },
+  { n: '02', t: 'Analizamos tus datos', d: 'Revisamos tu escenario y preparamos una respuesta personalizada.' },
+  { n: '03', t: 'Te damos claridad', d: 'Te contactamos con opciones concretas para que decidas con seguridad.' },
+];
+
+const faqs = [
+  { q: '¿Tiene algún coste?', a: 'La primera toma de contacto para plantear tu duda no tiene coste ni compromiso. Si tu caso requiere un servicio más completo, te lo explicamos antes con total transparencia.' },
+  { q: '¿En cuánto tiempo me responden?', a: 'Normalmente en 24–48 horas laborables desde que recibimos tu solicitud.' },
+  { q: '¿Qué datos necesito tener a mano?', a: 'Idealmente tu edad, tus años cotizados aproximados y tu base reguladora (la encuentras en tu informe de vida laboral). Si no los tienes, también te ayudamos a localizarlos.' },
+  { q: '¿Es confidencial?', a: 'Sí. Tratamos tus datos conforme al RGPD y únicamente para responder a tu consulta. Puedes consultar nuestra política de privacidad.' },
 ];
 
 const schema = [
@@ -36,151 +70,231 @@ const schema = [
 >
   <!-- Hero -->
   <section class="border-b border-paper-200 bg-gradient-to-b from-clay-50/60 to-paper-50">
-    <div class="container-prose py-16 sm:py-20">
-      <div class="max-w-3xl">
-        <p class="eyebrow">Asesoramiento</p>
+    <div class="container-prose grid items-center gap-10 py-14 sm:py-20 lg:grid-cols-2 lg:gap-16">
+      <div>
+        <p class="eyebrow">Asesoramiento personalizado</p>
         <h1 class="mt-3 text-4xl font-semibold leading-tight sm:text-5xl">
-          ¿Tienes dudas sobre tu jubilación anticipada?
+          Decidir cuándo jubilarte no debería ser una lotería
         </h1>
         <p class="mt-5 text-lg leading-relaxed text-ink-soft">
-          Cada situación es distinta. Cuéntanos la tuya y te ayudamos a entender
-          tus opciones con claridad, sin tecnicismos y sin compromiso.
+          Un error de cálculo puede costarte <strong>miles de euros</strong> durante
+          toda tu jubilación. Cuéntanos tu caso y te ayudamos a tomar la decisión
+          con todos los datos sobre la mesa.
         </p>
+        <div class="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
+          <a
+            href="#form"
+            class="btn-accent no-underline"
+            data-ga-event="cta_asesoramiento"
+            data-ga-location="landing_hero"
+          >
+            Solicitar asesoramiento
+          </a>
+          <span class="text-sm text-ink-muted">Respuesta en 24–48 h · Sin compromiso</span>
+        </div>
+
+        <!-- Prueba social -->
+        <div class="mt-8 flex items-center gap-3">
+          <div class="flex -space-x-2">
+            {
+              avatars.map((src) => (
+                <img
+                  src={src}
+                  alt=""
+                  width="40"
+                  height="40"
+                  loading="lazy"
+                  class="h-10 w-10 rounded-full border-2 border-paper-50 object-cover"
+                />
+              ))
+            }
+          </div>
+          <p class="text-sm text-ink-soft">
+            {
+              hasProof
+                ? `Más de ${socialProofCount} personas ya han pedido asesoramiento`
+                : 'Personas como tú que quieren decidir con seguridad'
+            }
+          </p>
+        </div>
+      </div>
+
+      <div class="relative">
+        <img
+          src="/asesoramiento/hero.jpg"
+          alt="Asesor de pensiones conversando con una persona sobre su jubilación anticipada"
+          width="1600"
+          height="900"
+          loading="eager"
+          class="w-full rounded-2xl border border-paper-200 object-cover shadow-sm"
+        />
       </div>
     </div>
   </section>
 
-  <section class="container-prose py-14">
-    <div class="grid gap-10 lg:grid-cols-2 lg:gap-16">
-      <!-- Beneficios -->
+  <!-- Beneficios -->
+  <section class="container-prose py-14 sm:py-16">
+    <h2 class="text-2xl font-semibold sm:text-3xl">Qué consigues con nuestra ayuda</h2>
+    <div class="mt-8 grid gap-6 sm:grid-cols-2">
+      {
+        beneficios.map((b) => (
+          <div class="flex items-start gap-4 rounded-xl border border-paper-200 bg-paper-50 p-6">
+            <span class="mt-0.5 grid h-10 w-10 shrink-0 place-items-center rounded-full bg-clay-100 text-clay-700" aria-hidden="true">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d={b.icon} /></svg>
+            </span>
+            <div>
+              <h3 class="font-serif text-lg font-semibold text-ink">{b.titulo}</h3>
+              <p class="mt-1 text-sm leading-relaxed text-ink-soft">{b.texto}</p>
+            </div>
+          </div>
+        ))
+      }
+    </div>
+  </section>
+
+  <!-- Coste de decidir mal (gráfico persuasivo, datos reales) -->
+  <section class="bg-paper-100">
+    <div class="container-prose py-14 sm:py-16">
+      <div class="grid items-center gap-10 lg:grid-cols-2">
+        <div>
+          <p class="eyebrow">Por qué importa</p>
+          <h2 class="mt-2 text-2xl font-semibold sm:text-3xl">
+            Cada trimestre que adelantas tiene un precio
+          </h2>
+          <p class="mt-4 text-ink-soft">
+            En la jubilación anticipada voluntaria, la pensión se reduce un
+            <strong>1,875 % por trimestre</strong> — de forma permanente. Adelantarte
+            dos años puede suponer alrededor de un <strong>15 % menos</strong> cada mes,
+            durante el resto de tu vida. Saber calcularlo bien es, literalmente, dinero.
+          </p>
+          <a
+            href="#form"
+            class="btn-accent mt-6 inline-flex no-underline"
+            data-ga-event="cta_asesoramiento"
+            data-ga-location="landing_chart"
+          >
+            Quiero calcularlo con un profesional
+          </a>
+        </div>
+        <BarChart
+          title="Reducción permanente de la pensión al adelantar (voluntaria)"
+          unit="%"
+          caption="Coeficiente del 1,875 % por trimestre anticipado. Cálculo orientativo."
+          data={[
+            { label: '1 año', value: 7.5 },
+            { label: '1,5 años', value: 11.25 },
+            { label: '2 años', value: 15, highlight: true },
+          ]}
+        />
+      </div>
+    </div>
+  </section>
+
+  <!-- Cómo funciona -->
+  <section class="container-prose py-14 sm:py-16">
+    <h2 class="text-2xl font-semibold sm:text-3xl">Cómo funciona</h2>
+    <div class="mt-8 grid gap-6 md:grid-cols-3">
+      {
+        pasos.map((p) => (
+          <div class="rounded-xl border border-paper-200 bg-paper-50 p-6">
+            <span class="text-sm font-bold text-clay-600">{p.n}</span>
+            <h3 class="mt-2 font-serif text-lg font-semibold">{p.t}</h3>
+            <p class="mt-2 text-sm leading-relaxed text-ink-soft">{p.d}</p>
+          </div>
+        ))
+      }
+    </div>
+  </section>
+
+  <!-- Formulario -->
+  <section id="form" class="scroll-mt-20 border-t border-paper-200 bg-paper-100">
+    <div class="container-prose grid gap-10 py-14 sm:py-16 lg:grid-cols-2 lg:gap-16">
       <div>
-        <h2 class="text-2xl font-semibold">Qué incluye</h2>
-        <ul class="mt-6 space-y-4">
-          {
-            beneficios.map((b) => (
-              <li class="flex items-start gap-3">
-                <span
-                  class="mt-0.5 grid h-6 w-6 shrink-0 place-items-center rounded-full bg-clay-100 text-clay-700"
-                  aria-hidden="true"
-                >
-                  ✓
-                </span>
-                <span class="text-ink-soft">{b}</span>
-              </li>
-            ))
-          }
-        </ul>
-        <p class="mt-8 rounded-lg border border-paper-300 bg-paper-100 p-4 text-sm text-ink-soft">
-          Este servicio es orientativo y no sustituye la información oficial de la
-          Seguridad Social ni el asesoramiento jurídico individualizado.
+        <h2 class="text-2xl font-semibold sm:text-3xl">Solicita tu asesoramiento</h2>
+        <p class="mt-3 text-ink-soft">
+          Rellena el formulario y te contactamos lo antes posible, normalmente en
+          24–48 horas laborables. Sin compromiso y con total confidencialidad.
         </p>
+        <ul class="mt-6 space-y-3 text-sm text-ink-soft">
+          <li class="flex items-center gap-2"><span class="text-clay-600" aria-hidden="true">✓</span> Primera consulta sin compromiso</li>
+          <li class="flex items-center gap-2"><span class="text-clay-600" aria-hidden="true">✓</span> Respuesta personalizada a tu caso</li>
+          <li class="flex items-center gap-2"><span class="text-clay-600" aria-hidden="true">✓</span> Tus datos, tratados conforme al RGPD</li>
+        </ul>
       </div>
 
-      <!-- Formulario -->
       <div>
         <div
           id="form-wrap"
           class="rounded-2xl border border-paper-300 bg-paper-50 p-6 shadow-sm sm:p-8"
         >
-          <h2 class="text-xl font-semibold">Solicita tu asesoramiento</h2>
-          <p class="mt-1 text-sm text-ink-muted">
-            Rellena el formulario y te contactamos lo antes posible.
-          </p>
-
-          <form id="contact-form" class="mt-6 space-y-4" novalidate>
+          <form id="contact-form" class="space-y-4" novalidate>
             <div>
               <label for="nombre" class="block text-sm font-medium text-ink">Nombre</label>
-              <input
-                id="nombre"
-                name="nombre"
-                type="text"
-                required
-                autocomplete="name"
-                class="mt-1.5 w-full rounded-lg border border-paper-300 bg-white px-3 py-2.5 text-base focus:border-clay-500 focus:outline-none focus:ring-2 focus:ring-clay-500"
-              />
+              <input id="nombre" name="nombre" type="text" required autocomplete="name"
+                class="mt-1.5 w-full rounded-lg border border-paper-300 bg-white px-3 py-2.5 text-base focus:border-clay-500 focus:outline-none focus:ring-2 focus:ring-clay-500" />
             </div>
-
             <div>
               <label for="telefono" class="block text-sm font-medium text-ink">Teléfono</label>
-              <input
-                id="telefono"
-                name="telefono"
-                type="tel"
-                required
-                autocomplete="tel"
-                inputmode="tel"
-                class="mt-1.5 w-full rounded-lg border border-paper-300 bg-white px-3 py-2.5 text-base focus:border-clay-500 focus:outline-none focus:ring-2 focus:ring-clay-500"
-              />
+              <input id="telefono" name="telefono" type="tel" required autocomplete="tel" inputmode="tel"
+                class="mt-1.5 w-full rounded-lg border border-paper-300 bg-white px-3 py-2.5 text-base focus:border-clay-500 focus:outline-none focus:ring-2 focus:ring-clay-500" />
             </div>
-
             <div>
               <label for="email" class="block text-sm font-medium text-ink">Correo electrónico</label>
-              <input
-                id="email"
-                name="email"
-                type="email"
-                required
-                autocomplete="email"
-                inputmode="email"
-                class="mt-1.5 w-full rounded-lg border border-paper-300 bg-white px-3 py-2.5 text-base focus:border-clay-500 focus:outline-none focus:ring-2 focus:ring-clay-500"
-              />
+              <input id="email" name="email" type="email" required autocomplete="email" inputmode="email"
+                class="mt-1.5 w-full rounded-lg border border-paper-300 bg-white px-3 py-2.5 text-base focus:border-clay-500 focus:outline-none focus:ring-2 focus:ring-clay-500" />
             </div>
-
             <div>
-              <label for="mensaje" class="block text-sm font-medium text-ink">Mensaje</label>
-              <textarea
-                id="mensaje"
-                name="mensaje"
-                rows="4"
-                required
-                class="mt-1.5 w-full rounded-lg border border-paper-300 bg-white px-3 py-2.5 text-base focus:border-clay-500 focus:outline-none focus:ring-2 focus:ring-clay-500"
-              ></textarea>
+              <label for="mensaje" class="block text-sm font-medium text-ink">Cuéntanos tu caso</label>
+              <textarea id="mensaje" name="mensaje" rows="4" required
+                class="mt-1.5 w-full rounded-lg border border-paper-300 bg-white px-3 py-2.5 text-base focus:border-clay-500 focus:outline-none focus:ring-2 focus:ring-clay-500"></textarea>
             </div>
 
-            <!-- Honeypot anti-spam (oculto para personas) -->
+            <!-- Honeypot anti-spam -->
             <div class="absolute left-[-9999px]" aria-hidden="true">
               <label>No rellenar<input name="empresa" type="text" tabindex="-1" autocomplete="off" /></label>
             </div>
 
             <div class="flex items-start gap-2.5">
-              <input
-                id="consent"
-                name="consent"
-                type="checkbox"
-                required
-                class="mt-1 h-4 w-4 rounded border-paper-300 text-clay-600 focus:ring-clay-500"
-              />
+              <input id="consent" name="consent" type="checkbox" required
+                class="mt-1 h-4 w-4 rounded border-paper-300 text-clay-600 focus:ring-clay-500" />
               <label for="consent" class="text-sm text-ink-soft">
                 He leído y acepto la
-                <a href="/privacidad" class="font-medium text-brand-700 underline hover:text-clay-700">
-                  política de privacidad</a
-                > y el tratamiento de mis datos para responder a mi consulta.
+                <a href="/privacidad" class="font-medium text-brand-700 underline hover:text-clay-700">política de privacidad</a>
+                y el tratamiento de mis datos para responder a mi consulta.
               </label>
             </div>
 
-            <button type="submit" id="contact-submit" class="btn-accent w-full">
-              Enviar solicitud
-            </button>
-
+            <button type="submit" id="contact-submit" class="btn-accent w-full">Enviar solicitud</button>
             <p id="contact-error" class="hidden text-sm text-red-600" role="alert"></p>
           </form>
         </div>
 
-        <!-- Mensaje de agradecimiento (oculto hasta el envío) -->
-        <div
-          id="form-thanks"
-          class="hidden rounded-2xl border border-green-200 bg-green-50 p-8 text-center"
-        >
-          <div class="mx-auto grid h-12 w-12 place-items-center rounded-full bg-green-100 text-2xl text-green-700" aria-hidden="true">
-            ✓
-          </div>
+        <div id="form-thanks" class="hidden rounded-2xl border border-green-200 bg-green-50 p-8 text-center">
+          <div class="mx-auto grid h-12 w-12 place-items-center rounded-full bg-green-100 text-2xl text-green-700" aria-hidden="true">✓</div>
           <h2 class="mt-4 text-xl font-semibold text-green-900">¡Gracias por tu mensaje!</h2>
           <p class="mt-2 text-green-800">
-            Hemos recibido tu solicitud y <strong>te avisaremos lo antes posible</strong>
-            para resolver tu duda.
+            Hemos recibido tu solicitud y <strong>te avisaremos lo antes posible</strong> para resolver tu duda.
           </p>
         </div>
       </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="container-prose py-14 sm:py-16">
+    <h2 class="text-2xl font-semibold sm:text-3xl">Preguntas frecuentes</h2>
+    <div class="mt-8 space-y-3">
+      {
+        faqs.map((f) => (
+          <details class="group rounded-xl border border-paper-200 bg-paper-50 p-5">
+            <summary class="flex cursor-pointer list-none items-center justify-between font-medium text-ink [&::-webkit-details-marker]:hidden">
+              {f.q}
+              <span class="text-ink-muted transition-transform group-open:rotate-45" aria-hidden="true">+</span>
+            </summary>
+            <p class="mt-3 text-sm leading-relaxed text-ink-soft">{f.a}</p>
+          </details>
+        ))
+      }
     </div>
   </section>
 
@@ -194,13 +308,11 @@ const schema = [
       form.addEventListener('submit', async function (e) {
         e.preventDefault();
         errEl.classList.add('hidden');
-
         if (!form.consent.checked) {
           errEl.textContent = 'Debes aceptar la política de privacidad para continuar.';
           errEl.classList.remove('hidden');
           return;
         }
-
         var payload = {
           nombre: form.nombre.value,
           telefono: form.telefono.value,
@@ -209,21 +321,16 @@ const schema = [
           consent: form.consent.checked,
           empresa: form.empresa.value,
         };
-
         btn.disabled = true;
         var prev = btn.textContent;
         btn.textContent = 'Enviando…';
-
         try {
           var resp = await fetch('/api/contact', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload),
           });
-          var data = await resp.json().catch(function () {
-            return {};
-          });
-
+          var data = await resp.json().catch(function () { return {}; });
           if (resp.ok && data.ok) {
             document.getElementById('form-wrap').classList.add('hidden');
             document.getElementById('form-thanks').classList.remove('hidden');
@@ -231,8 +338,7 @@ const schema = [
               window.gtag('event', 'generate_lead', { form: 'asesoramiento' });
             }
           } else {
-            errEl.textContent =
-              (data && data.error) || 'No se pudo enviar. Inténtalo de nuevo en un momento.';
+            errEl.textContent = (data && data.error) || 'No se pudo enviar. Inténtalo de nuevo en un momento.';
             errEl.classList.remove('hidden');
             btn.disabled = false;
             btn.textContent = prev;

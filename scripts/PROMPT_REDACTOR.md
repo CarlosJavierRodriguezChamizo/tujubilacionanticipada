@@ -40,7 +40,7 @@ Cada artículo debe incluir al final una nota de revisión firmada por:
 
 1. **Disclaimer inicial** (obligatorio, antes de todo):
    > *Este artículo es orientativo y no constituye asesoría legal ni laboral.
-   > Para una planificación personalizada, consulta con un graduado social o asesor laboral.*
+   > Para una planificación personalizada, consulta con nuestro equipo profesional.*
 
 2. **Introducción** — 150–200 palabras. Contexto, para quién es, qué va a aprender.
 
@@ -86,7 +86,7 @@ Cada artículo debe incluir al final una nota de revisión firmada por:
 
 7. **Disclaimer final** (obligatorio):
    > *Recuerda: esta información es orientativa. Las circunstancias personales varían.
-   > Consulta siempre con un profesional antes de tomar decisiones sobre tu jubilación.*
+   > Consulta siempre con nuestro equipo profesional antes de tomar decisiones sobre tu jubilación.*
 
 8. **Nota de revisión** (obligatorio al final):
    > *Revisado por [NOMBRE], [CARGO]. Fecha de revisión: [FECHA_HOY]*

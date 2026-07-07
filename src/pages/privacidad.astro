@@ -1,79 +1,153 @@
 ---
 import Base from '../layouts/Base.astro';
-import { SITE } from '../consts';
+import { SITE, LEGAL } from '../consts';
 ---
 
 <Base
   title="Política de privacidad"
-  description="Política de privacidad y tratamiento de datos personales en Tu Jubilación Anticipada."
+  description="Política de privacidad y protección de datos de Tu Jubilación Anticipada, conforme al RGPD y la LOPDGDD."
   path="/privacidad"
   noindex={true}
 >
   <section class="container-prose py-12 sm:py-16">
-    <div class="prose prose-lg mx-auto prose-a:text-brand-600">
+    <div class="prose prose-lg mx-auto prose-a:text-brand-700">
       <h1>Política de privacidad</h1>
 
       <p>
-        En {SITE.name} nos tomamos en serio la protección de tus datos
-        personales, conforme al Reglamento (UE) 2016/679 (RGPD) y a la Ley
-        Orgánica 3/2018 (LOPDGDD).
+        En <strong>{SITE.domain}</strong> (en adelante, el «Sitio Web») nos tomamos muy en
+        serio la protección de tus datos personales. Esta política explica qué datos
+        tratamos, con qué finalidad, sobre qué base jurídica, durante cuánto tiempo y
+        cuáles son tus derechos, de conformidad con el Reglamento (UE) 2016/679, General de
+        Protección de Datos (RGPD) y la Ley Orgánica 3/2018, de Protección de Datos
+        Personales y garantía de los derechos digitales (LOPDGDD).
       </p>
 
       <h2>1. Responsable del tratamiento</h2>
-      <p>
-        El responsable del tratamiento es el titular de {SITE.domain}. Puedes
-        contactar en <a href={`mailto:${SITE.email}`}>{SITE.email}</a>.
-      </p>
+      <ul>
+        <li><strong>Titular:</strong> {LEGAL.titular}</li>
+        <li><strong>NIF/CIF:</strong> {LEGAL.nif}</li>
+        <li><strong>Domicilio a efectos de notificaciones:</strong> {LEGAL.domicilio}</li>
+        <li><strong>Correo electrónico de contacto:</strong> <a href={`mailto:${LEGAL.email}`}>{LEGAL.email}</a></li>
+        <li><strong>Sitio web:</strong> {SITE.url}</li>
+      </ul>
 
-      <h2>2. Datos que recogemos</h2>
+      <h2>2. Datos que tratamos y cómo los obtenemos</h2>
+      <p>Tratamos las siguientes categorías de datos:</p>
       <ul>
         <li>
-          <strong>Correo electrónico</strong>, cuando lo facilitas
-          voluntariamente para recibir la guía o nuestras comunicaciones.
+          <strong>Datos identificativos y de contacto</strong> que nos facilitas
+          voluntariamente a través del formulario de asesoramiento: nombre, teléfono,
+          correo electrónico y el contenido del mensaje que nos escribes.
         </li>
         <li>
-          <strong>Datos de navegación</strong> (de forma agregada y anónima) con
-          fines estadísticos.
+          <strong>Datos de navegación</strong>, de forma agregada y seudonimizada, mediante
+          cookies analíticas (solo si prestas tu consentimiento): páginas visitadas,
+          duración, dispositivo, país aproximado, etc.
         </li>
       </ul>
       <p>
-        Los datos que introduces en el simulador (edad, años cotizados, base
-        reguladora) se procesan <strong>en tu propio navegador</strong> y no se
-        envían ni se almacenan en nuestros servidores.
+        <strong>Importante:</strong> los datos que introduces en el <em>simulador</em> de
+        jubilación (edad, años cotizados y base reguladora) se procesan
+        <strong>íntegramente en tu propio navegador</strong>; no se envían a nuestros
+        servidores ni se almacenan.
       </p>
-
-      <h2>3. Finalidad y base legitimadora</h2>
       <p>
-        Tratamos tu correo electrónico, con tu consentimiento, para enviarte la
-        guía y comunicaciones relacionadas con la jubilación anticipada. Puedes
-        retirar tu consentimiento en cualquier momento.
+        No solicitamos ni tratamos categorías especiales de datos (art. 9 RGPD). Te pedimos
+        que no incluyas datos de salud u otra información sensible en el mensaje del
+        formulario; si lo haces, entenderemos que consientes su tratamiento con la única
+        finalidad de atender tu consulta.
       </p>
 
-      <h2>4. Conservación</h2>
+      <h2>3. Finalidades y bases jurídicas</h2>
+      <table>
+        <thead>
+          <tr><th>Finalidad</th><th>Base jurídica (art. 6 RGPD)</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Atender y responder a tu consulta o solicitud de asesoramiento.</td>
+            <td>Tu <strong>consentimiento</strong> (art. 6.1.a) y/o la aplicación de medidas precontractuales a petición tuya (art. 6.1.b).</td>
+          </tr>
+          <tr>
+            <td>Elaboración de estadísticas de uso del Sitio Web (analítica).</td>
+            <td>Tu <strong>consentimiento</strong> (art. 6.1.a), gestionado a través del banner de cookies.</td>
+          </tr>
+          <tr>
+            <td>Garantizar la seguridad y el correcto funcionamiento del Sitio Web.</td>
+            <td><strong>Interés legítimo</strong> del responsable (art. 6.1.f).</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2>4. Plazos de conservación</h2>
       <p>
-        Conservamos tus datos mientras mantengas tu suscripción o hasta que
-        solicites su supresión.
+        Conservaremos los datos del formulario durante el tiempo necesario para atender tu
+        consulta y, posteriormente, durante los plazos legalmente exigibles para atender
+        posibles responsabilidades. Los datos analíticos se conservan según los plazos de
+        retención configurados en la herramienta de analítica. Cuando ya no sean necesarios,
+        los suprimiremos o anonimizaremos.
       </p>
 
-      <h2>5. Tus derechos</h2>
+      <h2>5. Destinatarios y encargados del tratamiento</h2>
       <p>
-        Puedes ejercer tus derechos de acceso, rectificación, supresión,
-        oposición, limitación y portabilidad escribiendo a{' '}
-        <a href={`mailto:${SITE.email}`}>{SITE.email}</a>. También puedes
-        presentar una reclamación ante la Agencia Española de Protección de
-        Datos (AEPD).
+        No cedemos tus datos a terceros salvo obligación legal. Para prestar el servicio nos
+        apoyamos en proveedores que actúan como <strong>encargados del tratamiento</strong>,
+        con los que hemos suscrito los correspondientes contratos (art. 28 RGPD):
       </p>
+      <ul>
+        <li><strong>Proveedor de alojamiento y despliegue web</strong> (p. ej. Vercel Inc.).</li>
+        <li><strong>Proveedor de envío de correo transaccional</strong> (p. ej. Resend), para hacerte llegar y gestionar tu solicitud.</li>
+        <li><strong>Proveedor de analítica web</strong> (p. ej. Google Analytics 4), solo si consientes las cookies analíticas.</li>
+      </ul>
 
-      <h2>6. Encargados del tratamiento</h2>
+      <h2>6. Transferencias internacionales</h2>
       <p>
-        Para el envío de correos podemos utilizar proveedores de email marketing
-        que actúan como encargados del tratamiento, con las debidas garantías
-        contractuales.
+        Algunos de estos proveedores pueden estar ubicados fuera del Espacio Económico
+        Europeo (por ejemplo, en EE. UU.). En tales casos, las transferencias se realizan con
+        las <strong>garantías adecuadas</strong> previstas en el RGPD, como las Cláusulas
+        Contractuales Tipo aprobadas por la Comisión Europea y/o la adhesión del proveedor al
+        marco <em>EU–US Data Privacy Framework</em>.
       </p>
 
-      <p class="text-sm text-ink-muted">
-        Última actualización: junio de 2026.
+      <h2>7. Tus derechos</h2>
+      <p>Puedes ejercer en cualquier momento los siguientes derechos:</p>
+      <ul>
+        <li><strong>Acceso</strong> a tus datos personales.</li>
+        <li><strong>Rectificación</strong> de datos inexactos.</li>
+        <li><strong>Supresión</strong> («derecho al olvido»).</li>
+        <li><strong>Oposición</strong> al tratamiento.</li>
+        <li><strong>Limitación</strong> del tratamiento.</li>
+        <li><strong>Portabilidad</strong> de tus datos.</li>
+        <li><strong>Retirar el consentimiento</strong> prestado, en cualquier momento, sin que ello afecte a la licitud del tratamiento previo.</li>
+      </ul>
+      <p>
+        Para ejercerlos, escríbenos a <a href={`mailto:${LEGAL.email}`}>{LEGAL.email}</a>
+        indicando el derecho que deseas ejercer. Podemos solicitarte que acredites tu
+        identidad. Si consideras que no hemos atendido correctamente tu solicitud, tienes
+        derecho a presentar una reclamación ante la <strong>Agencia Española de Protección de
+        Datos</strong> (AEPD), C/ Jorge Juan 6, 28001 Madrid —
+        <a href="https://www.aepd.es" target="_blank" rel="noopener noreferrer">www.aepd.es</a>.
       </p>
+
+      <h2>8. Decisiones automatizadas</h2>
+      <p>
+        No adoptamos decisiones automatizadas ni realizamos elaboración de perfiles con
+        efectos jurídicos sobre ti.
+      </p>
+
+      <h2>9. Medidas de seguridad</h2>
+      <p>
+        Aplicamos las medidas técnicas y organizativas apropiadas para garantizar un nivel de
+        seguridad adecuado al riesgo, de acuerdo con el art. 32 del RGPD.
+      </p>
+
+      <h2>10. Cambios en esta política</h2>
+      <p>
+        Podemos actualizar esta política para adaptarla a novedades legislativas o cambios en
+        el servicio. Te recomendamos revisarla periódicamente.
+      </p>
+
+      <p class="text-sm text-ink-muted">Última actualización: {LEGAL.actualizado}.</p>
     </div>
   </section>
 </Base>

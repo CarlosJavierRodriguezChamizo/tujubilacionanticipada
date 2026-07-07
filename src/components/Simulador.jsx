@@ -318,6 +318,33 @@ export default function Simulador({ disclaimer, guiaHref = '/guia-jubilacion-ant
             </div>
           )}
 
+          {/* CTA hacia asesoramiento personalizado */}
+          <div className="rounded-2xl border border-clay-200 bg-clay-50 p-6 sm:p-8">
+            <div className="sm:flex sm:items-center sm:justify-between sm:gap-6">
+              <div>
+                <h3 className="text-xl font-bold text-ink">
+                  ¿Quieres que un profesional revise tu caso?
+                </h3>
+                <p className="mt-2 text-sm text-ink-soft">
+                  Esta estimación es orientativa. Nuestro equipo puede analizar tu
+                  situación concreta y ayudarte a decidir el mejor momento para
+                  jubilarte. Sin compromiso.
+                </p>
+              </div>
+              <a
+                href="/asesoramiento"
+                onClick={() => {
+                  if (typeof window !== 'undefined' && typeof window.gtag === 'function') {
+                    window.gtag('event', 'cta_asesoramiento', { location: 'simulador' });
+                  }
+                }}
+                className="btn-accent mt-4 inline-flex shrink-0 no-underline sm:mt-0"
+              >
+                Solicitar asesoramiento
+              </a>
+            </div>
+          </div>
+
           {/* Captura de email — oculta temporalmente junto con la guía (producto sin definir) */}
           {false && (!emailEnviado ? (
             <div className="rounded-2xl border border-brand-200 bg-brand-50 p-6 sm:p-8">

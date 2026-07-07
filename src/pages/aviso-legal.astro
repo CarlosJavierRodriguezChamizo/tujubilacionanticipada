@@ -1,72 +1,103 @@
 ---
 import Base from '../layouts/Base.astro';
-import { SITE } from '../consts';
+import { SITE, LEGAL } from '../consts';
 ---
 
 <Base
   title="Aviso legal"
-  description="Aviso legal y condiciones de uso de Tu Jubilación Anticipada."
+  description="Aviso legal y condiciones de uso de Tu Jubilación Anticipada, conforme a la LSSI-CE."
   path="/aviso-legal"
   noindex={true}
 >
   <section class="container-prose py-12 sm:py-16">
-    <div class="prose prose-lg mx-auto prose-a:text-brand-600">
+    <div class="prose prose-lg mx-auto prose-a:text-brand-700">
       <h1>Aviso legal</h1>
 
-      <h2>1. Datos identificativos</h2>
       <p>
-        En cumplimiento de la Ley 34/2002, de Servicios de la Sociedad de la
-        Información y de Comercio Electrónico (LSSI-CE), se informa de que este
-        sitio web, <strong>{SITE.domain}</strong>, es titularidad del responsable
-        del proyecto {SITE.name}. Puedes contactar a través del correo
-        <a href={`mailto:${SITE.email}`}>{SITE.email}</a>.
+        El presente aviso legal regula el acceso, la navegación y el uso del sitio web
+        <strong>{SITE.domain}</strong> (en adelante, el «Sitio Web»), en cumplimiento de la
+        Ley 34/2002, de 11 de julio, de Servicios de la Sociedad de la Información y de
+        Comercio Electrónico (LSSI-CE).
       </p>
-      <p class="text-sm text-ink-muted">
-        [Completa aquí con el nombre/razón social, NIF/CIF y domicilio del
-        titular antes de publicar.]
-      </p>
+
+      <h2>1. Datos identificativos del titular</h2>
+      <ul>
+        <li><strong>Titular:</strong> {LEGAL.titular}</li>
+        <li><strong>NIF/CIF:</strong> {LEGAL.nif}</li>
+        <li><strong>Domicilio a efectos de notificaciones:</strong> {LEGAL.domicilio}</li>
+        <li><strong>Correo electrónico:</strong> <a href={`mailto:${LEGAL.email}`}>{LEGAL.email}</a></li>
+      </ul>
 
       <h2>2. Objeto</h2>
       <p>
-        Este sitio tiene una finalidad informativa y divulgativa sobre la
-        jubilación anticipada en España. El acceso y uso del sitio atribuye la
-        condición de usuario e implica la aceptación de las presentes
-        condiciones.
+        El Sitio Web tiene una finalidad <strong>informativa y divulgativa</strong> sobre la
+        jubilación anticipada y las pensiones en España, e incluye un simulador orientativo y
+        un servicio de contacto para solicitar asesoramiento. El acceso al Sitio Web es
+        gratuito, salvo el coste de conexión a través de la red de telecomunicaciones.
       </p>
 
-      <h2>3. Exención de responsabilidad</h2>
+      <h2>3. Condiciones de uso</h2>
       <p>
-        Los contenidos y las estimaciones del simulador tienen carácter
-        orientativo y no constituyen asesoramiento profesional. El titular no se
-        responsabiliza de las decisiones tomadas a partir de la información aquí
-        publicada. Se recomienda verificar siempre los datos con la Seguridad
-        Social o con un profesional cualificado.
+        El acceso y uso del Sitio Web atribuye la condición de usuario e implica la aceptación
+        plena de este aviso legal. El usuario se compromete a hacer un uso diligente del Sitio
+        Web y a no emplearlo para actividades ilícitas o contrarias a la buena fe, al orden
+        público o que puedan dañar los derechos o intereses de terceros o del titular.
       </p>
 
-      <h2>4. Propiedad intelectual</h2>
+      <h2>4. Propiedad intelectual e industrial</h2>
       <p>
-        Los textos, el diseño y los elementos gráficos de este sitio están
-        protegidos por derechos de propiedad intelectual. No se permite su
-        reproducción total o parcial sin autorización expresa.
+        Los contenidos del Sitio Web (textos, ilustraciones, diseño, gráficos, marcas, logos,
+        código y demás elementos) son titularidad del responsable o de terceros que han
+        autorizado su uso, y están protegidos por la normativa de propiedad intelectual e
+        industrial. Queda prohibida su reproducción, distribución, comunicación pública o
+        transformación, total o parcial, sin autorización expresa y por escrito del titular.
       </p>
 
-      <h2>5. Enlaces</h2>
+      <h2>5. Exención y limitación de responsabilidad</h2>
       <p>
-        Este sitio puede contener enlaces a páginas de terceros. El titular no
-        se hace responsable del contenido ni de las políticas de privacidad de
-        dichos sitios.
+        La información publicada en el Sitio Web, incluidos los artículos y las estimaciones
+        del simulador, tiene carácter <strong>orientativo y divulgativo</strong> y
+        <strong>no constituye asesoramiento</strong> jurídico, fiscal, laboral ni financiero,
+        ni sustituye la información oficial de la Seguridad Social. Las cifras del simulador son
+        estimaciones simplificadas que pueden diferir del cálculo real de tu pensión. El titular
+        no se responsabiliza de las decisiones adoptadas a partir de dicha información. Para el
+        estudio de tu caso concreto, puedes contactar con nuestro equipo profesional.
       </p>
-
-      <h2>6. Legislación aplicable</h2>
       <p>
-        Las presentes condiciones se rigen por la legislación española. Para
-        cualquier controversia, las partes se someten a los juzgados y
-        tribunales que correspondan conforme a derecho.
+        El titular no garantiza la disponibilidad continua e ininterrumpida del Sitio Web ni la
+        ausencia de errores en sus contenidos, si bien adoptará medidas razonables para
+        evitarlos y corregirlos.
       </p>
 
-      <p class="text-sm text-ink-muted">
-        Última actualización: junio de 2026.
+      <h2>6. Enlaces (links)</h2>
+      <p>
+        El Sitio Web puede contener enlaces a páginas de terceros (por ejemplo, fuentes
+        oficiales). El titular no se responsabiliza de los contenidos ni de las políticas de
+        dichos sitios. La existencia de estos enlaces no implica relación, recomendación ni
+        supervisión alguna.
       </p>
+
+      <h2>7. Protección de datos y cookies</h2>
+      <p>
+        El tratamiento de los datos personales que se recojan a través del Sitio Web se rige
+        por nuestra <a href="/privacidad">política de privacidad</a>. El uso de cookies se
+        regula en la <a href="/cookies">política de cookies</a>.
+      </p>
+
+      <h2>8. Legislación aplicable y jurisdicción</h2>
+      <p>
+        El presente aviso legal se rige por la legislación española. Para la resolución de
+        cualquier controversia, las partes se someterán a los juzgados y tribunales que
+        resulten competentes conforme a derecho.
+      </p>
+
+      <h2>9. Modificaciones</h2>
+      <p>
+        El titular se reserva el derecho a modificar este aviso legal para adaptarlo a
+        novedades legislativas o cambios en el Sitio Web. Se recomienda su consulta periódica.
+      </p>
+
+      <p class="text-sm text-ink-muted">Última actualización: {LEGAL.actualizado}.</p>
     </div>
   </section>
 </Base>
