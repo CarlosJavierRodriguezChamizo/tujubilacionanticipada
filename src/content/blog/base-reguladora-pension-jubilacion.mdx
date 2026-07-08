@@ -1,0 +1,109 @@
+---
+title: "Qué es la base reguladora y cómo afecta a tu pensión de jubilación"
+description: "Qué es la base reguladora de la pensión de jubilación, cómo se calcula en 2026 y por qué determina directamente el importe final que vas a cobrar."
+pubDate: 2026-07-08
+updatedDate: 2026-07-08
+category: "Cálculos y penalizaciones"
+author: "tujubilacionanticipada.com"
+reviewedBy: "Javier Rodríguez"
+reviewerTitle: "Escalón 26, Seguridad Social — Gestión de pensiones de ex-funcionarios"
+schema: "Article"
+tags: ["que es la base reguladora", "jubilación anticipada"]
+draft: false
+---
+
+import BarChart from '../../components/charts/BarChart.astro';
+
+> *Este artículo es orientativo y no constituye asesoría legal ni laboral. Para una planificación personalizada, consulta con nuestro equipo profesional.*
+
+Si te preguntas qué es la base reguladora, la respuesta corta es que se trata del número clave sobre el que se construye toda tu pensión de jubilación: sin ella, no existe cálculo posible. La base reguladora no es tu último sueldo ni una cifra que elijas tú; es el resultado de promediar, con reglas legales precisas, un tramo concreto de tu historial de cotizaciones a la Seguridad Social.
+
+Esta guía explica, de forma independiente al porcentaje que después se le aplica, qué es exactamente la base reguladora, qué periodo de tu vida laboral se tiene en cuenta para calcularla, cómo influyen las lagunas de cotización y los años con salarios más bajos o más altos, y por qué dos personas con la misma pensión teórica pueden acabar cobrando cantidades distintas según cómo se haya formado esta cifra. Está pensada para entender el concepto en sí, no para sustituir el cálculo de tu caso concreto.
+
+## Qué es la base reguladora de la pensión de jubilación
+
+La base reguladora es, según la define el [artículo 209 de la Ley General de la Seguridad Social (LGSS)](https://www.boe.es/buscar/act.php?id=BOE-A-2015-11724), el promedio actualizado de tus bases de cotización durante un periodo determinado de tu carrera laboral, inmediatamente anterior al mes previo al de tu jubilación. Es decir: no es un salario puntual, sino una media calculada sobre muchos meses de cotización real.
+
+Esta cifra es el primer factor de la fórmula general de la pensión contributiva:
+
+**Pensión = Base reguladora × Porcentaje según años cotizados**
+
+Por eso la base reguladora importa tanto: aunque hayas cotizado los años suficientes para alcanzar el 100 % del porcentaje, si tu base reguladora es baja, la pensión resultante también lo será. Y al revés: un porcentaje bajo por pocos años cotizados solo puede compensarse parcialmente si la base reguladora es alta. Los dos factores se multiplican, no se suman, por lo que ambos pesan de forma directa en el resultado final, tal y como recoge la [Seguridad Social](https://www.seg-social.es).
+
+## Qué periodo de cotización se tiene en cuenta para calcularla
+
+Desde el 1 de enero de 2026, y a raíz del [Real Decreto-ley 2/2023, de 16 de marzo](https://www.boe.es/buscar/act.php?id=BOE-A-2023-6967), la base reguladora se calcula con **dos métodos en paralelo**, y la Seguridad Social aplica de oficio el que resulte más favorable para cada persona, según explica el [INSS](https://inss.seg-social.es/BRjubilacion):
+
+- **Método tradicional**: se suman las bases de cotización de los **últimos 300 meses (25 años)** anteriores al mes previo al de la jubilación, y el total se divide entre **350**.
+- **Método nuevo (transitorio para 2026)**: se toman los **304 meses** inmediatamente anteriores, se descartan las bases más bajas de ese periodo y se suman las **302 bases de mayor importe** restantes, dividiendo el resultado entre **352,33**.
+
+El divisor (350 o 352,33) no es un número aleatorio: incorpora las 14 pagas anuales dentro del promedio mensual. El método nuevo se irá ampliando cada año hasta considerar, en el futuro, los mejores 27 años dentro de una ventana de 29, conforme al calendario fijado por el propio RDL 2/2023.
+
+En la práctica, este segundo método beneficia sobre todo a quienes han tenido tramos de baja cotización (paro sin prestación, reducción de jornada, excedencias) dentro de los últimos 25 años, porque permite dejar fuera del cálculo una parte de las bases más desfavorables de ese periodo ampliado.
+
+## Cómo afectan las lagunas de cotización a la base reguladora
+
+No todos los meses del periodo de cálculo tienen por qué tener cotización real. Cuando existen huecos —meses sin obligación de cotizar dentro del periodo considerado—, el [artículo 209.1 LGSS](https://www.boe.es/buscar/act.php?id=BOE-A-2015-11724) establece cómo se integran para que no cuenten como cero:
+
+- Los primeros **48 meses** de laguna dentro del periodo de cálculo se integran con el **100 %** de la base mínima de cotización vigente en cada momento.
+- A partir del mes 49 de laguna, cada mes adicional se integra únicamente con el **50 %** de esa base mínima.
+
+Esta integración solo rellena huecos sin cotización obligatoria; no sustituye meses en los que sí hubo obligación de cotizar aunque la base declarada fuera baja. Cuantas más lagunas largas existan dentro del periodo de cálculo, más tiende a reducirse la base reguladora resultante, porque los meses integrados al 50 % (a partir del mes 49) suelen quedar por debajo de la base real que la persona habría tenido trabajando.
+
+<BarChart
+  title="Cómo se integran las lagunas de cotización en la base reguladora"
+  unit="% de la base mínima"
+  caption="Fuente: artículo 209.1 LGSS, boe.es."
+  data={[
+    { label: 'Meses 1–48 de laguna', value: 100, highlight: true },
+    { label: 'Mes 49 en adelante', value: 50 },
+  ]}
+/>
+
+Este mecanismo explica por qué el método nuevo de cálculo (304 meses, descartando las bases más bajas) suele compensar mejor a quienes han tenido periodos de desempleo largos: al ampliar la ventana temporal, hay más margen para que esas lagunas queden fuera de las bases finalmente promediadas.
+
+## Ejemplos numéricos: cómo cambia la base reguladora según el historial de cotización
+
+**Ejemplo numérico 1 — carrera estable.** Un trabajador llega a su jubilación en 2026 con los últimos 300 meses cotizados de forma continua, con una base media de 2.400 €/mes durante ese periodo, sin ninguna laguna.
+- Base reguladora (método tradicional): `(2.400 € × 300) / 350 = 2.057,14 €/mes`.
+- Como no hay lagunas ni tramos descartables relevantes, el método nuevo (304 meses) arroja un resultado muy similar, así que la Seguridad Social aplicará el que salga ligeramente más alto, conforme al [RDL 2/2023](https://www.boe.es/buscar/act.php?id=BOE-A-2023-6967).
+
+**Ejemplo numérico 2 — carrera con lagunas.** Una trabajadora se jubila en 2026 con una base media de 2.400 €/mes en los meses efectivamente cotizados, pero dentro de los últimos 300 meses tiene **20 meses sin cotización** (agotó la prestación por desempleo antes de volver a trabajar).
+- Esos 20 meses de laguna se integran al 100 % de la base mínima vigente en cada momento (están dentro de los primeros 48 meses de laguna), no a cero, pero sí muy por debajo de sus 2.400 €/mes habituales.
+- El resultado es que su base reguladora por el método tradicional queda notablemente **por debajo** de los 2.057,14 €/mes del ejemplo anterior, pese a tener el mismo salario en los meses trabajados.
+- En este caso, el método nuevo de 304 meses (que permite descartar parte de las bases más bajas del periodo, incluidas algunas de esas integraciones) puede resultar más favorable, y es el que se le aplicaría de oficio según el [INSS](https://inss.seg-social.es/BRjubilacion).
+
+Estos dos ejemplos muestran que, ante el mismo salario habitual, tener o no lagunas de cotización dentro del periodo de cálculo puede marcar una diferencia real en la base reguladora, y por tanto en la pensión final.
+
+## Qué diferencia hay entre la base reguladora y la pensión que realmente cobras
+
+La base reguladora **no es** la pensión que vas a percibir. Es solo el primer factor de la fórmula. Una vez calculada, se le aplica el porcentaje que corresponda según tus años cotizados (con la escala vigente que llega al 100 % con 36 años y 6 meses en 2026, conforme al [artículo 210 LGSS](https://www.boe.es/buscar/act.php?id=BOE-A-2015-11724)), y el resultado se compara con el tope máximo legal de las pensiones públicas, fijado para 2026 en 3.359,60 €/mes por el [Real Decreto 241/2026, de 25 de marzo](https://www.boe.es/diario_boe/txt.php?id=BOE-A-2026-6977).
+
+Además, si te jubilas de forma anticipada (voluntaria o involuntaria) antes de la edad legal, se aplican coeficientes reductores sobre el importe resultante, según recoge la [Seguridad Social](https://www.seg-social.es). Por eso una base reguladora alta no garantiza por sí sola una pensión alta: es una condición necesaria, pero no la única variable del cálculo.
+
+## Preguntas frecuentes
+
+**¿Qué es exactamente la base reguladora de la jubilación?**
+Es el promedio actualizado de tus bases de cotización a la Seguridad Social durante un periodo determinado anterior a tu jubilación, calculado conforme al [artículo 209 LGSS](https://www.boe.es/buscar/act.php?id=BOE-A-2015-11724). Es el primer factor de la fórmula de la pensión contributiva.
+
+**¿La base reguladora es lo mismo que mi último salario?**
+No. Es un promedio de muchos meses (300 o 304, según el método), no una cifra puntual. Un salario alto solo en los últimos meses de tu vida laboral no eleva la base reguladora tanto como cabría pensar, precisamente porque se promedia con años anteriores, según explica el [INSS](https://inss.seg-social.es/BRjubilacion).
+
+**¿Qué periodo se usa para calcular la base reguladora en 2026?**
+La Seguridad Social calcula en paralelo dos métodos —los últimos 300 meses divididos entre 350, y las 302 mejores bases de los últimos 304 meses divididas entre 352,33— y aplica de oficio el que dé un resultado más favorable, conforme al [Real Decreto-ley 2/2023](https://www.boe.es/buscar/act.php?id=BOE-A-2023-6967).
+
+**¿Las lagunas de cotización reducen siempre la base reguladora?**
+En general sí, salvo que ya estuvieran fuera del periodo finalmente promediado. Los primeros 48 meses de laguna se integran al 100 % de la base mínima y, a partir del mes 49, al 50 %, según el [artículo 209.1 LGSS](https://www.boe.es/buscar/act.php?id=BOE-A-2015-11724), por lo que suelen quedar por debajo de una base real de trabajo activo.
+
+**¿Una base reguladora alta garantiza una pensión alta?**
+No necesariamente. La base reguladora se multiplica por el porcentaje según años cotizados y, si te jubilas de forma anticipada, se aplican además coeficientes reductores. El resultado final también está limitado por el tope máximo legal de la pensión pública, según la [Seguridad Social](https://www.seg-social.es).
+
+## Conclusión
+
+La base reguladora es el promedio de tus bases de cotización durante un periodo legal determinado —300 o 304 meses según el método aplicable en 2026— y constituye el primer y más determinante factor de tu pensión de jubilación. Cuanto más estable y alta haya sido tu cotización durante ese periodo, y cuantas menos lagunas largas existan dentro de él, mayor tenderá a ser esta cifra. A partir de ahí, el porcentaje según años cotizados y, en su caso, los coeficientes reductores por jubilación anticipada, terminan de definir el importe final que vas a cobrar.
+
+---
+
+> *Recuerda: esta información es orientativa. Las circunstancias personales varían. Consulta siempre con nuestro equipo profesional antes de tomar decisiones sobre tu jubilación.*
+
+_Revisado por Javier Rodríguez, Escalón 26, Seguridad Social — Gestión de pensiones de ex-funcionarios. Fecha de revisión: 8 de julio de 2026._
