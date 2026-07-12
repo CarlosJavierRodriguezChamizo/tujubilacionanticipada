@@ -53,13 +53,20 @@ jobs:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+          # Variables de runtime para las funciones serverless. Se inyectan en el
+          # propio deploy (-e) porque los deploys --prebuilt no heredan las
+          # variables del proyecto de Vercel. Salen de los secrets de GitHub.
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          CONTACT_TO_EMAIL: ${{ secrets.ALERT_EMAIL }}
         run: |
           # CLI oficial de Vercel (siempre actualizado). Sustituye a
           # amondnet/vercel-action, que fijaba una versión obsoleta del CLI.
           npm i -g vercel@latest
           vercel pull --yes --environment=production --token="$VERCEL_TOKEN"
           vercel build --prod --token="$VERCEL_TOKEN"
-          DEPLOY_URL=$(vercel deploy --prebuilt --prod --token="$VERCEL_TOKEN" | tail -1)
+          DEPLOY_URL=$(vercel deploy --prebuilt --prod --token="$VERCEL_TOKEN" \
+            -e RESEND_API_KEY="$RESEND_API_KEY" \
+            -e CONTACT_TO_EMAIL="$CONTACT_TO_EMAIL" | tail -1)
           echo "Deploy URL: $DEPLOY_URL"
           echo "deploy_url=$DEPLOY_URL" >> "$GITHUB_OUTPUT"
 
