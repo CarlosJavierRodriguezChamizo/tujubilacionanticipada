@@ -59,17 +59,19 @@ export default async function handler(req, res) {
 
   const apiKey = process.env.RESEND_API_KEY;
   const to = process.env.CONTACT_TO_EMAIL;
-  const from = process.env.CONTACT_FROM || 'Asesoramiento TJA <onboarding@resend.dev>';
+  const from =
+    process.env.CONTACT_FROM ||
+    'Asesoramiento Tu Jubilación Anticipada <asesoramiento@tujubilacionanticipada.com>';
 
   if (!apiKey || !to) {
     const missing = [!apiKey && 'RESEND_API_KEY', !to && 'CONTACT_TO_EMAIL']
       .filter(Boolean)
       .join(', ');
-    // El detalle solo va al log del servidor, nunca al cliente.
+    // Diagnóstico temporal: indicamos qué variable falta para depurar.
     console.error('Faltan variables de entorno:', missing);
     return res
       .status(500)
-      .json({ ok: false, error: 'Configuración del servidor incompleta.' });
+      .json({ ok: false, error: 'Configuración del servidor incompleta.', missing });
   }
 
   const html = `

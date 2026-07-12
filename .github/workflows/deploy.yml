@@ -114,7 +114,7 @@ jobs:
             --arg to "$ALERT_EMAIL" \
             --arg subject "✅ tujubilacionanticipada.com — Artículo publicado" \
             --arg text "$BODY" \
-            '{from: "Pipeline TJA <onboarding@resend.dev>", to: $to, subject: $subject, text: $text}')
+            '{from: "Tu Jubilación Anticipada <avisos@tujubilacionanticipada.com>", to: $to, subject: $subject, text: $text}')
           curl -s -X POST 'https://api.resend.com/emails' \
             -H "Authorization: Bearer ${RESEND_API_KEY}" \
             -H 'Content-Type: application/json' \
@@ -140,7 +140,7 @@ jobs:
             --arg to "$ALERT_EMAIL" \
             --arg subject "❌ tujubilacionanticipada.com — Fallo en el pipeline" \
             --arg text "$BODY" \
-            '{from: "Pipeline TJA <onboarding@resend.dev>", to: $to, subject: $subject, text: $text}')
+            '{from: "Tu Jubilación Anticipada <avisos@tujubilacionanticipada.com>", to: $to, subject: $subject, text: $text}')
           curl -s -X POST 'https://api.resend.com/emails' \
             -H "Authorization: Bearer ${RESEND_API_KEY}" \
             -H 'Content-Type: application/json' \
