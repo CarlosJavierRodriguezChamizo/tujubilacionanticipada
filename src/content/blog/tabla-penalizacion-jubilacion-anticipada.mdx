@@ -1,0 +1,126 @@
+---
+title: "Tabla penalización jubilación anticipada: coeficientes trimestre a trimestre"
+description: "Tabla de penalización por jubilación anticipada 2026: coeficientes por tramos en voluntaria e involuntaria, con fuentes oficiales de la Seguridad Social."
+pubDate: 2026-07-13
+updatedDate: 2026-07-13
+category: "Cálculos y penalizaciones"
+author: "tujubilacionanticipada.com"
+reviewedBy: "Javier Rodríguez"
+reviewerTitle: "Escalón 26, Seguridad Social — Gestión de pensiones de ex-funcionarios"
+schema: "Article"
+tags: ["tabla penalizacion jubilacion anticipada", "jubilación anticipada"]
+draft: false
+---
+
+import BarChart from '../../components/charts/BarChart.astro';
+
+> *Este artículo es orientativo y no constituye asesoría legal ni laboral. Para una planificación personalizada, consulta con nuestro equipo profesional.*
+
+Cuando alguien busca la **tabla de penalización por jubilación anticipada** normalmente quiere una sola cosa: un cuadro claro que le diga, según su modalidad y sus años cotizados, cuánto le va a recortar la Seguridad Social la pensión. El problema es que existen dos modalidades distintas —voluntaria e involuntaria—, cada una con cuatro tramos de cotización, y las tablas oficiales están repartidas en documentos separados.
+
+Esta guía reúne en un único lugar la tabla de penalización por jubilación anticipada vigente en 2026, con los coeficientes oficiales de la Seguridad Social para ambas modalidades, explica por qué ya no se calcula "por trimestres" como hace unos años y te muestra, con ejemplos numéricos, cómo pasar de un porcentaje de la tabla a euros concretos en tu nómina de pensión. No sustituye el cálculo individual que solo puede confirmarte la [Seguridad Social](https://www.seg-social.es), pero te permite entender la tabla antes de solicitar tu jubilación.
+
+## Qué es la tabla de penalización y cómo leerla
+
+La tabla de penalización recoge el **coeficiente reductor**: el porcentaje que se resta, de forma permanente, de la pensión ya calculada cuando te jubilas antes de tu edad legal. Su base legal está en el [artículo 210 del texto refundido de la Ley General de la Seguridad Social (LGSS)](https://www.boe.es/buscar/act.php?id=BOE-A-2015-11724), con el desarrollo transitorio de la **disposición transitoria trigésima cuarta del Real Decreto-ley 2/2023, de 16 de marzo**, publicado en el [BOE](https://www.boe.es).
+
+Para leer correctamente cualquier tabla de penalización necesitas dos datos propios:
+
+- **Cuántos meses adelantas** tu jubilación respecto a tu edad legal de jubilación (el máximo son 24 meses en la modalidad voluntaria y 48 meses en la involuntaria).
+- **Cuántos años, meses y días tienes cotizados** en el momento del hecho causante, ya que determinan tu tramo (A, B, C o D). Puedes verificarlos con tu informe de vida laboral, tal y como se explica en la guía sobre [cómo calcular la pensión de jubilación paso a paso](/blog/como-calcular-pension-jubilacion).
+
+Con esos dos datos, el coeficiente de la tabla se resta directamente sobre el importe de tu pensión ya calculada (base reguladora × porcentaje por años cotizados), no sobre la base reguladora, según recoge el propio [artículo 210 LGSS](https://www.boe.es/buscar/act.php?id=BOE-A-2015-11724).
+
+## Tabla de penalización: jubilación anticipada voluntaria
+
+Para acceder a la jubilación anticipada **voluntaria** necesitas, según el [artículo 208 LGSS](https://www.boe.es/buscar/act.php?id=BOE-A-2015-11724), tener como máximo 2 años (24 meses) menos que tu edad legal de jubilación y acreditar un mínimo de **35 años cotizados**. Dentro de ese margen, la tabla oficial de [coeficientes reductores para la jubilación anticipada voluntaria](https://www.seg-social.es/wps/wcm/connect/wss/bc1280cd-78ec-4c80-96ec-85ca99f4810b/Coeficientes+reductores+jubilaci%C3%B3n+anticipada+voluntaria.pdf?MOD=AJPERES) fija estos dos extremos por tramo de cotización:
+
+| Tramo | Años cotizados acreditados | Penalización con 1 mes de anticipo | Penalización con 24 meses de anticipo (máx.) |
+| --- | --- | --- | --- |
+| A | Menos de 38 años y 6 meses | 3,26 % | 21 % |
+| B | Entre 38a6m y 41a6m | 3,11 % | 19 % |
+| C | Entre 41a6m y 44a6m | 2,86 % | 17 % |
+| D | 44 años y 6 meses o más | 2,81 % | 13 % |
+
+Entre esos dos extremos —1 mes y 24 meses— el coeficiente crece de forma progresiva mes a mes dentro de cada tramo, por lo que el valor exacto para, por ejemplo, un anticipo de 14 meses debe consultarse en la tabla completa publicada por la [Seguridad Social](https://www.seg-social.es/wps/wcm/connect/wss/bc1280cd-78ec-4c80-96ec-85ca99f4810b/Coeficientes+reductores+jubilaci%C3%B3n+anticipada+voluntaria.pdf?MOD=AJPERES) o estimarse con el [simulador de jubilación](/simulador).
+
+<BarChart
+  title="Penalización máxima por tramo de cotización (jubilación anticipada voluntaria, 24 meses de anticipo)"
+  unit="%"
+  caption="Fuente: tabla de coeficientes reductores de la jubilación anticipada voluntaria, seg-social.es."
+  data={[
+    { label: 'Tramo A (<38a6m)', value: 21, highlight: true },
+    { label: 'Tramo B (38a6m–41a6m)', value: 19 },
+    { label: 'Tramo C (41a6m–44a6m)', value: 17 },
+    { label: 'Tramo D (≥44a6m)', value: 13 },
+  ]}
+/>
+
+Para un análisis más detallado de esta modalidad, incluida su equivalencia en euros y la pérdida acumulada a lo largo de los años, consulta nuestra guía específica sobre la [penalización por jubilación anticipada voluntaria](/blog/penalizacion-jubilacion-anticipada-voluntaria).
+
+## Tabla de penalización: jubilación anticipada involuntaria
+
+La jubilación anticipada **involuntaria** se aplica cuando el cese no depende de tu voluntad —por ejemplo, tras un despido colectivo o un ERE—, conforme al [artículo 207 LGSS](https://www.boe.es/buscar/act.php?id=BOE-A-2015-11724). Permite anticipar hasta **48 meses (4 años)**, el doble que la modalidad voluntaria, y sus coeficientes son más suaves para el mismo número de años cotizados. Según la tabla oficial de [coeficientes reductores de la jubilación anticipada involuntaria](https://www.seg-social.es/wps/wcm/connect/wss/8ee5942c-da64-4f1d-b115-cab692603c7f/Coeficientes+reductores+jubilaci%C3%B3n+anticipada+involuntaria.pdf?MOD=AJPERES), el coeficiente máximo por tramo, con el anticipo completo de 48 meses, es:
+
+| Tramo | Años cotizados acreditados | Penalización con 48 meses de anticipo (máx.) |
+| --- | --- | --- |
+| A | Menos de 38 años y 6 meses | 30 % |
+| B | Entre 38a6m y 41a6m | 28 % |
+| C | Entre 41a6m y 44a6m | 26 % |
+| D | 44 años y 6 meses o más | 24 % |
+
+En el otro extremo, con solo 1 mes de anticipo, el coeficiente más bajo de toda la escala involuntaria —correspondiente al tramo A— es del **4,75 %**; para los tramos con más años cotizados el porcentaje con 1 mes de anticipo es inferior, pero su valor exacto para cada tramo y cada mes debe consultarse en la tabla oficial completa, ya que no está desglosado de forma resumida por la Seguridad Social. Como en la modalidad voluntaria, esta tabla no debe confundirse con los coeficientes específicos de la [jubilación anticipada por discapacidad](/blog/jubilacion-anticipada-discapacidad) o de determinadas [profesiones de riesgo](/blog/jubilacion-anticipada-profesiones-riesgo), que siguen escalas propias. Puedes ampliar los requisitos de esta vía en nuestra guía sobre [jubilación anticipada involuntaria](/blog/jubilacion-anticipada-involuntaria).
+
+## Por qué la tabla ya no es "por trimestres": el cambio de 2024
+
+Es habitual buscar la tabla de penalización "trimestre a trimestre" porque, durante años, así funcionó realmente el sistema: hasta el **31 de diciembre de 2023**, el coeficiente reductor se aplicaba por cada **trimestre completo** de anticipo, con independencia de los días exactos que faltaran para completar el siguiente trimestre. Eso significaba que adelantarte una sola semana de más podía costarte un trimestre entero de penalización.
+
+Desde el **1 de enero de 2024**, tras la entrada en vigor del Real Decreto-ley 2/2023, de 16 de marzo, publicado en el [BOE](https://www.boe.es), el cálculo pasó a hacerse **mes a mes**, tal y como recoge el vigente [artículo 210 LGSS](https://www.boe.es/buscar/act.php?id=BOE-A-2015-11724). El cambio tiene dos efectos prácticos que conviene tener en cuenta al leer cualquier tabla actualizada:
+
+- Ya no se "pierde" un trimestre completo por adelantarte solo unas semanas: el coeficiente se ajusta al mes exacto de anticipo.
+- El coeficiente se sigue aplicando sobre el importe de la pensión ya calculada, no sobre la base reguladora, y si el resultado supera el límite máximo de las pensiones públicas del artículo 57 LGSS, se aplica sobre ese límite.
+
+En la práctica, sigue siendo útil pensar en "bloques" de tres o cuatro meses para hacerse una idea rápida de la penalización (por ejemplo, los 24 meses máximos de la modalidad voluntaria equivalen a 8 trimestres, y los 48 meses de la involuntaria a 16 trimestres), pero el coeficiente exacto que se te aplica siempre se calcula mes a mes según la tabla oficial vigente, no por trimestre completo.
+
+## Ejemplos numéricos: de la tabla a tu pensión en euros
+
+**Ejemplo numérico 1 — jubilación voluntaria, tramo B, 24 meses de anticipo.** Un trabajador de 63 años acredita 39 años cotizados (tramo B: entre 38 años y 6 meses y 41 años y 6 meses) y decide jubilarse de forma voluntaria adelantando los 24 meses máximos permitidos. Su pensión calculada, sin aplicar el coeficiente reductor, sería de **1.750 €/mes**.
+
+- Coeficiente aplicable según la tabla: **19 %** (tramo B, 24 meses, modalidad voluntaria).
+- Pensión resultante: `1.750 € × (1 − 0,19) = 1.417,50 €/mes`.
+- Pérdida permanente: **332,50 €/mes**, durante toda la vida de la pensión.
+
+**Ejemplo numérico 2 — jubilación involuntaria, tramo D, 48 meses de anticipo.** Una trabajadora de 61 años es incluida en un despido colectivo y acredita 45 años cotizados (tramo D: 44 años y 6 meses o más). Accede a la jubilación anticipada involuntaria adelantando el máximo de 48 meses. Su pensión calculada, sin coeficiente, sería de **2.000 €/mes**.
+
+- Coeficiente aplicable según la tabla: **24 %** (tramo D, 48 meses, modalidad involuntaria).
+- Pensión resultante: `2.000 € × (1 − 0,24) = 1.520 €/mes`.
+- Pérdida permanente: **480 €/mes** respecto a la pensión sin anticipar.
+
+Estos dos ejemplos muestran algo que la tabla por sí sola no siempre transmite: aunque el coeficiente de la modalidad involuntaria en euros absolutos puede parecer alto, para el mismo tramo de cotización sigue siendo más favorable que el máximo de la voluntaria, precisamente porque el cese no ha sido una decisión del trabajador.
+
+## Preguntas frecuentes
+
+**¿La tabla de penalización es la misma para todo el mundo?**
+No. Depende de la modalidad (voluntaria o involuntaria), de cuántos meses adelantes tu jubilación y de tu tramo de años cotizados. Por eso existen tablas separadas para cada modalidad, publicadas por la [Seguridad Social](https://www.seg-social.es).
+
+**¿Por qué mi tabla ya no está dividida en trimestres?**
+Porque desde el 1 de enero de 2024 el coeficiente se calcula mes a mes, no por trimestres completos, tras la reforma introducida por el Real Decreto-ley 2/2023, publicado en el [BOE](https://www.boe.es).
+
+**¿La penalización de la tabla se aplica sobre la base reguladora o sobre la pensión?**
+Se aplica sobre el importe de la pensión ya calculado (base reguladora × porcentaje por años cotizados), no directamente sobre la base reguladora, según el [artículo 210 LGSS](https://www.boe.es/buscar/act.php?id=BOE-A-2015-11724).
+
+**¿La penalización de la tabla desaparece al llegar a la edad legal de jubilación?**
+No. El coeficiente reductor es **permanente** y se mantiene durante toda la vida de la pensión, tal y como confirma la [Seguridad Social](https://www.seg-social.es).
+
+**¿Dónde consulto el coeficiente exacto para mi mes concreto de anticipo?**
+En las tablas oficiales completas de la Seguridad Social, para la [modalidad voluntaria](https://www.seg-social.es/wps/wcm/connect/wss/bc1280cd-78ec-4c80-96ec-85ca99f4810b/Coeficientes+reductores+jubilaci%C3%B3n+anticipada+voluntaria.pdf?MOD=AJPERES) y para la [modalidad involuntaria](https://www.seg-social.es/wps/wcm/connect/wss/8ee5942c-da64-4f1d-b115-cab692603c7f/Coeficientes+reductores+jubilaci%C3%B3n+anticipada+involuntaria.pdf?MOD=AJPERES), o con una estimación en nuestro [simulador de jubilación](/simulador).
+
+## Conclusión
+
+La tabla de penalización por jubilación anticipada de 2026 ya no se organiza por trimestres, sino mes a mes, y siempre distingue entre dos modalidades: la voluntaria, con un recorte que va del 2,81 % al 21 % según el tramo de cotización y hasta 24 meses de anticipo, y la involuntaria, con un rango oficial del 4,75 % al 30 % y hasta 48 meses de anticipo. Antes de solicitar tu jubilación anticipada, identifica tu modalidad, tu tramo de años cotizados y tus meses exactos de anticipo: son los tres datos que necesitas para leer correctamente cualquier tabla oficial y anticipar cuánto va a cambiar tu pensión.
+
+---
+
+> *Recuerda: esta información es orientativa. Las circunstancias personales varían. Consulta siempre con nuestro equipo profesional antes de tomar decisiones sobre tu jubilación.*
+
+_Revisado por Javier Rodríguez, Escalón 26, Seguridad Social — Gestión de pensiones de ex-funcionarios. Fecha de revisión: 13 de julio de 2026._
