@@ -85,7 +85,7 @@ export const REVIEWERS: Record<string, string> = {
  * Vacío = no se muestra el popup de suscripción.
  */
 export const VAPID_PUBLIC_KEY =
-  'BMIM62yKsoHu4_ErKWKv1KL8_TT9mvkWbWuLvIJ_Dd_7_mM-WijmiJvTkwhn2JIKYd7NqTriy7CG4wXdVVsA4gs';
+  'BIGmcg-4i1VUzoCGYOyS5G4so34rTj1mRivP3tF_Ur0b0AOlflhrZdIWyM2KiZa9cqA5d0ztuFunG3S_sqca618';
 
 /**
  * Configuración del CTA de asesoramiento y su prueba social (principios de Cialdini).

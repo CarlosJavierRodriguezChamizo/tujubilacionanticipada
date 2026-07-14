@@ -58,6 +58,11 @@ jobs:
           # variables del proyecto de Vercel. Salen de los secrets de GitHub.
           RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
           CONTACT_TO_EMAIL: ${{ secrets.ALERT_EMAIL }}
+          # Notificaciones push (Web Push + store Redis/Upstash).
+          VAPID_PRIVATE_KEY: ${{ secrets.VAPID_PRIVATE_KEY }}
+          PUSH_SEND_SECRET: ${{ secrets.PUSH_SEND_SECRET }}
+          KV_REST_API_URL: ${{ secrets.KV_REST_API_URL }}
+          KV_REST_API_TOKEN: ${{ secrets.KV_REST_API_TOKEN }}
         run: |
           # CLI oficial de Vercel (siempre actualizado). Sustituye a
           # amondnet/vercel-action, que fijaba una versión obsoleta del CLI.
@@ -66,7 +71,12 @@ jobs:
           vercel build --prod --token="$VERCEL_TOKEN"
           DEPLOY_URL=$(vercel deploy --prebuilt --prod --token="$VERCEL_TOKEN" \
             -e RESEND_API_KEY="$RESEND_API_KEY" \
-            -e CONTACT_TO_EMAIL="$CONTACT_TO_EMAIL" | tail -1)
+            -e CONTACT_TO_EMAIL="$CONTACT_TO_EMAIL" \
+            -e VAPID_PRIVATE_KEY="$VAPID_PRIVATE_KEY" \
+            -e VAPID_PUBLIC_KEY="BIGmcg-4i1VUzoCGYOyS5G4so34rTj1mRivP3tF_Ur0b0AOlflhrZdIWyM2KiZa9cqA5d0ztuFunG3S_sqca618" \
+            -e PUSH_SEND_SECRET="$PUSH_SEND_SECRET" \
+            -e KV_REST_API_URL="$KV_REST_API_URL" \
+            -e KV_REST_API_TOKEN="$KV_REST_API_TOKEN" | tail -1)
           echo "Deploy URL: $DEPLOY_URL"
           echo "deploy_url=$DEPLOY_URL" >> "$GITHUB_OUTPUT"
 
