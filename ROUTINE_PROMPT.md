@@ -57,7 +57,12 @@ El frontmatter debe incluir `heroImage: "/blog/[slug].jpg"` y un `heroImageAlt` 
 y el cuerpo debe contener el `import BarChart` y al menos un `<BarChart>` con datos reales
 (según `PROMPT_REDACTOR.md`).
 
-## Paso 3b — Generar la imagen destacada (Magnific)
+## Paso 3b — Imagen destacada (usa la pre-cargada si existe)
+
+**PRIMERO comprueba si la imagen ya existe** en el repo: `public/blog/[slug].jpg`.
+- **Si existe** (algunas están pre-generadas manualmente): NO generes nada. Mantén el
+  `heroImage: "/blog/[slug].jpg"` en el frontmatter y salta al Paso 4.
+- **Si NO existe**: intenta generarla con Magnific siguiendo lo de abajo.
 
 Genera UNA ilustración de portada para el artículo con el MCP de imágenes (Magnific/Freepik).
 
