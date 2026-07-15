@@ -8,6 +8,7 @@
  */
 import type { CollectionEntry } from 'astro:content';
 import { SITE, SOCIAL_PROFILES, REVIEWERS } from '../consts';
+import { resolveHeroImage } from './posts';
 
 type JsonLd = Record<string, unknown>;
 
@@ -137,7 +138,9 @@ export function blogPostingSchema(post: CollectionEntry<'blog'>): JsonLd {
         }
       : {}),
     publisher: { '@id': ORG_ID },
-    image: absUrl(data.ogImage ?? data.heroImage ?? SITE.defaultOgImage),
+    image: absUrl(
+      data.ogImage ?? resolveHeroImage(post.slug, data.heroImage) ?? SITE.defaultOgImage
+    ),
   };
 }
 

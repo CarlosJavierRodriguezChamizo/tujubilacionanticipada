@@ -1,6 +1,6 @@
 ---
 import type { CollectionEntry } from 'astro:content';
-import { formatDate, toISO, readingTimeMinutes } from '../lib/posts';
+import { formatDate, toISO, readingTimeMinutes, resolveHeroImage } from '../lib/posts';
 
 interface Props {
   post: CollectionEntry<'blog'>;
@@ -9,14 +9,15 @@ interface Props {
 const { post } = Astro.props;
 const { data } = post;
 const minutos = readingTimeMinutes(post.body);
+const heroImage = resolveHeroImage(post.slug, data.heroImage);
 ---
 
 <article class="group relative flex h-full flex-col overflow-hidden rounded-xl border border-paper-200 bg-paper-50 transition-shadow hover:shadow-card">
   {
-    data.heroImage && (
+    heroImage && (
       <a href={`/blog/${post.slug}`} class="block" tabindex="-1" aria-hidden="true">
         <img
-          src={data.heroImage}
+          src={heroImage}
           alt=""
           width="1200"
           height="675"
