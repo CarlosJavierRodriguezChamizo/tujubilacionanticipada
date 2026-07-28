@@ -111,8 +111,36 @@ jobs:
           echo "Promocionando ${GITHUB_SHA} a main (fast-forward)…"
           git push origin "HEAD:main"
 
-      - name: Email — deploy exitoso
+      - name: Leer informe de mejora continua
+        id: informe
         if: success()
+        run: |
+          if [ -f scripts/ultimo-informe.md ]; then
+            echo "existe=true" >> $GITHUB_OUTPUT
+            {
+              echo 'cuerpo<<INFORME_EOF'
+              cat scripts/ultimo-informe.md
+              echo 'INFORME_EOF'
+            } >> $GITHUB_OUTPUT
+          else
+            echo "existe=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Email — informe de mejora continua
+        if: success() && steps.informe.outputs.existe == 'true' && startsWith(github.event.head_commit.message, 'mejora:')
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 587
+          username: ${{ secrets.EMAIL_USERNAME }}
+          password: ${{ secrets.EMAIL_APP_PASSWORD }}
+          subject: "🔧 tujubilacionanticipada.com — Mejora continua"
+          to: ${{ secrets.ALERT_EMAIL }}
+          from: "Equipo TJA <${{ secrets.EMAIL_USERNAME }}>"
+          body: ${{ steps.informe.outputs.cuerpo }}
+
+      - name: Email — deploy exitoso
+        if: success() && !startsWith(github.event.head_commit.message, 'mejora:')
         env:
           RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
           ALERT_EMAIL: ${{ secrets.ALERT_EMAIL }}
