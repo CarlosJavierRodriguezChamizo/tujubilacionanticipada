@@ -1,0 +1,14 @@
+{
+  "config": {
+    "max_tareas_por_dia": 2,
+    "areas_validas": ["ux", "seo", "cro"],
+    "rutas_prohibidas": [
+      "src/content/blog/**",
+      "scripts/calendario.json",
+      ".github/**"
+    ],
+    "ejecutar_tareas_el_dia_de_replanificacion": false
+  },
+  "ultima_replanificacion": null,
+  "tareas": []
+}

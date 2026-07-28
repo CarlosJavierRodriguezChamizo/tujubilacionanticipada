@@ -25,6 +25,8 @@ pnpm-debug.log*
 .idea/
 
 # Claude Code / herramientas locales
-.claude/
+.claude/*
+# ...pero los subagentes del orquestador de mejora continua SÍ van al repo
+!.claude/agents/
 .vercel
 .env*
