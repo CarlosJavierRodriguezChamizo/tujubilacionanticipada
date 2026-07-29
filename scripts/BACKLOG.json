@@ -1,7 +1,11 @@
 {
   "config": {
     "max_tareas_por_dia": 2,
-    "areas_validas": ["ux", "seo", "cro"],
+    "areas_validas": [
+      "ux",
+      "seo",
+      "cro"
+    ],
     "rutas_prohibidas": [
       "src/content/blog/**",
       "scripts/calendario.json",
@@ -12,224 +16,213 @@
   "ultima_replanificacion": "2026-07-29",
   "tareas": [
     {
-      "id": "seo-01",
+      "id": "seo-001",
+      "titulo": "Crear helper de slugs de categoría (silos) como fuente única de verdad",
       "area": "seo",
       "prioridad": 1,
-      "titulo": "Crear páginas hub de categoría (los 4 silos) con ruta dinámica",
-      "objetivo_estrategico": "Línea 1: 'Silos reales: hubs de categoría y enlazado interno semántico' — falsable (a): '4 hubs con <title>, description, canonical y JSON-LD CollectionPage presentes en dist/'.",
-      "hipotesis": "Si creamos src/pages/blog/categoria/[categoria].astro con getStaticPaths sobre las 4 categorías de BLOG_CATEGORIES (src/content/config.ts) y listamos ahí los artículos de cada silo con JSON-LD CollectionPage (usando webPageSchema type 'CollectionPage' y blogCollectionSchema/breadcrumbSchema ya existentes en src/lib/schema.ts), esperamos que las 4 páginas aparezcan indexables en el sitemap, porque hoy `src/pages/` no contiene ninguna página de categoría y el calendario de 4 silos se publica como blog plano paginado.",
-      "criterio_exito": "Tras `npm run build`, existen en dist/ las 4 rutas /blog/categoria/<slug>/ (una por cada valor de BLOG_CATEGORIES), cada una con <title>, meta description, <link rel=canonical> y un <script type=application/ld+json> de tipo CollectionPage; las 4 aparecen en dist/sitemap-0.xml.",
-      "metrica": "grep -c en dist/sitemap-0.xml de las 4 rutas /blog/categoria/ → debe devolver 4. Plazo: verificable en el mismo build.",
+      "estado": "pendiente",
+      "hipotesis": "Si centralizamos el mapping nombre-de-categoría → slug de URL en un único módulo (src/lib/categories.ts), esperamos que las páginas de silo, el breadcrumb y los enlaces desde home/blog usen siempre el mismo slug, porque hoy no existe ninguna fuente única de verdad para la URL de cada categoría y cada implementación tendría que inventar su propio slugify.",
+      "criterio_exito": "El archivo src/lib/categories.ts existe y exporta una función (p.ej. getCategorySlug(category)) que devuelve un slug estable en kebab-case sin tildes para las 4 categorías de BLOG_CATEGORIES (src/content/config.ts), y `npm run build` (incluye astro check) sigue pasando sin que ninguna página use aún el helper.",
+      "metrica": "Comprobación directa de la función: getCategorySlug('Tipos de jubilación anticipada') === 'tipos-de-jubilacion-anticipada', getCategorySlug('Cálculos y penalizaciones') === 'calculos-y-penalizaciones', getCategorySlug('Planificación financiera') === 'planificacion-financiera'; y `npm run build` termina con código 0.",
       "archivos_sugeridos": [
-        "src/pages/blog/categoria/[categoria].astro",
-        "src/lib/posts.ts"
+        "src/lib/categories.ts"
       ],
-      "notas": "Añadir en src/lib/posts.ts una función categorySlug(category) que transforme cada valor de BLOG_CATEGORIES en un slug estable (kebab-case, sin acentos), para que la reutilicen S2, S3 y S5 sin duplicar lógica ni tocar más de 3 archivos por tarea.",
-      "estado": "pendiente"
+      "objetivo_estrategico": "Páginas de silo (`/blog/categoria/<slug>`) para las categorías con ≥ 3 artículos publicados",
+      "fecha_ejecucion": null,
+      "resultado": null
     },
     {
-      "id": "seo-02",
+      "id": "seo-002",
+      "titulo": "Crear las páginas de silo /blog/categoria/<slug> para categorías con ≥3 artículos",
       "area": "seo",
       "prioridad": 2,
-      "titulo": "Crear página de perfil del revisor con JSON-LD Person",
-      "objetivo_estrategico": "Línea 2: 'Responsable identificable y entidad de autoría' — entregable (b): página de perfil del revisor con JSON-LD Person, jobTitle y knowsAbout.",
-      "hipotesis": "Si creamos src/pages/equipo/javier-rodriguez.astro con biografía, la credencial 'Escalón 26, Seguridad Social' y un JSON-LD @type Person (jobTitle, knowsAbout, image apuntando a /equipo/javier-rodriguez.jpg, que ya existe en public/equipo/), esperamos que el revisor deje de ser un nombre sin entidad, porque hoy 'Javier Rodríguez' aparece en la caja Revisado por de BlogPost.astro sin página propia ni Person en el JSON-LD, lo cual es un requisito EEAT que no depende de ningún dato legal del propietario (no requiere NIF ni domicilio).",
-      "criterio_exito": "La página /equipo/javier-rodriguez existe, valida en el Rich Results Test de Google como Person, y no depende de LEGAL (titular/NIF/domicilio) para publicarse.",
-      "metrica": "Prueba con Rich Results Test sobre la URL en dist/ (o preview) detecta un elemento Person válido sin errores.",
+      "estado": "pendiente",
+      "hipotesis": "Si publicamos una página estática por cada categoría con ≥3 artículos publicados (hoy Tipos, Cálculos, Planificación), con listado completo sin paginar y JSON-LD CollectionPage+BreadcrumbList, esperamos que Google pueda rastrear una estructura temática que hoy solo existe en el frontmatter, porque el diagnóstico constata que el único listado es /blog paginado de 6 en 6 y no hay ninguna página de categoría.",
+      "criterio_exito": "Tras `npm run build` existen exactamente /dist/blog/categoria/tipos-de-jubilacion-anticipada/index.html, /dist/blog/categoria/calculos-y-penalizaciones/index.html y /dist/blog/categoria/planificacion-financiera/index.html; NO existe /dist/blog/categoria/actualidad-y-casos-practicos/ (0 artículos publicados en esa categoría); cada página lista todos sus artículos sin paginación y contiene un <script type=\"application/ld+json\"> con \"@type\":\"CollectionPage\" y otro con \"@type\":\"BreadcrumbList\".",
+      "metrica": "Nº de archivos generados en /dist/blog/categoria/**/index.html debe ser exactamente 3; grep de \"@type\":\"CollectionPage\" y \"@type\":\"BreadcrumbList\" en cada uno; nº de <a href=\"/blog/...\"> en cada hub == nº de artículos publicados de esa categoría (10, 15 y 6 respectivamente a fecha de hoy).",
       "archivos_sugeridos": [
-        "src/pages/equipo/javier-rodriguez.astro"
+        "src/pages/blog/categoria/[categoria].astro"
       ],
-      "estado": "pendiente"
+      "objetivo_estrategico": "Páginas de silo (`/blog/categoria/<slug>`) para las categorías con ≥ 3 artículos publicados",
+      "fecha_ejecucion": null,
+      "resultado": null
     },
     {
-      "id": "seo-03",
+      "id": "seo-003",
+      "titulo": "Enlazar los 3 hubs de silo desde el listado /blog",
       "area": "seo",
       "prioridad": 3,
-      "titulo": "Enlazar el eyebrow de categoría del artículo a su hub",
-      "objetivo_estrategico": "Línea 1, entregable: '...el category de cada artículo enlaza a su hub' (objetivo del ciclo, condición 1).",
-      "hipotesis": "Si convertimos el <p class=\"eyebrow\">{data.category}</p> de src/layouts/BlogPost.astro en un enlace a /blog/categoria/<categorySlug(data.category)>/ usando el helper creado en seo-01, esperamos que cada una de las 31 páginas de artículo enlace a su hub, porque hoy ese texto no es un enlace ('se pinta como texto muerto en la cabecera del artículo, sin enlace').",
-      "criterio_exito": "En dist/, el HTML de cada artículo publicado contiene un <a href=\"/blog/categoria/...\"> alrededor del nombre de categoría, apuntando al hub correspondiente.",
-      "metrica": "grep del atributo href=\"/blog/categoria/ en las 31 páginas de artículo generadas en dist/blog/**/index.html → 31 coincidencias.",
+      "estado": "pendiente",
+      "hipotesis": "Si añadimos en /blog un bloque con un enlace a cada silo publicado, esperamos reducir la profundidad de clics hasta cualquier artículo, porque hoy /blog solo ofrece paginación por fecha (6 en 6) y ningún acceso por categoría.",
+      "criterio_exito": "/dist/blog/index.html contiene los 3 <a href=\"/blog/categoria/...\"> (uno por silo publicado) fuera del listado de artículos; `npm run build` pasa.",
+      "metrica": "grep de las 3 rutas /blog/categoria/tipos-de-jubilacion-anticipada, /blog/categoria/calculos-y-penalizaciones y /blog/categoria/planificacion-financiera en /dist/blog/index.html.",
+      "archivos_sugeridos": [
+        "src/pages/blog/index.astro"
+      ],
+      "objetivo_estrategico": "Páginas de silo (`/blog/categoria/<slug>`) para las categorías con ≥ 3 artículos publicados",
+      "fecha_ejecucion": null,
+      "resultado": null
+    },
+    {
+      "id": "seo-004",
+      "titulo": "Enlazar los 3 hubs de silo desde la home",
+      "area": "seo",
+      "prioridad": 4,
+      "estado": "pendiente",
+      "hipotesis": "Si la home enlaza directamente a los 3 silos, esperamos que las 31 URLs de artículo publicadas queden a ≤2 clics de '/', porque hoy la home solo enlaza a /blog y a los 3 últimos artículos, y un artículo antiguo puede quedar a varias páginas de paginación de distancia.",
+      "criterio_exito": "/dist/index.html contiene los 3 <a href=\"/blog/categoria/...\">; combinado con seo-002 y seo-003, cualquier artículo publicado es alcanzable en ≤2 clics desde '/' (home → silo → artículo).",
+      "metrica": "grep de las 3 rutas /blog/categoria/ en /dist/index.html; comprobación manual home→silo→artículo en ≤2 saltos para el artículo más antiguo (que-es-la-jubilacion-anticipada u otro publicado el 2026-06-25).",
+      "archivos_sugeridos": [
+        "src/pages/index.astro"
+      ],
+      "objetivo_estrategico": "Páginas de silo (`/blog/categoria/<slug>`) para las categorías con ≥ 3 artículos publicados",
+      "fecha_ejecucion": null,
+      "resultado": null
+    },
+    {
+      "id": "ux-001",
+      "titulo": "Convertir la categoría del artículo en un enlace visible a su silo",
+      "area": "ux",
+      "prioridad": 5,
+      "estado": "pendiente",
+      "hipotesis": "Si el \"eyebrow\" de categoría que ya se muestra en la cabecera de cada artículo (hoy texto plano, <p class=\"eyebrow\">{data.category}</p> en BlogPost.astro) se convierte en un enlace a la página de silo correspondiente, esperamos mejorar la orientación del lector -puede saltar del artículo a más contenido de su categoría con un solo clic, sin JavaScript- y de paso cumplir 'cada artículo tiene ≥1 enlace saliente a su silo', porque hoy ese texto no es interactivo ni ofrece ninguna salida lateral.",
+      "criterio_exito": "En una muestra de /dist/blog/*/index.html, el texto de categoría en la cabecera del artículo es ahora un <a href=\"/blog/categoria/<slug-correcto-de-su-categoría>\">, visible y funcional sin JavaScript, con el mismo tratamiento visual (contraste AA) que el resto de enlaces del sitio.",
+      "metrica": "Para las 31 páginas /dist/blog/*/index.html, grep confirma un <a href=\"/blog/categoria/...\"> dentro del <header> del artículo apuntando al slug correcto de su propia categoría; 31/31 artículos cumplen.",
       "archivos_sugeridos": [
         "src/layouts/BlogPost.astro"
       ],
-      "estado": "pendiente"
+      "objetivo_estrategico": "Páginas de silo (`/blog/categoria/<slug>`) para las categorías con ≥ 3 artículos publicados",
+      "fecha_ejecucion": null,
+      "resultado": null
     },
     {
-      "id": "seo-04",
-      "area": "seo",
-      "prioridad": 4,
-      "titulo": "Enlazar la página de perfil del revisor desde BlogPost, sobre-este-sitio y consts",
-      "objetivo_estrategico": "Línea 2, entregable (b): página de perfil '...enlazada desde la caja Revisado por de BlogPost.astro y desde /sobre-este-sitio'.",
-      "hipotesis": "Si añadimos en src/consts.ts un mapa REVIEWER_PROFILES (nombre → ruta de perfil) y lo usamos para envolver el nombre del revisor en un <a> tanto en la caja 'Revisado por' de src/layouts/BlogPost.astro como en la sección 'Quién está detrás' de src/pages/sobre-este-sitio.astro, esperamos que el revisor sea una entidad navegable desde cualquier artículo, porque hoy 'aparece con credencial pero sin página de perfil ni entidad Person enlazada'.",
-      "criterio_exito": "Cada artículo con reviewedBy definido enlaza a /equipo/javier-rodriguez desde la caja Revisado por, y /sobre-este-sitio enlaza también a esa página.",
-      "metrica": "grep de href=\"/equipo/javier-rodriguez\" en dist/sobre-este-sitio/index.html (≥1) y en las páginas de artículo con reviewedBy: 'Javier Rodríguez' (≥1 cada una).",
-      "archivos_sugeridos": [
-        "src/consts.ts",
-        "src/layouts/BlogPost.astro",
-        "src/pages/sobre-este-sitio.astro"
-      ],
-      "estado": "pendiente"
-    },
-    {
-      "id": "seo-05",
-      "area": "seo",
-      "prioridad": 5,
-      "titulo": "Enlazar los 4 hubs de categoría desde Header y Footer",
-      "objetivo_estrategico": "Línea 1, condición 1 del objetivo del ciclo: 'Existen 4 páginas hub... enlazadas desde la navegación'.",
-      "hipotesis": "Si añadimos a src/components/Header.astro y src/components/Footer.astro un bloque de navegación con los 4 hubs de categoría (usando categorySlug de seo-01), esperamos que las 4 páginas sean alcanzables en 1 clic desde cualquier página del sitio, porque hoy `NAV_LINKS` en src/consts.ts solo enlaza a /simulador, /blog y /asesoramiento, sin ningún enlace a categoría.",
-      "criterio_exito": "Header.astro (menú de escritorio y móvil) y/o Footer.astro contienen los 4 enlaces a /blog/categoria/<slug>/ en todas las páginas.",
-      "metrica": "grep de las 4 rutas /blog/categoria/ en dist/index.html (página de inicio) → 4 coincidencias.",
-      "archivos_sugeridos": [
-        "src/components/Header.astro",
-        "src/components/Footer.astro"
-      ],
-      "estado": "pendiente"
-    },
-    {
-      "id": "seo-06",
+      "id": "seo-005",
+      "titulo": "Incluir el silo en la miga de pan (breadcrumb) del artículo",
       "area": "seo",
       "prioridad": 6,
-      "titulo": "Corregir el author del JSON-LD de artículo para que resuelva a la entidad Organization real",
-      "objetivo_estrategico": "Línea 2: 'el author de los artículos es la cadena \"tujubilacionanticipada.com\"—no una persona' (diagnóstico del cuello de botella autoridad).",
-      "hipotesis": "Si en src/lib/schema.ts (blogPostingSchema y blogCollectionSchema) sustituimos `author: { '@type': 'Organization', name: data.author, url: SITE.url }` por una referencia `{ '@id': ORG_ID }` a la Organization sitewide (que sí tiene name, logo y contactPoint reales) en vez de usar el campo de frontmatter `author` tal cual, esperamos una entidad de autoría coherente en el grafo de JSON-LD, porque hoy 29 de 31 artículos publicados tienen literalmente `author: \"tujubilacionanticipada.com\"` en el frontmatter (verificado por grep) y ese string se inyecta sin transformar como `name` de una Organization ad-hoc, sin más datos ni sameAs. No se toca src/content/blog/** (ruta prohibida): el arreglo es solo de plantilla en schema.ts.",
-      "criterio_exito": "El JSON-LD BlogPosting de cualquier artículo referencia el author mediante '@id' apuntando a la misma Organization que ya usan organizationSchema() y publisher, sin volver a serializar el string crudo del frontmatter como nombre de una entidad distinta.",
-      "metrica": "En dist/, el JSON-LD de cualquier página de artículo contiene \"author\":{\"@id\":\".../#organization\"} en vez de un objeto Organization con name igual al dominio.",
+      "estado": "pendiente",
+      "hipotesis": "Si la miga de pan pasa de 'Inicio / Blog / título' a 'Inicio / Blog / <Silo> / título', tanto en el <nav aria-label=\"Migas de pan\"> visible como en el BreadcrumbList que genera breadcrumbSchema() en BlogPost.astro, esperamos reforzar la señal de estructura jerárquica del sitio ante los buscadores, porque el falsable de la estrategia exige que la miga incluya el silo y hoy breadcrumbSchema() solo recibe 3 niveles (Inicio, Blog, título).",
+      "criterio_exito": "En una muestra de /dist/blog/*/index.html, el <nav aria-label=\"Migas de pan\"> muestra 4 enlaces (Inicio, Blog, <Silo>, título actual) y el JSON-LD BreadcrumbList tiene itemListElement.length === 4, con el elemento position 3 apuntando a la URL del silo correspondiente a esa categoría.",
+      "metrica": "Para 5 artículos de categorías distintas, el BreadcrumbList JSON-LD tiene 4 elementos y el item de position 3 coincide con /blog/categoria/<slug-de-esa-categoría>.",
+      "archivos_sugeridos": [
+        "src/layouts/BlogPost.astro"
+      ],
+      "objetivo_estrategico": "Páginas de silo (`/blog/categoria/<slug>`) para las categorías con ≥ 3 artículos publicados",
+      "fecha_ejecucion": null,
+      "resultado": null
+    },
+    {
+      "id": "seo-006",
+      "titulo": "Crear la página de entidad del revisor /equipo/javier-rodriguez",
+      "area": "seo",
+      "prioridad": 7,
+      "estado": "pendiente",
+      "hipotesis": "Si publicamos una página de persona indexable con el rol editorial real del revisor (revisa, no redacta), qué revisa, con qué criterio y qué fuentes usa, más un Person con @id y url estables en JSON-LD, esperamos dar a Google una entidad verificable detrás del contenido YMYL, porque hoy 'Javier Rodríguez' aparece 31 veces en texto plano sin ninguna URL detrás y el Person del schema no tiene @id ni url.",
+      "criterio_exito": "Tras `npm run build` existe /dist/equipo/javier-rodriguez/index.html; contiene un <script type=\"application/ld+json\"> con \"@type\":\"Person\", \"@id\":\"https://tujubilacionanticipada.com/equipo/javier-rodriguez#person\" y \"url\". El texto de la página usa únicamente el nombre 'Javier Rodríguez' y el cargo 'Escalón 26, Seguridad Social — Gestión de pensiones de ex-funcionarios', tal como figuran en scripts/calendario.json (reviewer_name / reviewer_title, solo lectura), sin inventar titulaciones, años de experiencia ni cifras de casos.",
+      "metrica": "grep del @id y \"@type\":\"Person\" en /dist/equipo/javier-rodriguez/index.html; comparación literal del nombre y cargo mostrados contra reviewer_name/reviewer_title de scripts/calendario.json.",
+      "archivos_sugeridos": [
+        "src/pages/equipo/javier-rodriguez.astro",
+        "src/lib/schema.ts"
+      ],
+      "objetivo_estrategico": "Página de entidad del revisor, enlazada desde los 31 artículos",
+      "fecha_ejecucion": null,
+      "resultado": null
+    },
+    {
+      "id": "seo-007",
+      "titulo": "Referenciar el @id del revisor desde el JSON-LD de los 31 artículos",
+      "area": "seo",
+      "prioridad": 8,
+      "estado": "pendiente",
+      "hipotesis": "Si blogPostingSchema() en src/lib/schema.ts sustituye el objeto Person embebido de reviewedBy por una referencia { '@id': '.../equipo/javier-rodriguez#person' } al @id estable creado en seo-006, esperamos que el grafo de conocimiento conecte cada BlogPosting con una única entidad Person en vez de 31 copias sueltas del mismo nombre, cumpliendo el falsable 'su reviewedBy resuelve al @id de esa URL'.",
+      "criterio_exito": "En una muestra de /dist/blog/*/index.html, el JSON-LD del BlogPosting tiene reviewedBy = { \"@id\": \"https://tujubilacionanticipada.com/equipo/javier-rodriguez#person\" } (referencia, no un objeto Person con name/jobTitle duplicados); esto debe cumplirse para los 31 artículos publicados con reviewedBy definido, porque todos reutilizan la misma función.",
+      "metrica": "grep del @id de reviewedBy en 5 páginas /dist/blog/*/index.html; el valor coincide exactamente con el @id publicado en /dist/equipo/javier-rodriguez/index.html.",
       "archivos_sugeridos": [
         "src/lib/schema.ts"
       ],
-      "estado": "pendiente"
+      "objetivo_estrategico": "Página de entidad del revisor, enlazada desde los 31 artículos",
+      "fecha_ejecucion": null,
+      "resultado": null
     },
     {
-      "id": "seo-07",
-      "area": "seo",
-      "prioridad": 7,
-      "titulo": "Reescribir la selección de 'lectura recomendada' en rehypeInlineBlocks por categoría/tags compartidos",
-      "objetivo_estrategico": "Línea 1: 'reescribir la selección de rehypeInlineBlocks... para que elijan por categoría y tags compartidos, no por posición de fichero'. Falsable (c): 'others[0]/others[1] desaparece del plugin'.",
-      "hipotesis": "Si en src/lib/rehype-plugins.mjs cambiamos `recoNode(others[recoPick % others.length])` por una selección que puntúe cada candidato por categoría igual + nº de tags compartidos (pasando category/tags de cada post desde astro.config.mjs al índice POSTS_INDEX) y elija el mejor no usado, esperamos que el enlazado interno automático deje de converger en los mismos 2 artículos, porque hoy 'el plugin inserta las lecturas recomendadas tomando siempre others[0] y others[1] del índice global... sin ninguna relación con el tema del artículo'.",
-      "criterio_exito": "Ningún literal `others[0]`/`others[1]` permanece en rehype-plugins.mjs; para dos artículos de la misma categoría con tags en común, la 'lectura recomendada' elegida es uno de ellos y no un artículo de otra categoría elegido por orden de fichero.",
-      "metrica": "grep -c \"others\\[0\\]\\|others\\[1\\]\" src/lib/rehype-plugins.mjs → 0.",
+      "id": "ux-002",
+      "titulo": "Enlazar la caja 'Revisado por' del artículo a la página del revisor",
+      "area": "ux",
+      "prioridad": 9,
+      "estado": "pendiente",
+      "hipotesis": "Si el nombre del revisor en la caja \"Revisado por\" de cada artículo (hoy texto plano dentro de un <aside> en BlogPost.astro) se convierte en un enlace a /equipo/javier-rodriguez, esperamos que el lector pueda verificar con un clic quién revisa el contenido, mejorando la confianza percibida en un sitio YMYL, porque hoy esa caja no enlaza a ningún sitio.",
+      "criterio_exito": "En una muestra de /dist/blog/*/index.html, dentro del <aside> de \"Revisado por\", el nombre 'Javier Rodríguez' (o su foto) es un <a href=\"/equipo/javier-rodriguez\">; el enlace funciona sin JavaScript y no se añade ninguna credencial o cifra nueva a la caja.",
+      "metrica": "Para los 31 artículos con reviewedBy definido en /dist/blog/*/index.html, grep confirma un <a href=\"/equipo/javier-rodriguez\"> dentro del bloque \"Revisado por\"; 31/31 cumplen.",
       "archivos_sugeridos": [
-        "src/lib/rehype-plugins.mjs",
+        "src/layouts/BlogPost.astro"
+      ],
+      "objetivo_estrategico": "Página de entidad del revisor, enlazada desde los 31 artículos",
+      "fecha_ejecucion": null,
+      "resultado": null
+    },
+    {
+      "id": "seo-008",
+      "titulo": "Mencionar y enlazar al revisor desde /sobre-este-sitio",
+      "area": "seo",
+      "prioridad": 10,
+      "estado": "pendiente",
+      "hipotesis": "Si la sección \"Quién está detrás\" de /sobre-este-sitio deja de decir solo \"elaborado por la redacción\" y pasa a nombrar a Javier Rodríguez como revisor editorial con enlace a /equipo/javier-rodriguez, esperamos reforzar la señal EEAT a nivel de sitio (no solo por artículo), porque hoy /sobre-este-sitio no menciona a un solo ser humano.",
+      "criterio_exito": "/dist/sobre-este-sitio/index.html contiene un <a href=\"/equipo/javier-rodriguez\"> y el texto nombra a 'Javier Rodríguez' con el cargo literal de scripts/calendario.json, sin inventar credenciales adicionales; `npm run build` pasa.",
+      "metrica": "grep del href y del nombre \"Javier Rodríguez\" en /dist/sobre-este-sitio/index.html.",
+      "archivos_sugeridos": [
+        "src/pages/sobre-este-sitio.astro"
+      ],
+      "objetivo_estrategico": "Página de entidad del revisor, enlazada desde los 31 artículos",
+      "fecha_ejecucion": null,
+      "resultado": null
+    },
+    {
+      "id": "seo-009",
+      "titulo": "Añadir el campo category al índice de posts que usa rehypeInlineBlocks",
+      "area": "seo",
+      "prioridad": 11,
+      "estado": "pendiente",
+      "hipotesis": "Si loadPostsIndex() en astro.config.mjs extrae también el frontmatter category de cada artículo (hoy solo extrae slug/title/description/draft), esperamos poder priorizar 'misma categoría primero' en la selección de lecturas recomendadas de rehypeInlineBlocks en una tarea posterior, porque hoy el índice que recibe ese plugin no tiene forma de saber la categoría de ningún artículo.",
+      "criterio_exito": "El array POSTS_INDEX que se pasa a rehypeInlineBlocks(POSTS_INDEX) en astro.config.mjs incluye un campo category por artículo con uno de los 4 valores de BLOG_CATEGORIES; `npm run build` sigue pasando y el HTML generado no cambia (esta tarea es solo preparación de datos, sin tocar la lógica de selección en rehype-plugins.mjs).",
+      "metrica": "Inspección de loadPostsIndex() confirmando el campo category en los 31 objetos del índice; el HTML de /dist antes y después de esta tarea es idéntico en el cuerpo de los artículos (ningún cambio de comportamiento todavía).",
+      "archivos_sugeridos": [
         "astro.config.mjs"
       ],
-      "estado": "pendiente"
+      "objetivo_estrategico": "Redistribuir el enlazado interno automático del cuerpo del artículo",
+      "fecha_ejecucion": null,
+      "resultado": null
     },
     {
-      "id": "seo-08",
+      "id": "seo-010",
+      "titulo": "Crear script de medición de enlaces internos entrantes sobre /dist",
       "area": "seo",
-      "prioridad": 8,
-      "titulo": "Priorizar tags compartidos (no solo recencia) en el fallback de RelatedArticles",
-      "objetivo_estrategico": "Línea 1: 'reescribir la selección de... RelatedArticles.astro para que elijan por categoría y tags compartidos, no por posición de fichero ni por recencia'.",
-      "hipotesis": "Si en src/components/RelatedArticles.astro, cuando `sameCategory` no completa `max`, ordenamos `rest` por número de tags en común con el artículo actual (en vez de dejarlo en el orden de `getPublishedPosts`, que es por fecha) antes de hacer slice, esperamos artículos relacionados temáticamente más relevantes fuera de la propia categoría, porque hoy el fallback es puramente por recencia.",
-      "criterio_exito": "Cuando un artículo de la categoría X no tiene 3 artículos en su misma categoría, los relacionados adicionales que se muestran son los de mayor solape de `tags`, no simplemente los más recientes.",
-      "metrica": "Test manual: para un post con ≤2 artículos en su categoría, el 3er/4º relacionado mostrado coincide en al menos 1 tag con el post actual en el 100% de los casos donde exista un candidato con tag compartido.",
-      "archivos_sugeridos": [
-        "src/components/RelatedArticles.astro"
-      ],
-      "estado": "pendiente"
-    },
-    {
-      "id": "seo-09",
-      "area": "seo",
-      "prioridad": 9,
-      "titulo": "Script de verificación de enlaces internos entrantes por slug y categoría",
-      "objetivo_estrategico": "Línea 1, falsable (b): 'script de verificación que cuente enlaces internos entrantes por slug y que ninguno baje de 3 dentro de su categoría'. Objetivo del ciclo, condición 2.",
-      "hipotesis": "Si creamos scripts/verificar-enlaces-internos.mjs que, tras `npm run build`, recorra dist/blog/**/index.html, extraiga los <a href=\"/blog/...\"> de cada página y cuente cuántos enlaces entrantes recibe cada slug desde artículos de su misma categoría, esperamos poder demostrar objetivamente si se cumple la condición '≥3 enlaces internos entrantes por artículo dentro de su categoría' del objetivo del ciclo, porque hoy esa condición no es verificable sin un script (es la única forma de falsarla sin inspección manual de 31 páginas).",
-      "criterio_exito": "El script imprime, por slug, el nº de enlaces internos entrantes desde artículos de su misma categoría, y devuelve código de salida distinto de 0 si algún slug tiene menos de 3.",
-      "metrica": "`node scripts/verificar-enlaces-internos.mjs` ejecutado tras un build con seo-01..seo-08 aplicados: 0 slugs por debajo de 3 enlaces entrantes de su categoría.",
-      "archivos_sugeridos": [
-        "scripts/verificar-enlaces-internos.mjs"
-      ],
-      "estado": "pendiente"
-    },
-    {
-      "id": "cro-01",
-      "area": "cro",
-      "prioridad": 10,
-      "titulo": "Instrumentar eventos GA4 de inicio y resultado de la simulación",
-      "objetivo_estrategico": "Línea 3, entregable (b): 'eventos GA4 más allá de cta_asesoramiento/generate_lead: inicio de simulación, resultado de simulación...'.",
-      "hipotesis": "Si en src/components/Simulador.jsx disparamos `window.gtag('event', 'simulador_inicio', ...)` la primera vez que el usuario interactúa con un campo del formulario y `window.gtag('event', 'simulador_resultado', ...)` cuando se calcula y muestra el resultado, esperamos poder medir el embudo real del CTA principal de la home, porque hoy el simulador (client:load, único camino de conversión relevante junto a /asesoramiento) no emite ningún evento propio más allá de los genéricos data-ga-event de Base.astro.",
-      "criterio_exito": "Al usar el simulador en el navegador con GA4 en modo debug, se observan los eventos `simulador_inicio` (una vez por sesión de uso) y `simulador_resultado` (al obtener un cálculo).",
-      "metrica": "GA4 DebugView muestra ambos eventos en una sesión de prueba manual tras el despliegue.",
-      "archivos_sugeridos": [
-        "src/components/Simulador.jsx"
-      ],
-      "estado": "pendiente"
-    },
-    {
-      "id": "cro-02",
-      "area": "cro",
-      "prioridad": 11,
-      "titulo": "Condicionar el prompt de notificaciones push a visitante recurrente",
-      "objetivo_estrategico": "Línea 3, entregable (c): 'retirar el prompt de push de la primera visita —condicionarlo a visitante recurrente o eliminarlo—'.",
-      "hipotesis": "Si en src/components/NotificationsPrompt.astro añadimos una comprobación (p. ej. localStorage `tja_visited_before`, marcada en cada carga de página) y solo mostramos el diálogo cuando esa marca ya existía ANTES de la visita actual, esperamos dejar de pedir permiso de notificaciones en la primera sesión, porque hoy el prompt se dispara a los 6 segundos tras registrar el service worker en cualquier primera visita, 'a un usuario de 60 años que acaba de llegar de Google, encima del banner de cookies'.",
-      "criterio_exito": "En una sesión sin localStorage previo (primera visita simulada), el prompt #push-prompt no pasa a display:block en ningún momento; en una segunda visita sí puede mostrarse si Notification.permission sigue en 'default'.",
-      "metrica": "Test manual con localStorage limpio: 0 apariciones del diálogo en la primera carga; con localStorage marcado de una visita previa, el diálogo puede aparecer.",
-      "archivos_sugeridos": [
-        "src/components/NotificationsPrompt.astro"
-      ],
-      "estado": "pendiente"
-    },
-    {
-      "id": "cro-03",
-      "area": "cro",
       "prioridad": 12,
-      "titulo": "Añadir <noscript> funcional en /simulador",
-      "objetivo_estrategico": "Línea 3, entregable (d): '<noscript> funcional en /simulador que, como mínimo, explique el cálculo y enlace al simulador oficial de la Seguridad Social'.",
-      "hipotesis": "Si añadimos un bloque <noscript> en src/pages/simulador.astro junto al componente `<Simulador client:load>` que explique en texto el criterio de cálculo (edad legal, penalización por trimestre) y enlace a un simulador oficial de la Seguridad Social (seg-social.es), esperamos que el sitio deje de mostrar un hueco vacío sin JavaScript en su página de producto, porque hoy 'el simulador... es una isla React client:load sin <noscript>: hoy el sitio no cumple su propia restricción de funcionar sin JavaScript'.",
-      "criterio_exito": "Con JavaScript desactivado en el navegador, /simulador muestra contenido explicativo útil (no un contenedor vacío) y un enlace dofollow-elegible a un dominio oficial de la Seguridad Social.",
-      "metrica": "Captura/inspección manual de /simulador con JS desactivado: el <noscript> es visible y contiene al menos 1 enlace a seg-social.es.",
+      "estado": "pendiente",
+      "hipotesis": "Si construimos scripts/contar-enlaces-internos.mjs, que tras `npm run build` cuenta cuántas veces aparece cada URL /blog/<slug> como href entrante desde el cuerpo (bloques 'Lectura recomendada' y RelatedArticles) de otros artículos en /dist, esperamos poder verificar de forma objetiva y repetible el diagnóstico 'dos artículos concentran ~30 entrantes y 23 tienen 0', y más adelante medir el resultado de seo-011, porque hoy no existe en el repo ninguna herramienta que mida esto.",
+      "criterio_exito": "Existe scripts/contar-enlaces-internos.mjs; ejecutado con `node scripts/contar-enlaces-internos.mjs` tras un `npm run build`, imprime una tabla con las 31 URLs de artículo y su nº de enlaces internos entrantes desde el cuerpo de otros artículos; ejecutado hoy (antes de tocar rehype-plugins.mjs) confirma el diagnóstico: al menos 2 URLs con ≥25 entrantes y al menos 20 URLs con 0 entrantes.",
+      "metrica": "Salida del script: recuento por URL, mínimo, máximo y mediana de entrantes. Este resultado es la línea base 'antes' que el orquestador traslada a DECISIONES.md.",
       "archivos_sugeridos": [
-        "src/pages/simulador.astro"
+        "scripts/contar-enlaces-internos.mjs"
       ],
-      "estado": "pendiente"
+      "objetivo_estrategico": "Redistribuir el enlazado interno automático del cuerpo del artículo",
+      "fecha_ejecucion": null,
+      "resultado": null
     },
     {
-      "id": "cro-04",
-      "area": "cro",
-      "prioridad": 13,
-      "titulo": "Crear scripts/METRICAS.md con la vía repetible de baseline (Search Console/GA4)",
-      "objetivo_estrategico": "Línea 3, entregable (a): 'un scripts/METRICAS.md con baseline de Search Console por URL... y la vía por la que se obtiene de forma repetible'. Condición de proceso: 'la próxima replanificación no puede volver a ser a ciegas'.",
-      "hipotesis": "Si creamos scripts/METRICAS.md con (1) la plantilla de tabla por URL (impresiones, clics, posición media, CTR), (2) el procedimiento paso a paso para obtenerla de Search Console/GA4 de forma repetible en cada ciclo, y (3) los campos numéricos vacíos con una nota explícita de que requieren que el propietario aporte acceso real a Search Console (el proxy de salida devuelve 403 sobre el dominio y no hay integración de Search Console en este entorno), esperamos que el próximo ciclo de replanificación no vuelva a ser 'a ciegas' salvo que el acceso siga sin resolverse, porque no inventar las cifras es una restricción permanente del ciclo ('Prohibido inventar datos').",
-      "criterio_exito": "Existe scripts/METRICAS.md con la plantilla y el procedimiento; no contiene ninguna cifra de tráfico inventada; documenta explícitamente qué acceso falta (Search Console) para rellenarlo con datos reales.",
-      "metrica": "Presencia del archivo y ausencia de números de impresiones/clics/CTR sin marcar como pendientes de dato real.",
-      "archivos_sugeridos": [
-        "scripts/METRICAS.md"
-      ],
-      "estado": "pendiente"
-    },
-    {
-      "id": "cro-05",
-      "area": "cro",
-      "prioridad": 14,
-      "titulo": "Instrumentar scroll al 75% del artículo y clic a hub de categoría",
-      "objetivo_estrategico": "Línea 3, entregable (b): 'scroll al 75% del artículo, clic a hub de categoría'.",
-      "hipotesis": "Si añadimos en src/layouts/BlogPost.astro un listener de scroll (IntersectionObserver o cálculo de scrollY/documentHeight) que dispare `window.gtag('event', 'scroll_articulo_75', ...)` una vez por página, y añadimos el atributo `data-ga-event=\"clic_hub_categoria\"` a los enlaces de categoría creados en Header.astro/Footer.astro en seo-05 (que ya se delegan automáticamente vía el listener genérico de Base.astro), esperamos poder medir profundidad de lectura y tráfico hacia los hubs nuevos, porque hoy ninguno de esos dos eventos existe en el código.",
-      "criterio_exito": "El evento `scroll_articulo_75` se dispara una vez al llegar al 75% de un artículo en pruebas manuales; los enlaces a /blog/categoria/ llevan data-ga-event=\"clic_hub_categoria\" y generan el evento al hacer clic.",
-      "metrica": "GA4 DebugView muestra `scroll_articulo_75` en una sesión de prueba sobre un artículo, y `clic_hub_categoria` al pulsar un enlace de categoría del Header/Footer.",
-      "archivos_sugeridos": [
-        "src/layouts/BlogPost.astro",
-        "src/components/Header.astro",
-        "src/components/Footer.astro"
-      ],
-      "estado": "pendiente"
-    },
-    {
-      "id": "seo-10",
+      "id": "seo-011",
+      "titulo": "Redistribuir la selección de 'lectura recomendada' en rehypeInlineBlocks",
       "area": "seo",
-      "prioridad": 15,
-      "titulo": "[BLOQUEADA] Sustituir los marcadores [TITULAR]/[NIF/CIF]/[DOMICILIO] en src/consts.ts",
-      "objetivo_estrategico": "Línea 2, entregable (a): 'eliminar los marcadores [TITULAR], [NIF/CIF], [DOMICILIO] de src/consts.ts'. Objetivo del ciclo, condición 3: 'grep -c \"[TITULAR|NIF|DOMICILIO]\" src/consts.ts devuelve 0'.",
-      "hipotesis": "Si el propietario aporta el nombre/razón social, NIF/CIF y domicilio a efectos de notificaciones reales, y se sustituyen en el objeto LEGAL de src/consts.ts, esperamos que el sitio deje de mostrar marcadores de posición en sus páginas legales (aviso-legal.astro los consume vía LEGAL.titular/nif/domicilio... actualmente aviso-legal.astro no imprime nif/domicilio en el HTML visible, solo LEGAL.email y LEGAL.actualizado, pero el propio objeto los expone y el diagnóstico del CEO los señala como huecos), porque un sitio YMYL sin responsable identificable es 'indefendible ante un quality rater y frágil ante la AEPD'.",
-      "criterio_exito": "grep -c \"\\[TITULAR\\|\\[NIF\\|\\[DOMICILIO\" src/consts.ts devuelve 0, con datos reales y no ficticios.",
-      "metrica": "Mismo grep, ejecutado tras la actualización, una vez el propietario aporte el dato.",
+      "prioridad": 13,
+      "estado": "pendiente",
+      "hipotesis": "Si rehypeInlineBlocks (src/lib/rehype-plugins.mjs) deja de arrancar siempre en recoPick=0 y en su lugar elige un punto de partida determinista por artículo (p.ej. un hash del slug de origen módulo others.length), priorizando primero los artículos de la misma categoría (usando el campo category añadido en seo-009) y sube a 3 bloques de recomendación en artículos con ≥5 H2, esperamos que el enlazado interno automático se reparta por todo el índice en vez de concentrarse en los 2 primeros artículos alfabéticos, porque hoy 'prácticamente todos los artículos enlazan a los dos mismos posts' al usar siempre el mismo índice de partida sobre un array ordenado alfabéticamente por readdirSync.",
+      "criterio_exito": "Depende de seo-009 y seo-010. Tras `npm run build`, ejecutando scripts/contar-enlaces-internos.mjs: ninguna de las 31 URLs de artículo tiene menos de 3 enlaces internos entrantes desde el cuerpo, y ninguna tiene más de 3× la mediana de entrantes; `npm run build` (incluye astro check) pasa; rehypeExternalLinks y su lista DOFOLLOW_HOSTS quedan sin modificar.",
+      "metrica": "Comparación de la salida de scripts/contar-enlaces-internos.mjs antes (seo-010, mínimo 0, máximo ~30) vs después de esta tarea (mínimo ≥3, máximo ≤3×mediana).",
       "archivos_sugeridos": [
-        "src/consts.ts"
+        "src/lib/rehype-plugins.mjs"
       ],
-      "estado": "bloqueada",
-      "bloqueo": "Los datos de titular, NIF/CIF y domicilio a efectos de notificaciones son una decisión legal del propietario del sitio (persona física, razón social o constitución de una S.L., como ya apunta el propio comentario de src/consts.ts). Ningún agente puede inventarlos ni asumir un valor plausible: sería un dato legal falso en un sitio YMYL. Esta tarea queda bloqueada y escalada al propietario (cjrchamizo@gmail.com) hasta que aporte esos tres datos; no debe ejecutarse con datos ficticios bajo ninguna circunstancia.",
-      "estado_ejecucion": "no_ejecutable_sin_dato_del_propietario"
+      "objetivo_estrategico": "Redistribuir el enlazado interno automático del cuerpo del artículo",
+      "fecha_ejecucion": null,
+      "resultado": null
     }
   ]
 }
