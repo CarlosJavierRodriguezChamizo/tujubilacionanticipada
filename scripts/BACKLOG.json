@@ -20,7 +20,7 @@
       "titulo": "Crear helper de slugs de categoría (silos) como fuente única de verdad",
       "area": "seo",
       "prioridad": 1,
-      "estado": "pendiente",
+      "estado": "hecha",
       "hipotesis": "Si centralizamos el mapping nombre-de-categoría → slug de URL en un único módulo (src/lib/categories.ts), esperamos que las páginas de silo, el breadcrumb y los enlaces desde home/blog usen siempre el mismo slug, porque hoy no existe ninguna fuente única de verdad para la URL de cada categoría y cada implementación tendría que inventar su propio slugify.",
       "criterio_exito": "El archivo src/lib/categories.ts existe y exporta una función (p.ej. getCategorySlug(category)) que devuelve un slug estable en kebab-case sin tildes para las 4 categorías de BLOG_CATEGORIES (src/content/config.ts), y `npm run build` (incluye astro check) sigue pasando sin que ninguna página use aún el helper.",
       "metrica": "Comprobación directa de la función: getCategorySlug('Tipos de jubilación anticipada') === 'tipos-de-jubilacion-anticipada', getCategorySlug('Cálculos y penalizaciones') === 'calculos-y-penalizaciones', getCategorySlug('Planificación financiera') === 'planificacion-financiera'; y `npm run build` termina con código 0.",
@@ -28,15 +28,15 @@
         "src/lib/categories.ts"
       ],
       "objetivo_estrategico": "Páginas de silo (`/blog/categoria/<slug>`) para las categorías con ≥ 3 artículos publicados",
-      "fecha_ejecucion": null,
-      "resultado": null
+      "fecha_ejecucion": "2026-07-29",
+      "resultado": "Creado src/lib/categories.ts con getCategorySlug()/getCategoryFromSlug(). Los 3 slugs exigidos verificados exactos. Build OK. No consumido aún desde ninguna página (fuera de alcance de esta tarea)."
     },
     {
       "id": "seo-002",
       "titulo": "Crear las páginas de silo /blog/categoria/<slug> para categorías con ≥3 artículos",
       "area": "seo",
       "prioridad": 2,
-      "estado": "pendiente",
+      "estado": "hecha",
       "hipotesis": "Si publicamos una página estática por cada categoría con ≥3 artículos publicados (hoy Tipos, Cálculos, Planificación), con listado completo sin paginar y JSON-LD CollectionPage+BreadcrumbList, esperamos que Google pueda rastrear una estructura temática que hoy solo existe en el frontmatter, porque el diagnóstico constata que el único listado es /blog paginado de 6 en 6 y no hay ninguna página de categoría.",
       "criterio_exito": "Tras `npm run build` existen exactamente /dist/blog/categoria/tipos-de-jubilacion-anticipada/index.html, /dist/blog/categoria/calculos-y-penalizaciones/index.html y /dist/blog/categoria/planificacion-financiera/index.html; NO existe /dist/blog/categoria/actualidad-y-casos-practicos/ (0 artículos publicados en esa categoría); cada página lista todos sus artículos sin paginación y contiene un <script type=\"application/ld+json\"> con \"@type\":\"CollectionPage\" y otro con \"@type\":\"BreadcrumbList\".",
       "metrica": "Nº de archivos generados en /dist/blog/categoria/**/index.html debe ser exactamente 3; grep de \"@type\":\"CollectionPage\" y \"@type\":\"BreadcrumbList\" en cada uno; nº de <a href=\"/blog/...\"> en cada hub == nº de artículos publicados de esa categoría (10, 15 y 6 respectivamente a fecha de hoy).",
@@ -44,8 +44,8 @@
         "src/pages/blog/categoria/[categoria].astro"
       ],
       "objetivo_estrategico": "Páginas de silo (`/blog/categoria/<slug>`) para las categorías con ≥ 3 artículos publicados",
-      "fecha_ejecucion": null,
-      "resultado": null
+      "fecha_ejecucion": "2026-07-29",
+      "resultado": "Creado src/pages/blog/categoria/[categoria].astro. Exactamente 3 páginas generadas (Tipos, Cálculos, Planificación), 'actualidad-y-casos-practicos' correctamente ausente. CollectionPage+BreadcrumbList verificados en las 3, listado completo sin paginar, URLs en sitemap. Build OK."
     },
     {
       "id": "seo-003",
