@@ -3,6 +3,8 @@ import Base from '../../layouts/Base.astro';
 import BlogListing from '../../components/BlogListing.astro';
 // Guía oculta temporalmente: import CTAGuia from '../../components/CTAGuia.astro';
 import { getPublishedPosts } from '../../lib/posts';
+import { getCategorySlug } from '../../lib/categories';
+import { BLOG_CATEGORIES } from '../../content/config';
 import { POSTS_PER_PAGE } from '../../consts';
 import {
   blogCollectionSchema,
@@ -13,6 +15,18 @@ import {
 const allPosts = await getPublishedPosts();
 const posts = allPosts.slice(0, POSTS_PER_PAGE);
 const lastPage = Math.max(1, Math.ceil(allPosts.length / POSTS_PER_PAGE));
+
+// Umbral mínimo de artículos publicados para que una categoría tenga su
+// propia página de silo (debe coincidir con MIN_POSTS_PER_SILO en
+// src/pages/blog/categoria/[categoria].astro) para no enlazar hubs vacíos.
+const MIN_POSTS_PER_SILO = 3;
+const silos = BLOG_CATEGORIES.filter((category) => {
+  const count = allPosts.filter((post) => post.data.category === category).length;
+  return count >= MIN_POSTS_PER_SILO;
+}).map((category) => ({
+  category,
+  slug: getCategorySlug(category),
+}));
 
 const descripcion =
   'Artículos sobre jubilación anticipada en España: requisitos, penalizaciones, cálculo de la pensión y guías prácticas para planificar tu retiro.';
@@ -50,6 +64,26 @@ const schema = [
         sobre cuándo jubilarte.
       </p>
     </header>
+
+    {
+      silos.length > 0 && (
+        <nav aria-label="Categorías del blog" class="mt-8">
+          <p class="eyebrow">Explora por categoría</p>
+          <ul class="mt-3 flex flex-wrap gap-3">
+            {silos.map(({ category, slug }) => (
+              <li>
+                <a
+                  href={`/blog/categoria/${slug}`}
+                  class="inline-block rounded-full border border-paper-300 px-4 py-2 text-sm font-medium text-ink-soft transition-colors hover:border-clay-700 hover:text-clay-700"
+                >
+                  {category}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </nav>
+      )
+    }
 
     <div class="mt-10">
       {

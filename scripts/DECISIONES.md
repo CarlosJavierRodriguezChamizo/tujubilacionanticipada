@@ -39,4 +39,24 @@ Formato:
 - Commit: (pendiente de este mismo commit)
 - Veredicto del CEO: pendiente
 
+## 2026-07-30 — seo-003 Enlazar los 3 hubs de silo desde el listado /blog (seo)
+- Archivos: src/pages/blog/index.astro
+- Qué: Bloque <nav aria-label="Categorías del blog"> con un enlace a cada silo publicado, insertado entre el H1 y el listado paginado de artículos. Reutiliza el umbral MIN_POSTS_PER_SILO=3 (mismo criterio que blog/categoria/[categoria].astro) y getCategorySlug() de src/lib/categories.ts.
+- Por qué: /blog solo ofrecía paginación por fecha (6 en 6), sin acceso directo por categoría, aumentando la profundidad de clic hasta artículos de páginas posteriores.
+- Hipótesis: Un bloque de enlaces a los 3 hubs de silo desde /blog reduce la profundidad de clics hasta cualquier artículo.
+- Criterio de éxito: Las 3 rutas /blog/categoria/... presentes en dist/blog/index.html fuera del listado de artículos; `npm run build` pasa. Cumplido.
+- Métrica y plazo: Evolución de indexación/impresiones de artículos de páginas 2+ de paginación y de las 3 URLs de silo en GSC a 21 días.
+- Commit: (pendiente de este mismo commit)
+- Veredicto del CEO: pendiente
+
+## 2026-07-30 — seo-004 Enlazar los 3 hubs de silo desde la home (seo)
+- Archivos: src/pages/index.astro
+- Qué: Sección "Blog por temas" en la home con un enlace a cada silo publicado, mismo patrón y umbral (MIN_POSTS_PER_SILO=3) que seo-003, justo antes de "Últimos artículos".
+- Por qué: La home solo enlazaba a /blog y a los 3 últimos artículos; un artículo antiguo podía quedar a varias páginas de paginación de distancia.
+- Hipótesis: Enlazando los 3 silos desde la home, cualquier artículo publicado queda a ≤2 clics de '/' (home → silo → artículo).
+- Criterio de éxito: Las 3 rutas /blog/categoria/... presentes en dist/index.html; comprobado manualmente que el artículo más antiguo (que-es-la-jubilacion-anticipada) es alcanzable en 2 clics desde home. Cumplido.
+- Métrica y plazo: Impresiones/clics en GSC para las URLs de silo y para artículos previamente "huérfanos" de paginación, a 21 días.
+- Commit: (pendiente de este mismo commit)
+- Veredicto del CEO: pendiente
+
 ---
