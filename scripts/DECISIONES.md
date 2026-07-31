@@ -39,4 +39,24 @@ Formato:
 - Commit: (pendiente de este mismo commit)
 - Veredicto del CEO: pendiente
 
+## 2026-07-31 — seo-003 Enlazar los 3 hubs de silo desde el listado /blog (seo)
+- Archivos: src/pages/blog/index.astro
+- Qué: Bloque <nav aria-label="Categorías del blog"> con enlaces a los 3 silos publicados, fuera del listado de artículos. Enlaces generados dinámicamente vía getCategorySlug() (seo-001) y el mismo umbral MIN_POSTS_PER_SILO=3 usado en las páginas de silo (seo-002), sin slugs hardcodeados.
+- Por qué: /blog solo ofrecía paginación por fecha (6 en 6) sin acceso por categoría; esto da acceso directo a los 3 hubs desde la página raíz del blog.
+- Hipótesis: Reduce la profundidad de clics hasta cualquier artículo.
+- Criterio de éxito: /dist/blog/index.html contiene los 3 <a href="/blog/categoria/..."> fuera del listado; build pasa. Cumplido y verificado (build OK, grep OK).
+- Métrica y plazo: Profundidad de rastreo/clics a artículos de cada silo en GSC a 21 días.
+- Commit: (pendiente de este mismo commit)
+- Veredicto del CEO: pendiente
+
+## 2026-07-31 — seo-004 Enlazar los 3 hubs de silo desde la home (seo)
+- Archivos: src/pages/index.astro
+- Qué: Sección "Explora por categoría" antes de "Últimos artículos", con enlaces dinámicos a los 3 silos reutilizando la misma fuente de verdad que seo-003 (getCategorySlug + MIN_POSTS_PER_SILO=3).
+- Por qué: La home solo enlazaba a /blog y a los 3 últimos artículos; un artículo antiguo podía quedar a varios clics de distancia.
+- Hipótesis: Las 31 URLs de artículo quedan a ≤2 clics de '/' (home → silo → artículo).
+- Criterio de éxito: /dist/index.html contiene los 3 <a href="/blog/categoria/...">. Cumplido y verificado (build OK, grep OK, enlace home→silo→artículo más antiguo confirmado en ≤2 clics).
+- Métrica y plazo: Cobertura/indexación de artículos antiguos y crawl frequency del artículo más antiguo en GSC a 21 días.
+- Commit: (pendiente de este mismo commit)
+- Veredicto del CEO: pendiente
+
 ---

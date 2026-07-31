@@ -4,9 +4,25 @@ import ArticleCard from '../components/ArticleCard.astro';
 // Guía oculta temporalmente: import CTAGuia from '../components/CTAGuia.astro';
 import { SITE } from '../consts';
 import { getPublishedPosts } from '../lib/posts';
+import { getCategorySlug } from '../lib/categories';
+import { BLOG_CATEGORIES } from '../content/config';
 import { webPageSchema } from '../lib/schema';
 
-const posts = (await getPublishedPosts()).slice(0, 3);
+const allPosts = await getPublishedPosts();
+const posts = allPosts.slice(0, 3);
+
+// Mismo umbral que en src/pages/blog/index.astro y
+// src/pages/blog/categoria/[categoria].astro: solo se enlazan desde la home
+// los silos que realmente tienen página generada (evita enlaces rotos a
+// categorías con demasiado pocos artículos publicados). Enlazar los 3 silos
+// directamente desde la home acerca cualquier artículo publicado a ≤2 clics
+// de '/' (home → silo → artículo).
+const MIN_POSTS_PER_SILO = 3;
+const silos = BLOG_CATEGORIES.map((category) => ({
+  category,
+  slug: getCategorySlug(category),
+  count: allPosts.filter((post) => post.data.category === category).length,
+})).filter((silo) => silo.count >= MIN_POSTS_PER_SILO);
 
 const homeSchema = webPageSchema({
   path: '/',
@@ -108,6 +124,33 @@ const pasos = [
       </a>
     </div>
   </section>
+
+  <!-- Categorías del blog (silos) -->
+  {
+    silos.length > 0 && (
+      <section class="container-prose py-16 sm:py-20">
+        <p class="eyebrow">Blog</p>
+        <h2 class="mt-3 text-3xl font-semibold sm:text-4xl">Explora por categoría</h2>
+        <p class="mt-3 max-w-2xl text-lg text-ink-soft">
+          Guías organizadas por tema para que encuentres lo que necesitas más rápido.
+        </p>
+        <nav aria-label="Categorías del blog" class="mt-8">
+          <ul class="flex flex-wrap gap-3">
+            {silos.map((silo) => (
+              <li>
+                <a
+                  href={`/blog/categoria/${silo.slug}`}
+                  class="inline-block rounded-full border border-clay-200 px-4 py-2 text-sm font-medium text-ink hover:border-clay-700 hover:text-clay-700"
+                >
+                  {silo.category}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </nav>
+      </section>
+    )
+  }
 
   <!-- Últimos artículos -->
   {
