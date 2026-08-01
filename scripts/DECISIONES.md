@@ -39,4 +39,24 @@ Formato:
 - Commit: (pendiente de este mismo commit)
 - Veredicto del CEO: pendiente
 
+## 2026-08-01 — seo-003 Enlazar los 3 hubs de silo desde el listado /blog (seo)
+- Archivos: src/pages/blog/index.astro
+- Qué: Bloque <nav aria-label="Categorías del blog"> con enlace a cada silo publicado (getCategorySlug + umbral ≥3 artículos), insertado fuera del listado paginado de artículos.
+- Por qué: /blog solo ofrecía paginación cronológica de 6 en 6, sin acceso por categoría, aumentando la profundidad de clics hasta artículos de silos avanzados en la paginación.
+- Hipótesis: Enlazar los 3 hubs de silo desde /blog reduce la profundidad de clics hasta cualquier artículo.
+- Criterio de éxito: /dist/blog/index.html contiene los 3 <a href="/blog/categoria/..."> fuera del listado; `npm run build` pasa. Cumplido y verificado por grep.
+- Métrica y plazo: GSC — profundidad de clics/impresiones de artículos de estos 3 silos vs periodo previo, a 21-28 días.
+- Commit: (pendiente de este mismo commit)
+- Veredicto del CEO: pendiente
+
+## 2026-08-01 — seo-004 Enlazar los 3 hubs de silo desde la home (seo)
+- Archivos: src/pages/index.astro
+- Qué: Sección "Explora por categoría" (h2) entre "Cómo funciona" y el banner del simulador, con <nav aria-label="Categorías del blog"> enlazando los 3 silos publicados (mismo helper y umbral que seo-003).
+- Por qué: La home solo enlazaba a /blog y a los 3 últimos artículos; un artículo antiguo podía quedar a varias páginas de paginación de distancia.
+- Hipótesis: Enlazar los 3 silos desde la home deja las 31 URLs de artículo a ≤2 clics de '/'.
+- Criterio de éxito: /dist/index.html contiene los 3 <a href="/blog/categoria/...">; combinado con seo-002/seo-003, cualquier artículo alcanzable en ≤2 clics. Cumplido y verificado (grep + comprobación manual del artículo más antiguo).
+- Métrica y plazo: GSC — cobertura de indexación/impresiones de artículos más antiguos (≤2026-06-25) vs periodo previo, a 21 días.
+- Commit: (pendiente de este mismo commit)
+- Veredicto del CEO: pendiente
+
 ---

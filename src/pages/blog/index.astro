@@ -3,6 +3,8 @@ import Base from '../../layouts/Base.astro';
 import BlogListing from '../../components/BlogListing.astro';
 // Guía oculta temporalmente: import CTAGuia from '../../components/CTAGuia.astro';
 import { getPublishedPosts } from '../../lib/posts';
+import { getCategorySlug } from '../../lib/categories';
+import { BLOG_CATEGORIES } from '../../content/config';
 import { POSTS_PER_PAGE } from '../../consts';
 import {
   blogCollectionSchema,
@@ -13,6 +15,18 @@ import {
 const allPosts = await getPublishedPosts();
 const posts = allPosts.slice(0, POSTS_PER_PAGE);
 const lastPage = Math.max(1, Math.ceil(allPosts.length / POSTS_PER_PAGE));
+
+// Mismo umbral que src/pages/blog/categoria/[categoria].astro: una categoría
+// solo tiene página de silo (y por tanto solo se enlaza aquí) si acumula al
+// menos 3 artículos publicados, para no enlazar silos vacíos o casi vacíos.
+const MIN_POSTS_PER_SILO = 3;
+const silos = BLOG_CATEGORIES.filter((category) => {
+  const count = allPosts.filter((post) => post.data.category === category).length;
+  return count >= MIN_POSTS_PER_SILO;
+}).map((category) => ({
+  name: category,
+  href: `/blog/categoria/${getCategorySlug(category)}`,
+}));
 
 const descripcion =
   'Artículos sobre jubilación anticipada en España: requisitos, penalizaciones, cálculo de la pensión y guías prácticas para planificar tu retiro.';
@@ -50,6 +64,25 @@ const schema = [
         sobre cuándo jubilarte.
       </p>
     </header>
+
+    {
+      silos.length > 0 && (
+        <nav aria-label="Categorías del blog" class="mt-8">
+          <ul class="flex flex-wrap gap-3">
+            {silos.map((silo) => (
+              <li>
+                <a
+                  href={silo.href}
+                  class="btn-secondary no-underline"
+                >
+                  {silo.name}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </nav>
+      )
+    }
 
     <div class="mt-10">
       {

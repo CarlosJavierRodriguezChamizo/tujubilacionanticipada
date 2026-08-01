@@ -4,9 +4,25 @@ import ArticleCard from '../components/ArticleCard.astro';
 // Guía oculta temporalmente: import CTAGuia from '../components/CTAGuia.astro';
 import { SITE } from '../consts';
 import { getPublishedPosts } from '../lib/posts';
+import { getCategorySlug } from '../lib/categories';
+import { BLOG_CATEGORIES } from '../content/config';
 import { webPageSchema } from '../lib/schema';
 
-const posts = (await getPublishedPosts()).slice(0, 3);
+const allPosts = await getPublishedPosts();
+const posts = allPosts.slice(0, 3);
+
+// Mismo umbral que src/pages/blog/index.astro y
+// src/pages/blog/categoria/[categoria].astro: una categoría solo tiene
+// página de silo (y por tanto solo se enlaza aquí) si acumula al menos 3
+// artículos publicados, para no enlazar silos vacíos o casi vacíos.
+const MIN_POSTS_PER_SILO = 3;
+const silos = BLOG_CATEGORIES.filter((category) => {
+  const count = allPosts.filter((post) => post.data.category === category).length;
+  return count >= MIN_POSTS_PER_SILO;
+}).map((category) => ({
+  name: category,
+  href: `/blog/categoria/${getCategorySlug(category)}`,
+}));
 
 const homeSchema = webPageSchema({
   path: '/',
@@ -90,6 +106,30 @@ const pasos = [
       }
     </div>
   </section>
+
+  <!-- Categorías del blog -->
+  {
+    silos.length > 0 && (
+      <section class="container-prose py-16 sm:py-20">
+        <p class="eyebrow">Blog</p>
+        <h2 class="mt-3 text-3xl font-semibold sm:text-4xl">Explora por categoría</h2>
+        <p class="mt-3 max-w-2xl text-lg text-ink-soft">
+          Guías organizadas por tema para encontrar rápido lo que necesitas.
+        </p>
+        <nav aria-label="Categorías del blog" class="mt-8">
+          <ul class="flex flex-wrap gap-3">
+            {silos.map((silo) => (
+              <li>
+                <a href={silo.href} class="btn-secondary no-underline">
+                  {silo.name}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </nav>
+      </section>
+    )
+  }
 
   <!-- Banner simulador -->
   <section class="container-prose">
