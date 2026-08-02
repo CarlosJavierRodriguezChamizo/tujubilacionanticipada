@@ -39,4 +39,24 @@ Formato:
 - Commit: (pendiente de este mismo commit)
 - Veredicto del CEO: pendiente
 
+## 2026-08-02 — seo-003 Enlazar los 3 hubs de silo desde el listado /blog (seo)
+- Archivos: src/pages/blog/index.astro
+- Qué: Bloque <nav aria-label="Categorías del blog"> tras el header de /blog, con un enlace por silo publicado (cálculo dinámico con getCategorySlug() y umbral de 3 posts, reutilizando el mismo criterio que categoria/[categoria].astro).
+- Por qué: /blog solo ofrecía paginación por fecha (6 en 6); sin acceso directo por categoría, algunos artículos quedaban a varios clics de distancia.
+- Hipótesis: Añadir un enlace a cada silo desde /blog reduce la profundidad de clics hasta cualquier artículo de ese silo.
+- Criterio de éxito: dist/blog/index.html contiene los 3 <a href="/blog/categoria/..."> esperados y ninguno más; `npm run build` pasa. Cumplido y verificado.
+- Métrica y plazo: Profundidad media de clics a artículo y evolución de impresiones/clics en páginas de categoría en GSC a 21 días.
+- Commit: (pendiente de este mismo commit)
+- Veredicto del CEO: pendiente
+
+## 2026-08-02 — seo-004 Enlazar los 3 hubs de silo desde la home (seo)
+- Archivos: src/pages/index.astro
+- Qué: Sección "Encuentra tu tema" en la home con un <nav aria-label="Categorías del blog"> enlazando a los 3 silos publicados, mismo patrón dinámico que seo-003.
+- Por qué: La home solo enlazaba a /blog y a los 3 últimos artículos; combinado con seo-002/seo-003 esto deja cualquiera de los 31 artículos publicados a ≤2 clics de '/'.
+- Hipótesis: Enlazar los 3 silos desde la home reduce a ≤2 clics el alcance de cualquier artículo publicado desde '/'.
+- Criterio de éxito: dist/index.html contiene los 3 <a href="/blog/categoria/...">; se mantiene un único <h1>; `npm run build` pasa. Cumplido y verificado.
+- Métrica y plazo: Impresiones/clics del artículo más antiguo y de las páginas de silo en GSC a 21 días.
+- Commit: (pendiente de este mismo commit)
+- Veredicto del CEO: pendiente
+
 ---
