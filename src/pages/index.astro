@@ -4,9 +4,22 @@ import ArticleCard from '../components/ArticleCard.astro';
 // Guía oculta temporalmente: import CTAGuia from '../components/CTAGuia.astro';
 import { SITE } from '../consts';
 import { getPublishedPosts } from '../lib/posts';
+import { getCategorySlug } from '../lib/categories';
+import { BLOG_CATEGORIES } from '../content/config';
 import { webPageSchema } from '../lib/schema';
 
-const posts = (await getPublishedPosts()).slice(0, 3);
+const allPosts = await getPublishedPosts();
+const posts = allPosts.slice(0, 3);
+
+// Mismo umbral que src/pages/blog/categoria/[categoria].astro y
+// src/pages/blog/index.astro: solo se enlazan desde la home los silos que
+// tienen página de categoría generada (evita enlaces rotos a silos sin
+// suficiente contenido).
+const MIN_POSTS_PER_SILO = 3;
+const publishedSilos = BLOG_CATEGORIES.filter((category) => {
+  const count = allPosts.filter((post) => post.data.category === category).length;
+  return count >= MIN_POSTS_PER_SILO;
+});
 
 const homeSchema = webPageSchema({
   path: '/',
@@ -108,6 +121,31 @@ const pasos = [
       </a>
     </div>
   </section>
+
+  <!-- Explora por categoría (hubs de silo del blog) -->
+  {
+    publishedSilos.length > 0 && (
+      <section class="container-prose py-16 sm:py-20">
+        <p class="eyebrow">Blog</p>
+        <h2 class="mt-3 text-3xl font-semibold sm:text-4xl">Explora por categoría</h2>
+        <p class="mt-3 max-w-2xl text-lg text-ink-soft">
+          Guías organizadas por tema para encontrar justo lo que necesitas.
+        </p>
+        <ul class="mt-6 flex flex-wrap gap-3">
+          {publishedSilos.map((category) => (
+            <li>
+              <a
+                href={`/blog/categoria/${getCategorySlug(category)}`}
+                class="inline-block rounded-full border border-clay-200 px-4 py-2 text-sm font-medium text-clay-800 hover:border-clay-400 hover:text-clay-950"
+              >
+                {category}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </section>
+    )
+  }
 
   <!-- Últimos artículos -->
   {

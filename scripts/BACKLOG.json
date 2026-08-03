@@ -52,7 +52,7 @@
       "titulo": "Enlazar los 3 hubs de silo desde el listado /blog",
       "area": "seo",
       "prioridad": 3,
-      "estado": "pendiente",
+      "estado": "hecha",
       "hipotesis": "Si añadimos en /blog un bloque con un enlace a cada silo publicado, esperamos reducir la profundidad de clics hasta cualquier artículo, porque hoy /blog solo ofrece paginación por fecha (6 en 6) y ningún acceso por categoría.",
       "criterio_exito": "/dist/blog/index.html contiene los 3 <a href=\"/blog/categoria/...\"> (uno por silo publicado) fuera del listado de artículos; `npm run build` pasa.",
       "metrica": "grep de las 3 rutas /blog/categoria/tipos-de-jubilacion-anticipada, /blog/categoria/calculos-y-penalizaciones y /blog/categoria/planificacion-financiera en /dist/blog/index.html.",
@@ -60,15 +60,15 @@
         "src/pages/blog/index.astro"
       ],
       "objetivo_estrategico": "Páginas de silo (`/blog/categoria/<slug>`) para las categorías con ≥ 3 artículos publicados",
-      "fecha_ejecucion": null,
-      "resultado": null
+      "fecha_ejecucion": "2026-08-03",
+      "resultado": "Añadido bloque 'Explora por categoría' fuera del listado en src/pages/blog/index.astro, con enlace a cada silo de ≥3 posts publicados vía getCategorySlug(). Build OK. Grep confirma las 3 rutas en /dist/blog/index.html."
     },
     {
       "id": "seo-004",
       "titulo": "Enlazar los 3 hubs de silo desde la home",
       "area": "seo",
       "prioridad": 4,
-      "estado": "pendiente",
+      "estado": "hecha",
       "hipotesis": "Si la home enlaza directamente a los 3 silos, esperamos que las 31 URLs de artículo publicadas queden a ≤2 clics de '/', porque hoy la home solo enlaza a /blog y a los 3 últimos artículos, y un artículo antiguo puede quedar a varias páginas de paginación de distancia.",
       "criterio_exito": "/dist/index.html contiene los 3 <a href=\"/blog/categoria/...\">; combinado con seo-002 y seo-003, cualquier artículo publicado es alcanzable en ≤2 clics desde '/' (home → silo → artículo).",
       "metrica": "grep de las 3 rutas /blog/categoria/ en /dist/index.html; comprobación manual home→silo→artículo en ≤2 saltos para el artículo más antiguo (que-es-la-jubilacion-anticipada u otro publicado el 2026-06-25).",
@@ -76,8 +76,8 @@
         "src/pages/index.astro"
       ],
       "objetivo_estrategico": "Páginas de silo (`/blog/categoria/<slug>`) para las categorías con ≥ 3 artículos publicados",
-      "fecha_ejecucion": null,
-      "resultado": null
+      "fecha_ejecucion": "2026-08-03",
+      "resultado": "Añadida sección 'Explora por categoría' en src/pages/index.astro con enlace a cada silo de ≥3 posts publicados. Build OK. Grep confirma las 3 rutas en /dist/index.html; ruta home→silo→artículo verificada en ≤2 saltos."
     },
     {
       "id": "ux-001",

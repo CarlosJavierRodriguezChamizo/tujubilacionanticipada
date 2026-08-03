@@ -4,6 +4,8 @@ import BlogListing from '../../components/BlogListing.astro';
 // Guía oculta temporalmente: import CTAGuia from '../../components/CTAGuia.astro';
 import { getPublishedPosts } from '../../lib/posts';
 import { POSTS_PER_PAGE } from '../../consts';
+import { getCategorySlug } from '../../lib/categories';
+import { BLOG_CATEGORIES } from '../../content/config';
 import {
   blogCollectionSchema,
   breadcrumbSchema,
@@ -13,6 +15,15 @@ import {
 const allPosts = await getPublishedPosts();
 const posts = allPosts.slice(0, POSTS_PER_PAGE);
 const lastPage = Math.max(1, Math.ceil(allPosts.length / POSTS_PER_PAGE));
+
+// Mismo umbral que src/pages/blog/categoria/[categoria].astro: solo se
+// enlazan los silos que tienen página de categoría generada (evita enlaces
+// rotos a silos sin suficiente contenido).
+const MIN_POSTS_PER_SILO = 3;
+const publishedSilos = BLOG_CATEGORIES.filter((category) => {
+  const count = allPosts.filter((post) => post.data.category === category).length;
+  return count >= MIN_POSTS_PER_SILO;
+});
 
 const descripcion =
   'Artículos sobre jubilación anticipada en España: requisitos, penalizaciones, cálculo de la pensión y guías prácticas para planificar tu retiro.';
@@ -50,6 +61,26 @@ const schema = [
         sobre cuándo jubilarte.
       </p>
     </header>
+
+    {
+      publishedSilos.length > 0 && (
+        <nav aria-label="Categorías del blog" class="mt-10">
+          <p class="eyebrow">Explora por categoría</p>
+          <ul class="mt-3 flex flex-wrap gap-3">
+            {publishedSilos.map((category) => (
+              <li>
+                <a
+                  href={`/blog/categoria/${getCategorySlug(category)}`}
+                  class="inline-block rounded-full border border-clay-200 px-4 py-2 text-sm font-medium text-clay-800 hover:border-clay-400 hover:text-clay-950"
+                >
+                  {category}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </nav>
+      )
+    }
 
     <div class="mt-10">
       {
