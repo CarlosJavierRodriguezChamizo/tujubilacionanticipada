@@ -38,8 +38,14 @@ Lee `scripts/BACKLOG.json` y cuenta las tareas con `"estado": "pendiente"`.
    > repositorio real antes de proponer rutas de archivo.
 
 3. Actualiza `ultima_replanificacion` con la fecha de hoy.
-4. Escribe el informe de replanificación en `scripts/ultimo-informe.md` (ver Paso 5).
-5. Haz commit y push. **No ejecutes tareas hoy.** El ciclo de ejecución empieza mañana.
+4. Lee `config.ejecutar_tareas_el_dia_de_replanificacion` en `scripts/BACKLOG.json`:
+   - Si es `false`: escribe el informe de replanificación en `scripts/ultimo-informe.md`
+     (ver Paso 5), haz commit y push, y **termina**. No ejecutes tareas hoy; el ciclo
+     de ejecución empieza mañana.
+   - Si es `true`: **no pares ni hagas commit todavía**. Continúa directamente al Paso 3
+     y ejecuta hoy mismo las `config.max_tareas_por_dia` tareas de mayor prioridad del
+     backlog recién generado. El informe del Paso 5 recogerá en un único commit tanto la
+     replanificación como las tareas ejecutadas.
 
 ### CASO B: hay tareas pendientes → día de ejecución
 

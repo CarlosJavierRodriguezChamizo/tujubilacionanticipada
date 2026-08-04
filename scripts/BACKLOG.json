@@ -1,6 +1,6 @@
 {
   "config": {
-    "max_tareas_por_dia": 2,
+    "max_tareas_por_dia": 5,
     "areas_validas": [
       "ux",
       "seo",
@@ -11,7 +11,7 @@
       "scripts/calendario.json",
       ".github/**"
     ],
-    "ejecutar_tareas_el_dia_de_replanificacion": false
+    "ejecutar_tareas_el_dia_de_replanificacion": true
   },
   "ultima_replanificacion": "2026-07-29",
   "tareas": [
