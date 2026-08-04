@@ -8,6 +8,8 @@ import ShareButtons from '../components/ShareButtons.astro';
 import RelatedArticles from '../components/RelatedArticles.astro';
 import AsesoramientoCard from '../components/AsesoramientoCard.astro';
 import { SITE, REVIEWERS } from '../consts';
+import { getCategorySlug, categoryHasSilo } from '../lib/categories';
+import { getPublishedPosts } from '../lib/posts';
 
 interface Props {
   post: CollectionEntry<'blog'>;
@@ -15,6 +17,14 @@ interface Props {
 
 const { post } = Astro.props;
 const { data } = post;
+const categoryPath = `/blog/categoria/${getCategorySlug(data.category)}`;
+// El silo de categoría solo existe (y por tanto solo debe enlazarse) si esa
+// categoría alcanza MIN_POSTS_PER_SILO artículos publicados; si no, el
+// eyebrow se muestra como texto plano para no crear un enlace roto.
+const categoryPostCount = (await getPublishedPosts()).filter(
+  (p) => p.data.category === data.category
+).length;
+const hasSilo = categoryHasSilo(categoryPostCount);
 const path = `/blog/${post.slug}`;
 const shareUrl = new URL(path, SITE.url).toString();
 const minutos = readingTimeMinutes(post.body);
@@ -46,7 +56,15 @@ const breadcrumb = breadcrumbSchema([
 
     <header class="mx-auto max-w-prose">
       <p class="eyebrow">
-        {data.category}
+        {
+          hasSilo ? (
+            <a href={categoryPath} class="hover:text-brand-600 hover:underline">
+              {data.category}
+            </a>
+          ) : (
+            data.category
+          )
+        }
       </p>
       <h1 class="mt-3 text-3xl font-semibold leading-tight sm:text-4xl">
         {data.title}

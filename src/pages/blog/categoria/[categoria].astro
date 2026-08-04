@@ -3,7 +3,7 @@ import type { GetStaticPaths } from 'astro';
 import Base from '../../../layouts/Base.astro';
 import BlogListing from '../../../components/BlogListing.astro';
 import { getPublishedPosts } from '../../../lib/posts';
-import { getCategorySlug } from '../../../lib/categories';
+import { getCategorySlug, MIN_POSTS_PER_SILO } from '../../../lib/categories';
 import { BLOG_CATEGORIES } from '../../../content/config';
 import { breadcrumbSchema, webPageSchema } from '../../../lib/schema';
 
@@ -24,13 +24,9 @@ export const getStaticPaths = (async () => {
   const allPosts = await getPublishedPosts();
 
   // Umbral mínimo de artículos publicados para que una categoría tenga su
-  // propia página de silo. Por debajo de este umbral el listado quedaría
-  // demasiado pobre para aportar valor y se prefiere no generar la página
-  // (evita silos "vacíos" o casi vacíos). Nota: este valor se mantiene
-  // inline (no como const de módulo) porque Astro extrae getStaticPaths a
-  // un ámbito aislado que no incluye variables de módulo no importadas.
-  const MIN_POSTS_PER_SILO = 3;
-
+  // propia página de silo (evita silos "vacíos" o casi vacíos). Se importa
+  // desde src/lib/categories.ts para que sea el mismo valor que usa el
+  // eyebrow de categoría de BlogPost.astro al decidir si enlaza al silo.
   return BLOG_CATEGORIES.filter((category) => {
     const count = allPosts.filter((post) => post.data.category === category).length;
     return count >= MIN_POSTS_PER_SILO;

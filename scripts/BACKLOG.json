@@ -84,7 +84,7 @@
       "titulo": "Convertir la categoría del artículo en un enlace visible a su silo",
       "area": "ux",
       "prioridad": 5,
-      "estado": "pendiente",
+      "estado": "hecha",
       "hipotesis": "Si el \"eyebrow\" de categoría que ya se muestra en la cabecera de cada artículo (hoy texto plano, <p class=\"eyebrow\">{data.category}</p> en BlogPost.astro) se convierte en un enlace a la página de silo correspondiente, esperamos mejorar la orientación del lector -puede saltar del artículo a más contenido de su categoría con un solo clic, sin JavaScript- y de paso cumplir 'cada artículo tiene ≥1 enlace saliente a su silo', porque hoy ese texto no es interactivo ni ofrece ninguna salida lateral.",
       "criterio_exito": "En una muestra de /dist/blog/*/index.html, el texto de categoría en la cabecera del artículo es ahora un <a href=\"/blog/categoria/<slug-correcto-de-su-categoría>\">, visible y funcional sin JavaScript, con el mismo tratamiento visual (contraste AA) que el resto de enlaces del sitio.",
       "metrica": "Para las 31 páginas /dist/blog/*/index.html, grep confirma un <a href=\"/blog/categoria/...\"> dentro del <header> del artículo apuntando al slug correcto de su propia categoría; 31/31 artículos cumplen.",
@@ -92,8 +92,8 @@
         "src/layouts/BlogPost.astro"
       ],
       "objetivo_estrategico": "Páginas de silo (`/blog/categoria/<slug>`) para las categorías con ≥ 3 artículos publicados",
-      "fecha_ejecucion": null,
-      "resultado": null
+      "fecha_ejecucion": "2026-08-04",
+      "resultado": "Eyebrow de categoría en BlogPost.astro ahora es <a href=\"/blog/categoria/<slug>\"> cuando la categoría tiene silo generado (usa getCategorySlug de categories.ts). Efecto colateral detectado y corregido en la misma tarea: 'Actualidad y casos prácticos' no alcanza el umbral de silo (MIN_POSTS_PER_SILO=3, ahora exportado desde categories.ts junto con categoryHasSilo()); esos 2 artículos muestran texto plano en vez de un enlace roto. Verificado: 35/37 artículos con enlace correcto al header, 0 referencias rotas a /blog/categoria/actualidad-y-casos-practicos en dist/, build OK (55 páginas), sin tocar rutas prohibidas."
     },
     {
       "id": "seo-005",

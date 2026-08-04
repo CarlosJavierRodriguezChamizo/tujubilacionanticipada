@@ -59,4 +59,14 @@ Formato:
 - Commit: (pendiente de este mismo commit)
 - Veredicto del CEO: pendiente
 
+## 2026-08-04 — ux-001 Convertir la categoría del artículo en un enlace visible a su silo (ux)
+- Archivos: src/layouts/BlogPost.astro, src/lib/categories.ts, src/pages/blog/categoria/[categoria].astro
+- Qué: El eyebrow de categoría de la cabecera del artículo ahora es un <a href="/blog/categoria/<slug>"> cuando esa categoría tiene silo generado (getCategorySlug, seo-001). Se detectó que enlazar siempre generaba 2 enlaces rotos (los artículos de "Actualidad y casos prácticos", categoría por debajo del umbral de silo) y se corrigió en la misma tarea: se exportó MIN_POSTS_PER_SILO y categoryHasSilo(postCount) desde categories.ts (fuente única, sustituye la constante inline que tenía [categoria].astro) y BlogPost.astro solo renderiza el enlace si categoryHasSilo() es true; si no, mantiene el texto plano de siempre.
+- Por qué: El eyebrow no era interactivo y no ofrecía salida lateral hacia más contenido de la misma categoría. Enlazar sin comprobar la existencia del silo habría introducido 2 enlaces 404 en un sitio YMYL.
+- Hipótesis: Convertir el eyebrow en enlace mejora la orientación del lector (un clic a más contenido de su categoría, sin JS) y cumple "cada artículo tiene ≥1 enlace saliente a su silo" (para las categorías que sí tienen silo).
+- Criterio de éxito: 35/37 artículos con <a href="/blog/categoria/...> correcto dentro del <header>; los 2 de "Actualidad y casos prácticos" muestran texto plano; 0 referencias a /blog/categoria/actualidad-y-casos-practicos en dist/; npm run build pasa. Cumplido y verificado de forma independiente por el orquestador (build, grep, comprobación de rutas prohibidas).
+- Métrica y plazo: Tasa de clics en el eyebrow de categoría y tasa de rebote artículo→silo (analítica), a 2-4 semanas tras despliegue.
+- Commit: (pendiente de este mismo commit)
+- Veredicto del CEO: pendiente
+
 ---

@@ -14,6 +14,16 @@ import { BLOG_CATEGORIES } from '../content/config';
  */
 type BlogCategory = (typeof BLOG_CATEGORIES)[number];
 
+/**
+ * Umbral mínimo de artículos publicados que debe tener una categoría para
+ * que exista su página de silo (`/blog/categoria/<slug>/`). Por debajo de
+ * este umbral no se genera la página (evita silos "vacíos" o casi vacíos).
+ * Se exporta desde aquí para que cualquier consumidor (la propia página de
+ * silo, el eyebrow de categoría del artículo, etc.) comparta el mismo
+ * número y no se desincronicen dos constantes iguales en dos archivos.
+ */
+export const MIN_POSTS_PER_SILO = 3;
+
 const CATEGORY_SLUGS: Record<BlogCategory, string> = {
   'Tipos de jubilación anticipada': 'tipos-de-jubilacion-anticipada',
   'Cálculos y penalizaciones': 'calculos-y-penalizaciones',
@@ -41,4 +51,15 @@ export function getCategorySlug(category: BlogCategory): string {
 /** Mapa inverso: slug de URL -> nombre de categoría. Útil para páginas de silo. */
 export function getCategoryFromSlug(slug: string): BlogCategory | undefined {
   return BLOG_CATEGORIES.find((category) => CATEGORY_SLUGS[category] === slug);
+}
+
+/**
+ * Indica si una categoría con `postCount` artículos publicados alcanza el
+ * umbral `MIN_POSTS_PER_SILO` y, por tanto, tiene página de silo generada
+ * en `/blog/categoria/<slug>/`. Cualquier enlace hacia esa página (p.ej. el
+ * eyebrow de categoría en la cabecera de un artículo) debe comprobar esto
+ * antes de renderizarse como enlace, para no apuntar a una URL inexistente.
+ */
+export function categoryHasSilo(postCount: number): boolean {
+  return postCount >= MIN_POSTS_PER_SILO;
 }
