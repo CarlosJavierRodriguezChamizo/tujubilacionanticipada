@@ -1,0 +1,130 @@
+---
+import Base from '../../layouts/Base.astro';
+import { SITE, REVIEWERS } from '../../consts';
+import { webPageSchema, breadcrumbSchema, reviewerPersonSchema, absUrl } from '../../lib/schema';
+import calendario from '../../../scripts/calendario.json';
+
+// Nombre y cargo del revisor: se leen literalmente de scripts/calendario.json
+// (fuente única, solo lectura) para que esta página no pueda divergir del
+// dato usado en el resto del sitio.
+const reviewerName = calendario.config.reviewer_name;
+const reviewerTitle = calendario.config.reviewer_title;
+const reviewerImage = REVIEWERS[reviewerName];
+
+const path = '/equipo/javier-rodriguez';
+const descripcion = `Rol editorial de ${reviewerName} en ${SITE.name}: qué contenidos revisa, con qué criterio y qué fuentes oficiales se contrastan antes de publicar.`;
+
+const schema = [
+  webPageSchema({
+    type: 'ProfilePage',
+    path,
+    name: reviewerName,
+    description: descripcion,
+    breadcrumbPath: path,
+  }),
+  breadcrumbSchema([
+    { name: 'Inicio', path: '/' },
+    { name: reviewerName, path },
+  ]),
+  {
+    '@context': 'https://schema.org',
+    ...reviewerPersonSchema(reviewerName, reviewerTitle),
+    url: absUrl(path),
+    mainEntityOfPage: { '@id': `${absUrl(path)}#webpage` },
+  },
+];
+---
+
+<Base
+  title={`${reviewerName} — revisor de contenido`}
+  description={descripcion}
+  path={path}
+  schema={schema}
+>
+  <section class="container-prose py-12 sm:py-16">
+    <div class="prose prose-lg mx-auto prose-a:text-brand-600">
+      <div class="not-prose mb-8 flex items-center gap-4">
+        {reviewerImage && (
+          <img
+            src={reviewerImage}
+            alt={`Foto de ${reviewerName}`}
+            width="80"
+            height="80"
+            loading="eager"
+            class="h-20 w-20 shrink-0 rounded-full border border-paper-300 object-cover"
+          />
+        )}
+        <div>
+          <p class="text-xs font-semibold uppercase tracking-wide text-clay-700">
+            Revisor de contenido
+          </p>
+          <p class="font-serif text-xl font-semibold text-ink">{reviewerName}</p>
+        </div>
+      </div>
+
+      <h1>{reviewerName}</h1>
+      <p class="text-lg text-ink-soft">{reviewerTitle}</p>
+
+      <h2>Qué significa &ldquo;revisado por&rdquo; en este sitio</h2>
+      <p>
+        {reviewerName} no redacta los artículos de {SITE.name}: la redacción
+        corre a cargo del equipo editorial del sitio. Su función es distinta y
+        se indica de forma explícita al pie de cada artículo marcado como
+        &ldquo;Revisado por&rdquo;: comprobar que el contenido publicado sobre
+        jubilación anticipada se ajusta a la normativa vigente y a la
+        información oficial disponible en el momento de la revisión.
+      </p>
+
+      <h2>Qué revisa</h2>
+      <p>
+        La revisión se centra en los datos que pueden inducir a error si están
+        desactualizados o mal explicados: requisitos de acceso a cada
+        modalidad de jubilación anticipada, coeficientes reductores y
+        penalizaciones aplicables, edades y periodos de cotización exigidos, y
+        la correspondencia entre lo que dice el artículo y lo que establece la
+        fuente oficial citada en él.
+      </p>
+
+      <h2>Con qué criterio</h2>
+      <p>
+        Antes de dar por válido un artículo, se contrasta cada afirmación
+        normativa con la fuente oficial correspondiente y se comprueba que el
+        artículo enlaza esa fuente en lugar de darla por supuesta. Si una
+        norma ha cambiado o un dato queda desactualizado, el artículo se
+        marca para actualización antes de mantenerse publicado.
+      </p>
+
+      <h2>Fuentes que se contrastan</h2>
+      <p>
+        Las fuentes oficiales de referencia utilizadas en esta revisión son la{' '}
+        <a href="https://www.seg-social.es" rel="noopener" target="_blank">
+          Seguridad Social
+        </a>
+        , el{' '}
+        <a href="https://www.boe.es" rel="noopener" target="_blank">
+          Boletín Oficial del Estado (BOE)
+        </a>
+        , el{' '}
+        <a href="https://www.sepe.es" rel="noopener" target="_blank">
+          Servicio Público de Empleo Estatal (SEPE)
+        </a>{' '}
+        y, cuando el contenido lo requiere, la{' '}
+        <a href="https://www.cnmv.es" rel="noopener" target="_blank">
+          Comisión Nacional del Mercado de Valores (CNMV)
+        </a>
+        .
+      </p>
+
+      <h2>Aviso importante</h2>
+      <p>
+        Esta revisión editorial no equivale a asesoramiento jurídico, fiscal
+        ni financiero personalizado, ni sustituye la información oficial de
+        la Seguridad Social sobre tu caso concreto. Consulta siempre tu
+        situación particular con la Seguridad Social o con un profesional
+        cualificado antes de tomar decisiones. Más contexto sobre el enfoque
+        del sitio en{' '}
+        <a href="/sobre-este-sitio">Sobre este sitio</a>.
+      </p>
+    </div>
+  </section>
+</Base>

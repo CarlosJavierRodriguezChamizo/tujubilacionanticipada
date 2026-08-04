@@ -2,8 +2,9 @@
 import type { CollectionEntry } from 'astro:content';
 import Base from './Base.astro';
 // Guía oculta temporalmente: import CTAGuia from '../components/CTAGuia.astro';
-import { formatDate, toISO, readingTimeMinutes, resolveHeroImage } from '../lib/posts';
+import { formatDate, toISO, readingTimeMinutes, resolveHeroImage, getPublishedPosts } from '../lib/posts';
 import { blogPostingSchema, breadcrumbSchema } from '../lib/schema';
+import { getCategorySlug } from '../lib/categories';
 import ShareButtons from '../components/ShareButtons.astro';
 import RelatedArticles from '../components/RelatedArticles.astro';
 import AsesoramientoCard from '../components/AsesoramientoCard.astro';
@@ -20,6 +21,18 @@ const shareUrl = new URL(path, SITE.url).toString();
 const minutos = readingTimeMinutes(post.body);
 const heroImage = resolveHeroImage(post.slug, data.heroImage);
 const reviewerImg = data.reviewedBy ? REVIEWERS[data.reviewedBy] : undefined;
+
+// El eyebrow de categoría solo enlaza a su silo si esa categoría tiene
+// página de silo generada (mismo umbral que en
+// src/pages/blog/categoria/[categoria].astro: MIN_POSTS_PER_SILO = 3).
+// Evita enlaces rotos a categorías sin suficientes artículos publicados.
+const MIN_POSTS_PER_SILO = 3;
+const allPosts = await getPublishedPosts();
+const categoryPostCount = allPosts.filter((p) => p.data.category === data.category).length;
+const categoryHref =
+  categoryPostCount >= MIN_POSTS_PER_SILO
+    ? `/blog/categoria/${getCategorySlug(data.category)}`
+    : undefined;
 
 const articleSchema = blogPostingSchema(post);
 const breadcrumb = breadcrumbSchema([
@@ -45,9 +58,17 @@ const breadcrumb = breadcrumbSchema([
     </nav>
 
     <header class="mx-auto max-w-prose">
-      <p class="eyebrow">
-        {data.category}
-      </p>
+      {
+        categoryHref ? (
+          <p class="eyebrow">
+            <a href={categoryHref} class="hover:underline underline-offset-4">
+              {data.category}
+            </a>
+          </p>
+        ) : (
+          <p class="eyebrow">{data.category}</p>
+        )
+      }
       <h1 class="mt-3 text-3xl font-semibold leading-tight sm:text-4xl">
         {data.title}
       </h1>

@@ -21,6 +21,28 @@ export function absUrl(path: string): string {
 export const ORG_ID = `${SITE.url}/#organization`;
 export const WEBSITE_ID = `${SITE.url}/#website`;
 
+/**
+ * Páginas de entidad de los revisores del contenido (EEAT): asocian el
+ * nombre que aparece en `reviewedBy` con una URL indexable estable, de modo
+ * que el `Person` del schema tenga `@id` y `url` verificables.
+ */
+export const REVIEWER_PROFILES: Record<string, string> = {
+  'Javier Rodríguez': '/equipo/javier-rodriguez',
+};
+
+/** Person de un revisor de contenido, con `@id`/`url` estables si tiene página de entidad. */
+export function reviewerPersonSchema(name: string, jobTitle?: string): JsonLd {
+  const profilePath = REVIEWER_PROFILES[name];
+  const url = profilePath ? absUrl(profilePath) : undefined;
+  return {
+    '@type': 'Person',
+    name,
+    ...(jobTitle ? { jobTitle } : {}),
+    ...(url ? { '@id': `${url}#person`, url } : {}),
+    ...(REVIEWERS[name] ? { image: absUrl(REVIEWERS[name]) } : {}),
+  };
+}
+
 /** Organización titular del sitio. Presente en todas las páginas. */
 export function organizationSchema(): JsonLd {
   return {
@@ -81,7 +103,7 @@ export function breadcrumbSchema(items: { name: string; path: string }[]): JsonL
  * con su BreadcrumbList. `type` permite especializar (AboutPage, ContactPage…).
  */
 export function webPageSchema(opts: {
-  type?: 'WebPage' | 'AboutPage' | 'ContactPage' | 'CollectionPage';
+  type?: 'WebPage' | 'AboutPage' | 'ContactPage' | 'CollectionPage' | 'ProfilePage';
   path: string;
   name: string;
   description: string;
@@ -126,16 +148,7 @@ export function blogPostingSchema(post: CollectionEntry<'blog'>): JsonLd {
     author: { '@type': 'Organization', name: data.author, url: SITE.url },
     // Señal EEAT: revisión editorial por una persona acreditada.
     ...(data.reviewedBy
-      ? {
-          reviewedBy: {
-            '@type': 'Person',
-            name: data.reviewedBy,
-            ...(data.reviewerTitle ? { jobTitle: data.reviewerTitle } : {}),
-            ...(REVIEWERS[data.reviewedBy]
-              ? { image: absUrl(REVIEWERS[data.reviewedBy]) }
-              : {}),
-          },
-        }
+      ? { reviewedBy: reviewerPersonSchema(data.reviewedBy, data.reviewerTitle) }
       : {}),
     publisher: { '@id': ORG_ID },
     image: absUrl(

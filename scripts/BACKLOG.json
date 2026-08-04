@@ -84,7 +84,7 @@
       "titulo": "Convertir la categoría del artículo en un enlace visible a su silo",
       "area": "ux",
       "prioridad": 5,
-      "estado": "pendiente",
+      "estado": "hecha",
       "hipotesis": "Si el \"eyebrow\" de categoría que ya se muestra en la cabecera de cada artículo (hoy texto plano, <p class=\"eyebrow\">{data.category}</p> en BlogPost.astro) se convierte en un enlace a la página de silo correspondiente, esperamos mejorar la orientación del lector -puede saltar del artículo a más contenido de su categoría con un solo clic, sin JavaScript- y de paso cumplir 'cada artículo tiene ≥1 enlace saliente a su silo', porque hoy ese texto no es interactivo ni ofrece ninguna salida lateral.",
       "criterio_exito": "En una muestra de /dist/blog/*/index.html, el texto de categoría en la cabecera del artículo es ahora un <a href=\"/blog/categoria/<slug-correcto-de-su-categoría>\">, visible y funcional sin JavaScript, con el mismo tratamiento visual (contraste AA) que el resto de enlaces del sitio.",
       "metrica": "Para las 31 páginas /dist/blog/*/index.html, grep confirma un <a href=\"/blog/categoria/...\"> dentro del <header> del artículo apuntando al slug correcto de su propia categoría; 31/31 artículos cumplen.",
@@ -92,8 +92,8 @@
         "src/layouts/BlogPost.astro"
       ],
       "objetivo_estrategico": "Páginas de silo (`/blog/categoria/<slug>`) para las categorías con ≥ 3 artículos publicados",
-      "fecha_ejecucion": null,
-      "resultado": null
+      "fecha_ejecucion": "2026-08-04",
+      "resultado": "El eyebrow de categoría en la cabecera del artículo (BlogPost.astro) ahora enlaza a /blog/categoria/<slug> vía getCategorySlug() cuando la categoría tiene silo (≥3 posts publicados). 35/35 artículos de categorías con silo enlazan al slug correcto; los 2 de 'Actualidad y casos prácticos' (2 posts, sin silo) quedan sin enlace por diseño para evitar un 404. Enlace visible sin JS, contraste AA. Build OK. No se tocó autoría/fuentes/fechas."
     },
     {
       "id": "seo-005",
@@ -116,7 +116,7 @@
       "titulo": "Crear la página de entidad del revisor /equipo/javier-rodriguez",
       "area": "seo",
       "prioridad": 7,
-      "estado": "pendiente",
+      "estado": "hecha",
       "hipotesis": "Si publicamos una página de persona indexable con el rol editorial real del revisor (revisa, no redacta), qué revisa, con qué criterio y qué fuentes usa, más un Person con @id y url estables en JSON-LD, esperamos dar a Google una entidad verificable detrás del contenido YMYL, porque hoy 'Javier Rodríguez' aparece 31 veces en texto plano sin ninguna URL detrás y el Person del schema no tiene @id ni url.",
       "criterio_exito": "Tras `npm run build` existe /dist/equipo/javier-rodriguez/index.html; contiene un <script type=\"application/ld+json\"> con \"@type\":\"Person\", \"@id\":\"https://tujubilacionanticipada.com/equipo/javier-rodriguez#person\" y \"url\". El texto de la página usa únicamente el nombre 'Javier Rodríguez' y el cargo 'Escalón 26, Seguridad Social — Gestión de pensiones de ex-funcionarios', tal como figuran en scripts/calendario.json (reviewer_name / reviewer_title, solo lectura), sin inventar titulaciones, años de experiencia ni cifras de casos.",
       "metrica": "grep del @id y \"@type\":\"Person\" en /dist/equipo/javier-rodriguez/index.html; comparación literal del nombre y cargo mostrados contra reviewer_name/reviewer_title de scripts/calendario.json.",
@@ -125,8 +125,8 @@
         "src/lib/schema.ts"
       ],
       "objetivo_estrategico": "Página de entidad del revisor, enlazada desde los 31 artículos",
-      "fecha_ejecucion": null,
-      "resultado": null
+      "fecha_ejecucion": "2026-08-04",
+      "resultado": "Creada la página indexable /equipo/javier-rodriguez (ProfilePage) con Person JSON-LD @id=https://tujubilacionanticipada.com/equipo/javier-rodriguez#person + url. Nombre y cargo leídos literalmente de calendario.json (reviewer_name/reviewer_title), sin inventar credenciales; worksFor omitido a propósito (el cargo es de la Seguridad Social, no del sitio). Refactor de schema.ts (reviewerPersonSchema): los 31+ artículos con reviewedBy ahora referencian ese @id compartido. Build OK (56 páginas), URL en sitemap e indexable."
     },
     {
       "id": "seo-007",
