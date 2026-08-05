@@ -43,6 +43,19 @@ export function reviewerPersonSchema(name: string, jobTitle?: string): JsonLd {
   };
 }
 
+/**
+ * Referencia al `Person` de un revisor para usar en `reviewedBy` de los
+ * artículos: si el revisor tiene página de entidad (con `@id` estable), se
+ * referencia por `@id` en lugar de duplicar `name`/`jobTitle`/`image`, de
+ * modo que todas las menciones del grafo apunten a una única entidad Person.
+ * Si no tiene página de entidad, se degrada al `Person` embebido completo.
+ */
+export function reviewerReferenceSchema(name: string, jobTitle?: string): JsonLd {
+  const profilePath = REVIEWER_PROFILES[name];
+  if (!profilePath) return reviewerPersonSchema(name, jobTitle);
+  return { '@id': `${absUrl(profilePath)}#person` };
+}
+
 /** Organización titular del sitio. Presente en todas las páginas. */
 export function organizationSchema(): JsonLd {
   return {
@@ -148,7 +161,7 @@ export function blogPostingSchema(post: CollectionEntry<'blog'>): JsonLd {
     author: { '@type': 'Organization', name: data.author, url: SITE.url },
     // Señal EEAT: revisión editorial por una persona acreditada.
     ...(data.reviewedBy
-      ? { reviewedBy: reviewerPersonSchema(data.reviewedBy, data.reviewerTitle) }
+      ? { reviewedBy: reviewerReferenceSchema(data.reviewedBy, data.reviewerTitle) }
       : {}),
     publisher: { '@id': ORG_ID },
     image: absUrl(

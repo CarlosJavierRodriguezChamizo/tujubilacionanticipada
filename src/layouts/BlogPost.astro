@@ -38,6 +38,7 @@ const articleSchema = blogPostingSchema(post);
 const breadcrumb = breadcrumbSchema([
   { name: 'Inicio', path: '/' },
   { name: 'Blog', path: '/blog' },
+  ...(categoryHref ? [{ name: data.category, path: categoryHref }] : []),
   { name: data.title, path },
 ]);
 ---
@@ -55,6 +56,16 @@ const breadcrumb = breadcrumbSchema([
       <a href="/" class="hover:text-brand-600">Inicio</a>
       <span class="px-1.5" aria-hidden="true">/</span>
       <a href="/blog" class="hover:text-brand-600">Blog</a>
+      {
+        categoryHref && (
+          <>
+            <span class="px-1.5" aria-hidden="true">/</span>
+            <a href={categoryHref} class="hover:text-brand-600">{data.category}</a>
+          </>
+        )
+      }
+      <span class="px-1.5" aria-hidden="true">/</span>
+      <span aria-current="page">{data.title}</span>
     </nav>
 
     <header class="mx-auto max-w-prose">

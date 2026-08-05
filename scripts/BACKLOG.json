@@ -100,7 +100,7 @@
       "titulo": "Incluir el silo en la miga de pan (breadcrumb) del artículo",
       "area": "seo",
       "prioridad": 6,
-      "estado": "pendiente",
+      "estado": "hecha",
       "hipotesis": "Si la miga de pan pasa de 'Inicio / Blog / título' a 'Inicio / Blog / <Silo> / título', tanto en el <nav aria-label=\"Migas de pan\"> visible como en el BreadcrumbList que genera breadcrumbSchema() en BlogPost.astro, esperamos reforzar la señal de estructura jerárquica del sitio ante los buscadores, porque el falsable de la estrategia exige que la miga incluya el silo y hoy breadcrumbSchema() solo recibe 3 niveles (Inicio, Blog, título).",
       "criterio_exito": "En una muestra de /dist/blog/*/index.html, el <nav aria-label=\"Migas de pan\"> muestra 4 enlaces (Inicio, Blog, <Silo>, título actual) y el JSON-LD BreadcrumbList tiene itemListElement.length === 4, con el elemento position 3 apuntando a la URL del silo correspondiente a esa categoría.",
       "metrica": "Para 5 artículos de categorías distintas, el BreadcrumbList JSON-LD tiene 4 elementos y el item de position 3 coincide con /blog/categoria/<slug-de-esa-categoría>.",
@@ -108,8 +108,8 @@
         "src/layouts/BlogPost.astro"
       ],
       "objetivo_estrategico": "Páginas de silo (`/blog/categoria/<slug>`) para las categorías con ≥ 3 artículos publicados",
-      "fecha_ejecucion": null,
-      "resultado": null
+      "fecha_ejecucion": "2026-08-05",
+      "resultado": "Añadido el nivel de silo al <nav aria-label=\"Migas de pan\"> y a breadcrumbSchema() en BlogPost.astro, reutilizando categoryHref (mismo umbral MIN_POSTS_PER_SILO=3 que el resto del sitio). Verificado en 5 artículos de 3 categorías: BreadcrumbList con itemListElement.length===4, position 3 = URL del silo correcto. Build OK (58 páginas)."
     },
     {
       "id": "seo-006",
@@ -133,7 +133,7 @@
       "titulo": "Referenciar el @id del revisor desde el JSON-LD de los 31 artículos",
       "area": "seo",
       "prioridad": 8,
-      "estado": "pendiente",
+      "estado": "hecha",
       "hipotesis": "Si blogPostingSchema() en src/lib/schema.ts sustituye el objeto Person embebido de reviewedBy por una referencia { '@id': '.../equipo/javier-rodriguez#person' } al @id estable creado en seo-006, esperamos que el grafo de conocimiento conecte cada BlogPosting con una única entidad Person en vez de 31 copias sueltas del mismo nombre, cumpliendo el falsable 'su reviewedBy resuelve al @id de esa URL'.",
       "criterio_exito": "En una muestra de /dist/blog/*/index.html, el JSON-LD del BlogPosting tiene reviewedBy = { \"@id\": \"https://tujubilacionanticipada.com/equipo/javier-rodriguez#person\" } (referencia, no un objeto Person con name/jobTitle duplicados); esto debe cumplirse para los 31 artículos publicados con reviewedBy definido, porque todos reutilizan la misma función.",
       "metrica": "grep del @id de reviewedBy en 5 páginas /dist/blog/*/index.html; el valor coincide exactamente con el @id publicado en /dist/equipo/javier-rodriguez/index.html.",
@@ -141,8 +141,8 @@
         "src/lib/schema.ts"
       ],
       "objetivo_estrategico": "Página de entidad del revisor, enlazada desde los 31 artículos",
-      "fecha_ejecucion": null,
-      "resultado": null
+      "fecha_ejecucion": "2026-08-05",
+      "resultado": "Añadida reviewerReferenceSchema() en schema.ts: reviewedBy usa ahora {\"@id\": \".../equipo/javier-rodriguez#person\"} en lugar del Person embebido, con fallback a Person completo si el revisor no tiene página de entidad. Verificado en 38 artículos publicados: @id coincide exactamente con el publicado en /equipo/javier-rodriguez. Build OK."
     },
     {
       "id": "ux-002",
@@ -165,7 +165,7 @@
       "titulo": "Mencionar y enlazar al revisor desde /sobre-este-sitio",
       "area": "seo",
       "prioridad": 10,
-      "estado": "pendiente",
+      "estado": "hecha",
       "hipotesis": "Si la sección \"Quién está detrás\" de /sobre-este-sitio deja de decir solo \"elaborado por la redacción\" y pasa a nombrar a Javier Rodríguez como revisor editorial con enlace a /equipo/javier-rodriguez, esperamos reforzar la señal EEAT a nivel de sitio (no solo por artículo), porque hoy /sobre-este-sitio no menciona a un solo ser humano.",
       "criterio_exito": "/dist/sobre-este-sitio/index.html contiene un <a href=\"/equipo/javier-rodriguez\"> y el texto nombra a 'Javier Rodríguez' con el cargo literal de scripts/calendario.json, sin inventar credenciales adicionales; `npm run build` pasa.",
       "metrica": "grep del href y del nombre \"Javier Rodríguez\" en /dist/sobre-este-sitio/index.html.",
@@ -173,15 +173,15 @@
         "src/pages/sobre-este-sitio.astro"
       ],
       "objetivo_estrategico": "Página de entidad del revisor, enlazada desde los 31 artículos",
-      "fecha_ejecucion": null,
-      "resultado": null
+      "fecha_ejecucion": "2026-08-05",
+      "resultado": "Añadida mención y enlace <a href=\"/equipo/javier-rodriguez\"> a Javier Rodríguez con su cargo literal (leído de calendario.json, solo lectura) en la sección 'Quién está detrás' de /sobre-este-sitio.astro. Verificado con grep en dist. Build OK."
     },
     {
       "id": "seo-009",
       "titulo": "Añadir el campo category al índice de posts que usa rehypeInlineBlocks",
       "area": "seo",
       "prioridad": 11,
-      "estado": "pendiente",
+      "estado": "hecha",
       "hipotesis": "Si loadPostsIndex() en astro.config.mjs extrae también el frontmatter category de cada artículo (hoy solo extrae slug/title/description/draft), esperamos poder priorizar 'misma categoría primero' en la selección de lecturas recomendadas de rehypeInlineBlocks en una tarea posterior, porque hoy el índice que recibe ese plugin no tiene forma de saber la categoría de ningún artículo.",
       "criterio_exito": "El array POSTS_INDEX que se pasa a rehypeInlineBlocks(POSTS_INDEX) en astro.config.mjs incluye un campo category por artículo con uno de los 4 valores de BLOG_CATEGORIES; `npm run build` sigue pasando y el HTML generado no cambia (esta tarea es solo preparación de datos, sin tocar la lógica de selección en rehype-plugins.mjs).",
       "metrica": "Inspección de loadPostsIndex() confirmando el campo category en los 31 objetos del índice; el HTML de /dist antes y después de esta tarea es idéntico en el cuerpo de los artículos (ningún cambio de comportamiento todavía).",
@@ -189,8 +189,8 @@
         "astro.config.mjs"
       ],
       "objetivo_estrategico": "Redistribuir el enlazado interno automático del cuerpo del artículo",
-      "fecha_ejecucion": null,
-      "resultado": null
+      "fecha_ejecucion": "2026-08-05",
+      "resultado": "loadPostsIndex() en astro.config.mjs añade el campo category al POSTS_INDEX que recibe rehypeInlineBlocks, sin tocar rehype-plugins.mjs. Verificado: HTML de /dist idéntico antes/después (diff -rq sin diferencias), 38 artículos con category válida de BLOG_CATEGORIES. Build OK."
     },
     {
       "id": "seo-010",

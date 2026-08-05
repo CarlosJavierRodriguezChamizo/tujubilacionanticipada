@@ -79,4 +79,44 @@ Formato:
 - Commit: (pendiente de este mismo commit)
 - Veredicto del CEO: pendiente
 
+## 2026-08-05 — seo-005 Incluir el silo en la miga de pan (breadcrumb) del artículo (seo)
+- Archivos: src/layouts/BlogPost.astro
+- Qué: Añadido el nivel del silo tanto al `<nav aria-label="Migas de pan">` visible como al array que recibe `breadcrumbSchema()`, reutilizando `categoryHref` (mismo umbral MIN_POSTS_PER_SILO=3 que el resto del sitio). Añadido también el título del artículo como último ítem visible de la miga.
+- Por qué: Refuerza la señal de estructura jerárquica del sitio ante buscadores sin enlazar a silos inexistentes cuando la categoría no alcanza el umbral mínimo.
+- Hipótesis: Una miga de 4 niveles (Inicio/Blog/Silo/título) en el nav visible y en el BreadcrumbList refuerza la señal de estructura jerárquica ante los buscadores.
+- Criterio de éxito: BreadcrumbList con itemListElement.length===4 y position 3 apuntando al silo correcto. Cumplido y verificado en 5 artículos de 3 categorías distintas.
+- Métrica y plazo: Impresiones/CTR del breadcrumb rich result en GSC a 21 días; validación en la Prueba de Resultados Enriquecidos de Google.
+- Commit: (pendiente de este mismo commit)
+- Veredicto del CEO: pendiente
+
+## 2026-08-05 — seo-007 Referenciar el @id del revisor desde el JSON-LD de los artículos (seo)
+- Archivos: src/lib/schema.ts
+- Qué: Nueva función `reviewerReferenceSchema(name, jobTitle)` que devuelve `{"@id": "<url-perfil>#person"}` cuando el revisor tiene página de entidad propia (vía `REVIEWER_PROFILES`), con fallback al Person embebido completo si no la tiene. `blogPostingSchema()` la usa ahora en `reviewedBy` en vez del Person embebido.
+- Por qué: Evita duplicar copias sueltas del mismo Person en cada BlogPosting y conecta todos los artículos con la única entidad Person publicada en /equipo/javier-rodriguez.
+- Hipótesis: Sustituir el Person embebido por una referencia al @id estable conecta el grafo de conocimiento con una única entidad Person en vez de copias sueltas.
+- Criterio de éxito: reviewedBy = {"@id": ".../equipo/javier-rodriguez#person"} en los artículos publicados. Cumplido: 38/38 artículos verificados, 0 objetos Person embebidos duplicados.
+- Métrica y plazo: Validación del reviewedBy en la Prueba de Resultados Enriquecidos de Google; seguimiento en GSC a 21 días.
+- Commit: (pendiente de este mismo commit)
+- Veredicto del CEO: pendiente
+
+## 2026-08-05 — seo-008 Mencionar y enlazar al revisor desde /sobre-este-sitio (seo)
+- Archivos: src/pages/sobre-este-sitio.astro
+- Qué: Añadida en la sección "Quién está detrás" una mención a Javier Rodríguez con su cargo literal (leído de calendario.json, solo lectura) y un enlace `<a href="/equipo/javier-rodriguez">`.
+- Por qué: La página no mencionaba a ningún ser humano; nombrar y enlazar al revisor editorial refuerza la señal EEAT a nivel de sitio, no solo por artículo.
+- Hipótesis: Nombrar al revisor con enlace a su página de entidad en /sobre-este-sitio refuerza la señal EEAT a nivel de sitio.
+- Criterio de éxito: /dist/sobre-este-sitio/index.html contiene el enlace y el nombre. Cumplido y verificado por grep.
+- Métrica y plazo: Impresiones/CTR de /sobre-este-sitio en GSC a 21 días.
+- Commit: (pendiente de este mismo commit)
+- Veredicto del CEO: pendiente
+
+## 2026-08-05 — seo-009 Añadir el campo category al índice de posts que usa rehypeInlineBlocks (seo)
+- Archivos: astro.config.mjs
+- Qué: `loadPostsIndex()` extrae ahora también el campo `category` del frontmatter de cada artículo y lo incluye en POSTS_INDEX, sin tocar `rehype-plugins.mjs` ni la lógica de selección.
+- Por qué: Prepara el índice de datos para poder priorizar "misma categoría primero" en la selección de lecturas recomendadas en una tarea posterior (seo-011).
+- Hipótesis: Añadir category al índice permite a una tarea futura priorizar recomendaciones de la misma categoría, sin cambiar el comportamiento actual.
+- Criterio de éxito: POSTS_INDEX incluye category por artículo; HTML de /dist idéntico antes/después. Cumplido: diff -rq sin diferencias entre builds, 38 artículos con category válida.
+- Métrica y plazo: No aplica (tarea de preparación de datos, sin cambio de comportamiento visible).
+- Commit: (pendiente de este mismo commit)
+- Veredicto del CEO: pendiente
+
 ---
