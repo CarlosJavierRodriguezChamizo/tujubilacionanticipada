@@ -35,6 +35,7 @@ function loadPostsIndex() {
         slug: f.replace(/\.mdx$/, ''),
         title: field(block, 'title'),
         description: field(block, 'description'),
+        category: field(block, 'category'),
         draft: field(block, 'draft') === 'true',
       };
     })

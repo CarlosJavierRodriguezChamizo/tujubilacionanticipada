@@ -2,6 +2,13 @@
 import Base from '../layouts/Base.astro';
 import { SITE } from '../consts';
 import { webPageSchema, breadcrumbSchema } from '../lib/schema';
+import calendario from '../../scripts/calendario.json';
+
+// Nombre y cargo del revisor: se leen literalmente de scripts/calendario.json
+// (fuente única, solo lectura) para que esta página no pueda divergir del
+// dato usado en el resto del sitio.
+const reviewerName = calendario.config.reviewer_name;
+const reviewerTitle = calendario.config.reviewer_title;
 
 const path = '/sobre-este-sitio';
 const descripcion =
@@ -52,7 +59,11 @@ const schema = [
       <p>
         El contenido está elaborado por la redacción de {SITE.name}, que revisa
         y actualiza los artículos a partir de fuentes oficiales como la
-        Seguridad Social y el Boletín Oficial del Estado.
+        Seguridad Social y el Boletín Oficial del Estado. Los artículos
+        publicados son revisados editorialmente por{' '}
+        <a href="/equipo/javier-rodriguez">{reviewerName}</a>, {reviewerTitle},
+        que contrasta cada dato normativo con la fuente oficial
+        correspondiente antes de la publicación.
       </p>
 
       <h2>Aviso importante</h2>
