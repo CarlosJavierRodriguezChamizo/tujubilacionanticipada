@@ -30,6 +30,12 @@ export const REVIEWER_PROFILES: Record<string, string> = {
   'Javier Rodríguez': '/equipo/javier-rodriguez',
 };
 
+/** `@id` estable de la entidad Person de un revisor, si tiene página de entidad. */
+export function reviewerPersonId(name: string): string | undefined {
+  const profilePath = REVIEWER_PROFILES[name];
+  return profilePath ? `${absUrl(profilePath)}#person` : undefined;
+}
+
 /** Person de un revisor de contenido, con `@id`/`url` estables si tiene página de entidad. */
 export function reviewerPersonSchema(name: string, jobTitle?: string): JsonLd {
   const profilePath = REVIEWER_PROFILES[name];
@@ -41,6 +47,16 @@ export function reviewerPersonSchema(name: string, jobTitle?: string): JsonLd {
     ...(url ? { '@id': `${url}#person`, url } : {}),
     ...(REVIEWERS[name] ? { image: absUrl(REVIEWERS[name]) } : {}),
   };
+}
+
+/**
+ * Referencia al revisor para usar en otras entidades (p. ej. BlogPosting.reviewedBy):
+ * si el revisor tiene página de entidad propia, referencia su `@id` en vez de
+ * duplicar el objeto Person; si no, incrusta el Person completo como fallback.
+ */
+export function reviewerReferenceSchema(name: string, jobTitle?: string): JsonLd {
+  const id = reviewerPersonId(name);
+  return id ? { '@id': id } : reviewerPersonSchema(name, jobTitle);
 }
 
 /** Organización titular del sitio. Presente en todas las páginas. */
@@ -148,7 +164,7 @@ export function blogPostingSchema(post: CollectionEntry<'blog'>): JsonLd {
     author: { '@type': 'Organization', name: data.author, url: SITE.url },
     // Señal EEAT: revisión editorial por una persona acreditada.
     ...(data.reviewedBy
-      ? { reviewedBy: reviewerPersonSchema(data.reviewedBy, data.reviewerTitle) }
+      ? { reviewedBy: reviewerReferenceSchema(data.reviewedBy, data.reviewerTitle) }
       : {}),
     publisher: { '@id': ORG_ID },
     image: absUrl(

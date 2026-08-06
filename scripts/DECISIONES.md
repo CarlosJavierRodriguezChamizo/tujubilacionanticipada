@@ -79,4 +79,44 @@ Formato:
 - Commit: (pendiente de este mismo commit)
 - Veredicto del CEO: pendiente
 
+## 2026-08-05 — seo-005 Incluir el silo en la miga de pan (breadcrumb) del artículo (seo)
+- Archivos: src/layouts/BlogPost.astro
+- Qué: El <nav aria-label="Migas de pan"> y el BreadcrumbList JSON-LD pasan de 3 a 4 niveles (Inicio / Blog / Silo / título), reutilizando categoryHref y el umbral de silo (≥3 posts publicados) ya introducidos en ux-001, sin duplicar lógica. Para categorías sin silo la miga se mantiene en 3 niveles.
+- Por qué: breadcrumbSchema() solo recibía 3 niveles; la estrategia exige que la miga incluya el silo para reforzar la señal de estructura jerárquica ante los buscadores.
+- Hipótesis: Añadir el silo a la miga refuerza la señal de estructura jerárquica del sitio ante los buscadores.
+- Criterio de éxito: nav con 4 enlaces y BreadcrumbList con itemListElement.length === 4, position 3 → URL del silo. Cumplido y verificado (build, muestra de dist).
+- Métrica y plazo: GSC a 21 días — aparición de breadcrumbs enriquecidos en resultados y evolución de impresiones/CTR por categoría.
+- Commit: (pendiente de este mismo commit)
+- Veredicto del CEO: pendiente
+
+## 2026-08-05 — seo-007 Referenciar el @id del revisor desde el JSON-LD de los 31 artículos (seo)
+- Archivos: src/lib/schema.ts
+- Qué: Nueva reviewerReferenceSchema() (con fallback a Person completo si el revisor no tiene página propia) sustituye a reviewerPersonSchema() dentro de blogPostingSchema(); reviewedBy pasa a ser una referencia { "@id": ".../equipo/javier-rodriguez#person" } que reutiliza el @id ya construido en seo-006, en vez de un objeto Person duplicado.
+- Por qué: 31 artículos incrustaban copias sueltas del mismo Person; el grafo de conocimiento debe conectarlos con una única entidad.
+- Hipótesis: Referenciar el @id conecta cada BlogPosting con una única entidad Person en el grafo de conocimiento.
+- Criterio de éxito: reviewedBy = { "@id": ... } en el JSON-LD, coincidiendo con el @id publicado en /equipo/javier-rodriguez. Cumplido y verificado (build, muestra de 4 artículos).
+- Métrica y plazo: GSC/Rich Results Test a 21 días — sin errores de Person/reviewedBy, entidad unificada.
+- Commit: (pendiente de este mismo commit)
+- Veredicto del CEO: pendiente
+
+## 2026-08-05 — seo-008 Mencionar y enlazar al revisor desde /sobre-este-sitio (seo)
+- Archivos: src/pages/sobre-este-sitio.astro
+- Qué: La sección "Quién está detrás" nombra a Javier Rodríguez con <a href="/equipo/javier-rodriguez"> y su cargo literal leído de scripts/calendario.json (solo lectura), sin credenciales ni cifras inventadas.
+- Por qué: /sobre-este-sitio no mencionaba a ningún ser humano, debilitando la señal EEAT a nivel de sitio.
+- Hipótesis: Nombrar y enlazar al revisor editorial desde la página "about" refuerza la señal EEAT a nivel de sitio.
+- Criterio de éxito: /dist/sobre-este-sitio/index.html contiene el enlace y el nombre/cargo literal. Cumplido y verificado (build, grep).
+- Métrica y plazo: GSC a 21 días — impresiones/CTR de /equipo/javier-rodriguez y /sobre-este-sitio.
+- Commit: (pendiente de este mismo commit)
+- Veredicto del CEO: pendiente
+
+## 2026-08-05 — seo-009 Añadir el campo category al índice de posts que usa rehypeInlineBlocks (seo)
+- Archivos: astro.config.mjs
+- Qué: loadPostsIndex() extrae ahora también category del frontmatter (mismo helper field() ya usado para title/description/draft) en cada objeto de POSTS_INDEX. rehype-plugins.mjs no lee aún ese campo (confirmado por inspección): es solo preparación de datos para seo-011.
+- Por qué: Sin category en el índice no hay forma de priorizar "misma categoría primero" en las lecturas recomendadas en una tarea futura.
+- Hipótesis: Añadir category al índice permite priorizar la misma categoría en la selección de lecturas recomendadas (seo-011, aún no ejecutada).
+- Criterio de éxito: POSTS_INDEX incluye category por artículo; `npm run build` pasa y el HTML no cambia. Cumplido: diff -rq de dist/ antes/después sin diferencias.
+- Métrica y plazo: No aplica (preparación de datos sin efecto observable todavía; se medirá en seo-011).
+- Commit: (pendiente de este mismo commit)
+- Veredicto del CEO: pendiente
+
 ---
