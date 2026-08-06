@@ -2,6 +2,13 @@
 import Base from '../layouts/Base.astro';
 import { SITE } from '../consts';
 import { webPageSchema, breadcrumbSchema } from '../lib/schema';
+import calendario from '../../scripts/calendario.json';
+
+// Nombre y cargo del revisor: se leen literalmente de scripts/calendario.json
+// (fuente única, solo lectura) para que esta página no pueda divergir del
+// dato usado en el resto del sitio.
+const reviewerName = calendario.config.reviewer_name;
+const reviewerTitle = calendario.config.reviewer_title;
 
 const path = '/sobre-este-sitio';
 const descripcion =
@@ -50,9 +57,12 @@ const schema = [
 
       <h2>Quién está detrás</h2>
       <p>
-        El contenido está elaborado por la redacción de {SITE.name}, que revisa
-        y actualiza los artículos a partir de fuentes oficiales como la
-        Seguridad Social y el Boletín Oficial del Estado.
+        El contenido está elaborado por la redacción de {SITE.name}, que
+        actualiza los artículos a partir de fuentes oficiales como la
+        Seguridad Social y el Boletín Oficial del Estado. La revisión
+        editorial corre a cargo de{' '}
+        <a href="/equipo/javier-rodriguez">{reviewerName}</a>, {reviewerTitle},
+        cuya función se detalla en su página de perfil.
       </p>
 
       <h2>Aviso importante</h2>

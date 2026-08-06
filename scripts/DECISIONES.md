@@ -99,4 +99,14 @@ Formato:
 - Commit: (pendiente de este mismo commit)
 - Veredicto del CEO: pendiente
 
+## 2026-08-06 — seo-008 Mencionar y enlazar al revisor desde /sobre-este-sitio (seo)
+- Archivos: src/pages/sobre-este-sitio.astro
+- Qué: La sección "Quién está detrás" nombra a Javier Rodríguez como revisor editorial, con <a href="/equipo/javier-rodriguez">; nombre/cargo se leen de scripts/calendario.json (solo lectura) igual que en la página de equipo, para que no puedan divergir.
+- Por qué: /sobre-este-sitio no mencionaba a ningún ser humano identificable, debilitando la señal EEAT a nivel de sitio.
+- Hipótesis: Nombrar y enlazar al revisor editorial desde "Sobre este sitio" refuerza la señal EEAT a nivel de sitio, no solo por artículo.
+- Criterio de éxito: <a href="/equipo/javier-rodriguez"> y el nombre "Javier Rodríguez" en /dist/sobre-este-sitio/index.html. Cumplido y verificado (build, grep).
+- Métrica y plazo: GSC — impresiones/CTR/posición media de /sobre-este-sitio a 21-30 días; señales de entidad (Enhancements) a 30-60 días.
+- Commit: (pendiente de este mismo commit)
+- Veredicto del CEO: pendiente
+
 ---

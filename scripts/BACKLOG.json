@@ -165,7 +165,7 @@
       "titulo": "Mencionar y enlazar al revisor desde /sobre-este-sitio",
       "area": "seo",
       "prioridad": 10,
-      "estado": "pendiente",
+      "estado": "hecha",
       "hipotesis": "Si la sección \"Quién está detrás\" de /sobre-este-sitio deja de decir solo \"elaborado por la redacción\" y pasa a nombrar a Javier Rodríguez como revisor editorial con enlace a /equipo/javier-rodriguez, esperamos reforzar la señal EEAT a nivel de sitio (no solo por artículo), porque hoy /sobre-este-sitio no menciona a un solo ser humano.",
       "criterio_exito": "/dist/sobre-este-sitio/index.html contiene un <a href=\"/equipo/javier-rodriguez\"> y el texto nombra a 'Javier Rodríguez' con el cargo literal de scripts/calendario.json, sin inventar credenciales adicionales; `npm run build` pasa.",
       "metrica": "grep del href y del nombre \"Javier Rodríguez\" en /dist/sobre-este-sitio/index.html.",
@@ -173,8 +173,8 @@
         "src/pages/sobre-este-sitio.astro"
       ],
       "objetivo_estrategico": "Página de entidad del revisor, enlazada desde los 31 artículos",
-      "fecha_ejecucion": null,
-      "resultado": null
+      "fecha_ejecucion": "2026-08-06",
+      "resultado": "Añadida en 'Quién está detrás' de /sobre-este-sitio una mención a Javier Rodríguez como revisor editorial, con <a href=\"/equipo/javier-rodriguez\">, y nombre/cargo leídos de scripts/calendario.json (solo lectura, sin editar). Verificado: grep confirma el enlace y el nombre en dist/sobre-este-sitio/index.html; 1 solo H1; sin noindex accidental. Build OK."
     },
     {
       "id": "seo-009",
