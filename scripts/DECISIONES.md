@@ -79,4 +79,24 @@ Formato:
 - Commit: (pendiente de este mismo commit)
 - Veredicto del CEO: pendiente
 
+## 2026-08-06 — seo-005 Incluir el silo en la miga de pan (breadcrumb) del artículo (seo)
+- Archivos: src/layouts/BlogPost.astro
+- Qué: breadcrumbSchema() y el <nav aria-label="Migas de pan"> visible añaden un cuarto nivel (categoría/silo) entre "Blog" y el título, reutilizando categoryHref/getCategorySlug() (seo-001) con el mismo umbral de silo (≥3 posts). Sin silo, se mantienen 3 niveles sin inventar URL.
+- Por qué: breadcrumbSchema() solo generaba 3 niveles (Inicio, Blog, título); la estrategia exige que la miga incluya el silo para reforzar la señal de estructura jerárquica.
+- Hipótesis: Añadir el silo a la miga de pan (visible y JSON-LD) refuerza la señal de estructura jerárquica del sitio ante los buscadores.
+- Criterio de éxito: BreadcrumbList con itemListElement.length === 4 y position 3 = URL del silo. Cumplido y verificado en 7 artículos de las 4 categorías (todas con silo actualmente).
+- Métrica y plazo: GSC — informe "Migas de pan" (Enhancements) a 21 días, sin errores de validación; cobertura sin nuevas exclusiones en /blog/*.
+- Commit: (pendiente de este mismo commit)
+- Veredicto del CEO: pendiente
+
+## 2026-08-06 — seo-007 Referenciar el @id del revisor desde el JSON-LD de los 31 artículos (seo)
+- Archivos: src/lib/schema.ts
+- Qué: Nueva función reviewerRefSchema() que, si el revisor tiene página de entidad (REVIEWER_PROFILES), devuelve solo {"@id": ".../equipo/javier-rodriguez#person"} en vez del objeto Person completo; blogPostingSchema() la usa para reviewedBy. reviewerPersonSchema() se mantiene sin cambios para la página de equipo (que sí necesita el objeto Person completo como entidad canónica).
+- Por qué: reviewedBy duplicaba name/jobTitle del revisor en cada uno de los artículos en vez de referenciar la entidad única creada en seo-006.
+- Hipótesis: Referenciar por @id conecta cada BlogPosting con una única entidad Person, en vez de 31+ copias sueltas del mismo nombre.
+- Criterio de éxito: reviewedBy = {"@id": "..."} en vez de objeto Person con name/jobTitle. Cumplido y verificado en los 39 artículos publicados con reviewedBy (31 originales + posts nuevos entretanto): 39/39 con referencia, 0 con Person embebido.
+- Métrica y plazo: GSC — Rich Results / Resultados enriquecidos a 21-30 días, sin errores de "Person" duplicado.
+- Commit: (pendiente de este mismo commit)
+- Veredicto del CEO: pendiente
+
 ---

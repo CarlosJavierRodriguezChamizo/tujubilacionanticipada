@@ -100,7 +100,7 @@
       "titulo": "Incluir el silo en la miga de pan (breadcrumb) del artículo",
       "area": "seo",
       "prioridad": 6,
-      "estado": "pendiente",
+      "estado": "hecha",
       "hipotesis": "Si la miga de pan pasa de 'Inicio / Blog / título' a 'Inicio / Blog / <Silo> / título', tanto en el <nav aria-label=\"Migas de pan\"> visible como en el BreadcrumbList que genera breadcrumbSchema() en BlogPost.astro, esperamos reforzar la señal de estructura jerárquica del sitio ante los buscadores, porque el falsable de la estrategia exige que la miga incluya el silo y hoy breadcrumbSchema() solo recibe 3 niveles (Inicio, Blog, título).",
       "criterio_exito": "En una muestra de /dist/blog/*/index.html, el <nav aria-label=\"Migas de pan\"> muestra 4 enlaces (Inicio, Blog, <Silo>, título actual) y el JSON-LD BreadcrumbList tiene itemListElement.length === 4, con el elemento position 3 apuntando a la URL del silo correspondiente a esa categoría.",
       "metrica": "Para 5 artículos de categorías distintas, el BreadcrumbList JSON-LD tiene 4 elementos y el item de position 3 coincide con /blog/categoria/<slug-de-esa-categoría>.",
@@ -108,8 +108,8 @@
         "src/layouts/BlogPost.astro"
       ],
       "objetivo_estrategico": "Páginas de silo (`/blog/categoria/<slug>`) para las categorías con ≥ 3 artículos publicados",
-      "fecha_ejecucion": null,
-      "resultado": null
+      "fecha_ejecucion": "2026-08-06",
+      "resultado": "Añadido un cuarto nivel condicional (categoría/silo) en breadcrumbSchema() y en el <nav aria-label=\"Migas de pan\"> de BlogPost.astro, usando el categoryHref ya calculado con getCategorySlug() (umbral ≥3 posts). Sin silo, se mantienen 3 niveles sin inventar URL. Verificado en 7 artículos de las 4 categorías: BreadcrumbList con itemListElement.length === 4 y position 3 apuntando al silo correcto. El nivel final del nav es <span aria-current=\"page\"> (no <a>) siguiendo el patrón de [categoria].astro. Build OK (59 páginas)."
     },
     {
       "id": "seo-006",
@@ -133,7 +133,7 @@
       "titulo": "Referenciar el @id del revisor desde el JSON-LD de los 31 artículos",
       "area": "seo",
       "prioridad": 8,
-      "estado": "pendiente",
+      "estado": "hecha",
       "hipotesis": "Si blogPostingSchema() en src/lib/schema.ts sustituye el objeto Person embebido de reviewedBy por una referencia { '@id': '.../equipo/javier-rodriguez#person' } al @id estable creado en seo-006, esperamos que el grafo de conocimiento conecte cada BlogPosting con una única entidad Person en vez de 31 copias sueltas del mismo nombre, cumpliendo el falsable 'su reviewedBy resuelve al @id de esa URL'.",
       "criterio_exito": "En una muestra de /dist/blog/*/index.html, el JSON-LD del BlogPosting tiene reviewedBy = { \"@id\": \"https://tujubilacionanticipada.com/equipo/javier-rodriguez#person\" } (referencia, no un objeto Person con name/jobTitle duplicados); esto debe cumplirse para los 31 artículos publicados con reviewedBy definido, porque todos reutilizan la misma función.",
       "metrica": "grep del @id de reviewedBy en 5 páginas /dist/blog/*/index.html; el valor coincide exactamente con el @id publicado en /dist/equipo/javier-rodriguez/index.html.",
@@ -141,8 +141,8 @@
         "src/lib/schema.ts"
       ],
       "objetivo_estrategico": "Página de entidad del revisor, enlazada desde los 31 artículos",
-      "fecha_ejecucion": null,
-      "resultado": null
+      "fecha_ejecucion": "2026-08-06",
+      "resultado": "Añadida reviewerRefSchema() en schema.ts: si el revisor tiene página de entidad (REVIEWER_PROFILES), reviewedBy pasa a ser solo {'@id': '.../equipo/javier-rodriguez#person'} en vez del objeto Person completo; reviewerPersonSchema() se mantiene intacta para la propia página de equipo. Verificado en los 39 artículos publicados con reviewedBy (más que los 31 originales, han entrado posts nuevos): 39/39 usan la referencia @id, 0 con Person embebido. @id coincide exactamente con el publicado en /equipo/javier-rodriguez. Build OK."
     },
     {
       "id": "ux-002",

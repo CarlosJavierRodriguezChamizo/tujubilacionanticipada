@@ -43,6 +43,22 @@ export function reviewerPersonSchema(name: string, jobTitle?: string): JsonLd {
   };
 }
 
+/**
+ * Referencia a la entidad Person de un revisor, para usar en `reviewedBy` de
+ * otras entidades (p. ej. BlogPosting). Si el revisor tiene página de
+ * entidad propia (ver `REVIEWER_PROFILES`), devuelve solo `{ '@id': ... }`
+ * para que el grafo de conocimiento apunte a una única entidad Person en
+ * lugar de duplicar name/jobTitle en cada artículo. Si no tiene página de
+ * entidad, cae al objeto Person completo (sin `@id` que referenciar).
+ */
+export function reviewerRefSchema(name: string, jobTitle?: string): JsonLd {
+  const profilePath = REVIEWER_PROFILES[name];
+  if (profilePath) {
+    return { '@id': `${absUrl(profilePath)}#person` };
+  }
+  return reviewerPersonSchema(name, jobTitle);
+}
+
 /** Organización titular del sitio. Presente en todas las páginas. */
 export function organizationSchema(): JsonLd {
   return {
@@ -146,9 +162,11 @@ export function blogPostingSchema(post: CollectionEntry<'blog'>): JsonLd {
     articleSection: data.category,
     ...(data.tags.length > 0 ? { keywords: data.tags.join(', ') } : {}),
     author: { '@type': 'Organization', name: data.author, url: SITE.url },
-    // Señal EEAT: revisión editorial por una persona acreditada.
+    // Señal EEAT: revisión editorial por una persona acreditada. Se referencia
+    // por `@id` a la entidad Person publicada en /equipo/... en lugar de
+    // duplicar name/jobTitle en cada uno de los artículos.
     ...(data.reviewedBy
-      ? { reviewedBy: reviewerPersonSchema(data.reviewedBy, data.reviewerTitle) }
+      ? { reviewedBy: reviewerRefSchema(data.reviewedBy, data.reviewerTitle) }
       : {}),
     publisher: { '@id': ORG_ID },
     image: absUrl(
