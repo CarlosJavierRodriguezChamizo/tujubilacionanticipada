@@ -109,4 +109,14 @@ Formato:
 - Commit: (pendiente de este mismo commit)
 - Veredicto del CEO: pendiente
 
+## 2026-08-06 — seo-009 Añadir el campo category al índice de posts que usa rehypeInlineBlocks (seo)
+- Archivos: astro.config.mjs
+- Qué: loadPostsIndex() extrae ahora category del frontmatter de cada .mdx (mismo helper field() que title/description), sin tocar rehype-plugins.mjs. Preparación de datos, ningún cambio de comportamiento.
+- Por qué: rehypeInlineBlocks(POSTS_INDEX) no tenía forma de saber la categoría de ningún artículo, bloqueando la futura priorización "misma categoría primero" (seo-011).
+- Hipótesis: Añadir category al índice permite priorizar lecturas recomendadas de la misma categoría en una tarea posterior.
+- Criterio de éxito: category presente en el índice para todos los posts publicados, con uno de los 4 valores de BLOG_CATEGORIES; HTML de /dist sin cambios. Cumplido: 39/39 posts publicados con category válida; diff de dist/ antes/después idéntico byte a byte.
+- Métrica y plazo: Sin métrica de tráfico propia (tarea de preparación); se medirá con seo-010/seo-011.
+- Commit: (pendiente de este mismo commit)
+- Veredicto del CEO: pendiente
+
 ---

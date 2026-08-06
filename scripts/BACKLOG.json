@@ -181,7 +181,7 @@
       "titulo": "Añadir el campo category al índice de posts que usa rehypeInlineBlocks",
       "area": "seo",
       "prioridad": 11,
-      "estado": "pendiente",
+      "estado": "hecha",
       "hipotesis": "Si loadPostsIndex() en astro.config.mjs extrae también el frontmatter category de cada artículo (hoy solo extrae slug/title/description/draft), esperamos poder priorizar 'misma categoría primero' en la selección de lecturas recomendadas de rehypeInlineBlocks en una tarea posterior, porque hoy el índice que recibe ese plugin no tiene forma de saber la categoría de ningún artículo.",
       "criterio_exito": "El array POSTS_INDEX que se pasa a rehypeInlineBlocks(POSTS_INDEX) en astro.config.mjs incluye un campo category por artículo con uno de los 4 valores de BLOG_CATEGORIES; `npm run build` sigue pasando y el HTML generado no cambia (esta tarea es solo preparación de datos, sin tocar la lógica de selección en rehype-plugins.mjs).",
       "metrica": "Inspección de loadPostsIndex() confirmando el campo category en los 31 objetos del índice; el HTML de /dist antes y después de esta tarea es idéntico en el cuerpo de los artículos (ningún cambio de comportamiento todavía).",
@@ -189,8 +189,8 @@
         "astro.config.mjs"
       ],
       "objetivo_estrategico": "Redistribuir el enlazado interno automático del cuerpo del artículo",
-      "fecha_ejecucion": null,
-      "resultado": null
+      "fecha_ejecucion": "2026-08-06",
+      "resultado": "loadPostsIndex() en astro.config.mjs ahora extrae también category del frontmatter (mismo helper field() que title/description). Verificado: los 39 posts publicados (más que los 31 originales) obtienen un valor válido de BLOG_CATEGORIES. Comparación dist/ antes/después (git stash) confirma HTML idéntico byte a byte — solo preparación de datos, sin tocar rehype-plugins.mjs. Build OK."
     },
     {
       "id": "seo-010",
