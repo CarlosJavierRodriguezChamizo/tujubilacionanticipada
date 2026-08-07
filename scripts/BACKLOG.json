@@ -157,8 +157,8 @@
         "src/layouts/BlogPost.astro"
       ],
       "objetivo_estrategico": "Página de entidad del revisor, enlazada desde los 31 artículos",
-      "fecha_ejecucion": null,
-      "resultado": null
+      "fecha_ejecucion": "2026-08-07",
+      "resultado": "El nombre y la foto en la caja 'Revisado por' de BlogPost.astro ahora enlazan a /equipo/javier-rodriguez vía un mapeo REVIEWER_URLS local (fuera de alcance tocar src/consts.ts). Verificado: 40/40 artículos con reviewedBy (no 31; el número real de artículos publicados creció desde que se redactó la tarea) contienen el enlace dentro del bloque 'Revisado por'. Enlace estático, funciona sin JS, sin credenciales/cifras nuevas. Build OK (60 páginas)."
     },
     {
       "id": "seo-008",
@@ -205,8 +205,8 @@
         "scripts/contar-enlaces-internos.mjs"
       ],
       "objetivo_estrategico": "Redistribuir el enlazado interno automático del cuerpo del artículo",
-      "fecha_ejecucion": null,
-      "resultado": null
+      "fecha_ejecucion": "2026-08-07",
+      "resultado": "Creado scripts/contar-enlaces-internos.mjs (Node ESM, sin dependencias nuevas). Cuenta hrefs /blog/<slug> desde bloques 'Lectura recomendada' y 'Artículos relacionados' del cuerpo, excluyendo nav/breadcrumb/header/footer/caja de revisor. Línea base 'antes' (2026-08-07): 40 artículos, 320 enlaces totales, mínimo 0, máximo 45, mediana 0, 23 artículos con 0 entrantes — confirma el diagnóstico de concentración. Build OK, script no afecta el HTML generado."
     },
     {
       "id": "seo-011",
