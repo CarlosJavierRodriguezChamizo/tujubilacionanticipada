@@ -87,6 +87,95 @@ function currentSlug(file) {
   return m ? m[1] : '';
 }
 
+/**
+ * Hash determinista (djb2) de una cadena → entero sin signo. Se usa para
+ * elegir un punto de partida por artículo en la selección de "lectura
+ * recomendada", de modo que el resultado sea reproducible en cada build
+ * (mismo slug → mismo hash) sin depender de Math.random ni Date.now.
+ */
+export function hashString(str) {
+  let hash = 5381;
+  for (let i = 0; i < str.length; i++) {
+    hash = ((hash * 33) ^ str.charCodeAt(i)) >>> 0;
+  }
+  return hash >>> 0;
+}
+
+/**
+ * Rota `list` (array de objetos con `.slug`) para que empiece en un punto
+ * determinista derivado de `seedSlug` (hash del slug módulo la longitud de
+ * la lista). Se exporta para que otros puntos de enlazado interno
+ * automático puedan repartir sus selecciones con el mismo criterio
+ * determinista, en vez de usar siempre el mismo orden fijo.
+ */
+export function rotateByHash(list, seedSlug) {
+  if (!list.length) return list;
+  const start = hashString(seedSlug) % list.length;
+  return list.map((_, i) => list[(start + i) % list.length]);
+}
+
+/**
+ * Elige hasta `count` objetivos distintos de `pool` para el artículo
+ * `sourceSlug`, con una garantía de reparto homogéneo: `pool` DEBE incluir
+ * al propio artículo de origen. Se ordena todo `pool` por hash(slug) del
+ * candidato (empate por slug para que el orden sea 100% determinista) y
+ * cada artículo apunta a los `count` siguientes en ese orden circular.
+ *
+ * Como el orden por hash es una permutación (biyección) de `pool`, cada
+ * artículo del pool recibe exactamente `count` enlaces entrantes desde sus
+ * `count` "vecinos" anteriores en el círculo — a diferencia de tomar
+ * directamente `hash(slug) % length` como punto de partida, que con pools
+ * pequeños (10-20 elementos) puede colisionar y dejar algunos artículos sin
+ * ningún enlace entrante por pura casualidad estadística del hash.
+ *
+ * `salt` permite obtener un orden circular distinto para dos componentes
+ * distintos que comparten el mismo `pool` y el mismo `sourceSlug` (p. ej.
+ * los bloques "Lectura recomendada" intercalados y el bloque "Artículos
+ * relacionados" al final del artículo), para que no siempre señalen
+ * exactamente a los mismos 3 artículos dentro de una misma página.
+ */
+export function pickBalancedTargets(pool, sourceSlug, count, salt = '') {
+  const K = pool.length;
+  if (K <= 1 || count <= 0) return [];
+  const order = [...pool]
+    .map((m) => ({ m, h: hashString(m.slug + salt) }))
+    .sort((a, b) => a.h - b.h || a.m.slug.localeCompare(b.m.slug))
+    .map((x) => x.m);
+  const rank = order.findIndex((m) => m.slug === sourceSlug);
+  if (rank === -1) return [];
+  const n = Math.min(count, K - 1);
+  const picks = [];
+  for (let i = 1; i <= n; i++) {
+    picks.push(order[(rank + i) % K]);
+  }
+  return picks;
+}
+
+/**
+ * Calcula, para un artículo dado, sus artículos recomendados.
+ *
+ * - Prioriza primero los artículos de la misma `category` (campo añadido en
+ *   seo-009): se reparten con `pickBalancedTargets`, que garantiza un punto
+ *   de partida determinista por artículo (derivado de un hash del slug, no
+ *   siempre el mismo índice) y un reparto homogéneo de enlaces entrantes
+ *   dentro de la categoría.
+ * - Si la categoría no tiene candidatos suficientes, completa con el resto
+ *   del índice usando el mismo criterio de rotación determinista.
+ */
+function pickRecommendations(slug, category, posts, count) {
+  const categoryMembers = category ? posts.filter((p) => p.category === category) : [];
+  const picks = pickBalancedTargets(categoryMembers, slug, count, 'reco');
+
+  if (picks.length < count) {
+    const seen = new Set(picks.map((p) => p.slug));
+    seen.add(slug);
+    const rest = posts.filter((p) => !seen.has(p.slug));
+    const extra = rotateByHash(rest, slug + 'reco').slice(0, count - picks.length);
+    picks.push(...extra);
+  }
+  return picks;
+}
+
 function advisorNode() {
   return el('aside', { className: ['inline-cta'] }, [
     el('p', { className: ['inline-cta__text'] }, [
@@ -128,19 +217,38 @@ export function rehypeInlineBlocks(posts = []) {
   // unified lo registre correctamente cuando se pasa ya parametrizado.
   return () => (tree, file) => {
     const slug = currentSlug(file);
-    const others = posts.filter((p) => p.slug !== slug);
+    const current = posts.find((p) => p.slug === slug);
 
     const h2 = [];
     (tree.children || []).forEach((n, i) => {
       if (n.type === 'element' && n.tagName === 'h2') h2.push(i);
     });
 
-    const plan = [
-      { ord: 1, type: 'reco' },
-      { ord: 2, type: 'advisor' },
-      { ord: 3, type: 'reco' },
-      { ord: 4, type: 'advisor' },
-    ];
+    // Con ≥5 H2 hay espacio suficiente para un tercer bloque de "lectura
+    // recomendada" sin saturar el artículo.
+    const recoBlocks = h2.length >= 5 ? 3 : 2;
+    const types =
+      recoBlocks === 3
+        ? ['reco', 'advisor', 'reco', 'advisor', 'reco']
+        : ['reco', 'advisor', 'reco', 'advisor'];
+    // Posiciones proporcionales al nº de H2 (en vez de índices fijos), para
+    // que los `ord` sean siempre índices válidos de `h2` incluso en el caso
+    // límite de exactamente 5 H2 (donde un índice fijo como 5 no existiría).
+    let lastOrd = -1;
+    const plan = types.map((type, i) => {
+      let ord = Math.floor(((i + 1) * h2.length) / (types.length + 1));
+      if (ord <= lastOrd) ord = lastOrd + 1;
+      ord = Math.min(ord, h2.length - 1);
+      lastOrd = ord;
+      return { ord, type };
+    });
+
+    const recoPicks = pickRecommendations(
+      slug,
+      current ? current.category : '',
+      posts,
+      recoBlocks
+    );
 
     const inserts = [];
     let recoPick = 0;
@@ -151,8 +259,8 @@ export function rehypeInlineBlocks(posts = []) {
       if (p.type === 'advisor') {
         inserts.push({ at, node: advisorNode() });
         advisorCount++;
-      } else if (others.length) {
-        inserts.push({ at, node: recoNode(others[recoPick % others.length]) });
+      } else if (recoPicks.length) {
+        inserts.push({ at, node: recoNode(recoPicks[recoPick % recoPicks.length]) });
         recoPick++;
       }
     }
