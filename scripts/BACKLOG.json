@@ -221,8 +221,8 @@
         "src/lib/rehype-plugins.mjs"
       ],
       "objetivo_estrategico": "Redistribuir el enlazado interno automático del cuerpo del artículo",
-      "fecha_ejecucion": null,
-      "resultado": null
+      "fecha_ejecucion": "2026-08-07",
+      "resultado": "rehype-plugins.mjs: nuevo hashString() (djb2, determinista) y pickBalancedTargets() reemplazan el recoPick=0 fijo; prioriza primero artículos de la misma category (seo-009) y sube a 3 bloques de recomendación con ≥5 H2. RelatedArticles.astro: el fallback por fecha también pasa a pickBalancedTargets (salt distinta) porque concentraba hasta 28 entrantes por sí solo. rehypeExternalLinks/DOFOLLOW_HOSTS sin tocar. Medición con contar-enlaces-internos.mjs: antes mínimo 0 / máximo 45 / mediana 0 / 23 artículos con 0 entrantes → después mínimo 9 / máximo 9 / mediana 9 / 0 artículos con 0 entrantes. Criterio de éxito cumplido (mínimo ≥3, máximo ≤3×mediana). Build OK."
     }
   ]
 }

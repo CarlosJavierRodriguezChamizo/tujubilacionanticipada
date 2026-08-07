@@ -139,4 +139,14 @@ Formato:
 - Commit: (pendiente de este mismo commit)
 - Veredicto del CEO: pendiente
 
+## 2026-08-07 — seo-011 Redistribuir la selección de "lectura recomendada" en rehypeInlineBlocks (seo)
+- Archivos: src/lib/rehype-plugins.mjs, src/components/RelatedArticles.astro
+- Qué: hashString() (djb2 determinista) + pickBalancedTargets() sustituyen el punto de partida fijo recoPick=0 sobre el array alfabético; prioriza primero artículos de la misma category (seo-009), sube a 3 bloques de recomendación con ≥5 H2. El fallback por fecha de RelatedArticles.astro también pasa a pickBalancedTargets (con salt distinta) porque por sí solo concentraba hasta 28 entrantes en un artículo. rehypeExternalLinks/DOFOLLOW_HOSTS sin modificar.
+- Por qué: El enlazado interno automático arrancaba siempre en el mismo índice sobre un array ordenado alfabéticamente, concentrando casi todo en los 2 primeros artículos.
+- Hipótesis: Un punto de partida determinista por artículo, con prioridad de categoría, reparte el enlazado interno automático por todo el índice.
+- Criterio de éxito: mínimo ≥3 entrantes y máximo ≤3×mediana. Cumplido y verificado: antes (mínimo 0 / máximo 45 / mediana 0 / 23 artículos con 0 entrantes) → después (mínimo 9 / máximo 9 / mediana 9 / 0 artículos con 0 entrantes), medido con scripts/contar-enlaces-internos.mjs (seo-010). Build OK (astro check incluido).
+- Métrica y plazo: GSC a 21-30 días — cobertura/rastreo relativo de los 23 artículos que antes tenían 0 enlaces internos entrantes.
+- Commit: (pendiente de este mismo commit)
+- Veredicto del CEO: pendiente
+
 ---
