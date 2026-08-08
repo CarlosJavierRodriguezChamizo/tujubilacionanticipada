@@ -87,6 +87,38 @@ function currentSlug(file) {
   return m ? m[1] : '';
 }
 
+/** Hash determinista (FNV-1a simplificado) de un string, sin dependencias. */
+function hashString(str) {
+  let h = 0;
+  for (let i = 0; i < str.length; i++) {
+    h = (Math.imul(h, 31) + str.charCodeAt(i)) >>> 0;
+  }
+  return h;
+}
+
+/** Rota un array `offset` posiciones, sin mutarlo. */
+function rotate(arr, offset) {
+  if (arr.length === 0) return arr;
+  const o = ((offset % arr.length) + arr.length) % arr.length;
+  return arr.slice(o).concat(arr.slice(0, o));
+}
+
+/**
+ * Construye el orden de candidatos a "lectura recomendada" para un artículo
+ * dado: prioriza los de su misma `category`, seguidos del resto, pero
+ * rotando cada grupo con un desplazamiento determinista derivado del propio
+ * slug (hash), en vez de arrancar siempre en la posición 0 del array
+ * ordenado alfabéticamente por `readdirSync`. Así el enlazado interno
+ * automático se reparte por todo el índice en lugar de concentrarse siempre
+ * en los mismos artículos.
+ */
+function buildRecoCandidates(slug, category, others) {
+  const seed = hashString(slug);
+  const sameCategory = others.filter((p) => p.category && p.category === category);
+  const rest = others.filter((p) => !(p.category && p.category === category));
+  return [...rotate(sameCategory, seed), ...rotate(rest, seed)];
+}
+
 function advisorNode() {
   return el('aside', { className: ['inline-cta'] }, [
     el('p', { className: ['inline-cta__text'] }, [
@@ -129,6 +161,8 @@ export function rehypeInlineBlocks(posts = []) {
   return () => (tree, file) => {
     const slug = currentSlug(file);
     const others = posts.filter((p) => p.slug !== slug);
+    const current = posts.find((p) => p.slug === slug);
+    const candidates = buildRecoCandidates(slug, current && current.category, others);
 
     const h2 = [];
     (tree.children || []).forEach((n, i) => {
@@ -141,6 +175,12 @@ export function rehypeInlineBlocks(posts = []) {
       { ord: 3, type: 'reco' },
       { ord: 4, type: 'advisor' },
     ];
+    // Con suficientes cabeceras (≥5 H2), un tercer bloque de recomendación
+    // cerca del final del artículo, para no depender solo de los dos
+    // primeros huecos y repartir mejor los enlaces salientes.
+    if (h2.length >= 5) {
+      plan.push({ ord: Math.min(h2.length - 1, 6), type: 'reco' });
+    }
 
     const inserts = [];
     let recoPick = 0;
@@ -151,8 +191,8 @@ export function rehypeInlineBlocks(posts = []) {
       if (p.type === 'advisor') {
         inserts.push({ at, node: advisorNode() });
         advisorCount++;
-      } else if (others.length) {
-        inserts.push({ at, node: recoNode(others[recoPick % others.length]) });
+      } else if (candidates.length) {
+        inserts.push({ at, node: recoNode(candidates[recoPick % candidates.length]) });
         recoPick++;
       }
     }
