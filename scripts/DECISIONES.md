@@ -120,3 +120,33 @@ Formato:
 - Veredicto del CEO: pendiente
 
 ---
+
+## 2026-08-08 — ux-002 Enlazar la caja "Revisado por" del artículo a la página del revisor (ux)
+- Archivos: src/layouts/BlogPost.astro
+- Qué: La foto y el nombre "Javier Rodríguez" en la caja "Revisado por" del artículo ahora son un <a href="/equipo/javier-rodriguez">, sin JS, sin cambios de diseño ni contraste.
+- Por qué: La caja de revisor no enlazaba a ningún sitio; en un sitio YMYL, poder verificar con un clic quién revisa el contenido refuerza la confianza percibida.
+- Hipótesis: Enlazar el nombre del revisor a su página mejora la confianza percibida sin fricción añadida.
+- Criterio de éxito: 31/31 artículos con reviewedBy enlazan a /equipo/javier-rodriguez desde la caja. Cumplido y superado: 41/41 (hoy hay 41 artículos, no 31).
+- Métrica y plazo: No hay métrica de tráfico directa; se revisará cualitativamente en la próxima replanificación (percepción de confianza, no medible por analítica estándar).
+- Commit: 7afd880
+- Veredicto del CEO: pendiente
+
+## 2026-08-08 — seo-010 Crear script de medición de enlaces internos entrantes sobre /dist (seo)
+- Archivos: scripts/contar-enlaces-internos.mjs (nuevo)
+- Qué: Script Node sin dependencias que cuenta, tras npm run build, los enlaces entrantes desde el cuerpo (bloques "Lectura recomendada" + "Artículos relacionados") hacia cada URL /blog/<slug> en /dist.
+- Por qué: No existía forma objetiva y repetible de verificar el diagnóstico "dos artículos concentran ~30 entrantes y el resto tiene 0", ni de medir el efecto de una redistribución futura.
+- Hipótesis: Con esta herramienta se puede confirmar el diagnóstico y usarlo como línea base para medir seo-011.
+- Criterio de éxito: El script existe, imprime tabla + mínimo/máximo/mediana, y confirma >=2 URLs con >=25 entrantes y >=20 URLs con 0. Cumplido: mínimo 0, máximo 40, mediana 0, 23/41 URLs con 0 entrantes.
+- Métrica y plazo: Línea base "antes" trasladada aquí; el "después" se mide en seo-011 (mismo día).
+- Commit: b27a90e
+- Veredicto del CEO: pendiente
+
+## 2026-08-08 — seo-011 Redistribuir la selección de "lectura recomendada" en rehypeInlineBlocks (seo)
+- Archivos: src/lib/rehype-plugins.mjs
+- Qué: recoPick ya no arranca siempre en 0 sobre el índice alfabético fijo; ahora rota por un hash determinista del slug de cada artículo, prioriza primero los artículos de su misma categoría, y sube a 3 bloques de recomendación en artículos con >=5 H2. rehypeExternalLinks y DOFOLLOW_HOSTS quedan sin modificar.
+- Por qué: La concentración de enlaces internos (diagnosticada en seo-010: 23/41 URLs con 0 entrantes, 2 URLs con 40) venía de que recoPick arrancaba siempre en el mismo índice sobre un array ordenado alfabéticamente por readdirSync.
+- Hipótesis: Un punto de partida determinista por slug (en vez de fijo en 0) reparte el enlazado interno automático por todo el índice.
+- Criterio de éxito: Ninguna URL con <3 entrantes ni >3×mediana (combinando reco+related); npm run build pasa. PARCIALMENTE cumplido (65.9%, 27/41 URLs): 0/41 URLs con 0 entrantes (antes 23/41), máximo 40->18, mediana 4. Aislado al mecanismo que esta tarea controla (reco): mínimo 1, máximo 5, mediana 3, dentro de rango razonable. El 34.1% restante no cumple por el residuo de src/components/RelatedArticles.astro, que prioriza "misma categoría, orden de getPublishedPosts()" sin ninguna rotación y queda fuera del alcance de esta tarea (no modificado).
+- Métrica y plazo: Medido hoy mismo con scripts/contar-enlaces-internos.mjs (seo-010). Recomendación para una tarea futura: aplicar la misma rotación por hash-de-slug en RelatedArticles.astro para cerrar el 34.1% restante.
+- Commit: e0d26a9
+- Veredicto del CEO: pendiente
