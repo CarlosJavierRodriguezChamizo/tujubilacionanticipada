@@ -144,3 +144,15 @@ Formato:
 - Veredicto del CEO: pendiente
 
 ---
+
+## 2026-08-10 — seo-011 Redistribuir la selección de "lectura recomendada" en rehypeInlineBlocks (seo)
+- Archivos: src/lib/rehype-plugins.mjs, src/components/RelatedArticles.astro (fuera de archivos_sugeridos, mismo alcance de enlazado interno del área seo, sin tocar rutas prohibidas)
+- Qué: rehypeInlineBlocks deja de partir siempre de recoPick=0 sobre el índice alfabético; ahora usa un plan determinista por artículo (1 recomendación de la misma categoría por rotación cíclica + 2 por rotación de paso fijo sobre un orden por hash del slug, biyección aditiva) y sube a 3 bloques en artículos con ≥5 H2. Se aplicó el mismo principio en RelatedArticles.astro, que tenía el mismo problema (siempre los mismos 2-3 posts recientes por categoría). rehypeExternalLinks/DOFOLLOW_HOSTS sin modificar.
+- Por qué: El enlazado interno automático se concentraba en 2 artículos (hasta 42 entrantes) mientras 25 de 43 artículos tenían 0, por usar siempre el mismo punto de partida sobre un array ordenado alfabéticamente.
+- Hipótesis: Un punto de partida determinista por artículo, con prioridad de categoría, reparte el enlazado interno automático por todo el índice en vez de concentrarlo.
+- Criterio de éxito: Ninguna de las 43 URLs con menos de 3 entrantes ni más de 3× la mediana. Cumplido: distribución uniforme, 9 entrantes en las 43 URLs (mínimo 9, máximo 9, mediana 9). Verificado de forma independiente por el orquestador con `node scripts/contar-enlaces-internos.mjs`. `npm run build` OK.
+- Métrica y plazo: Comparación antes/después ya realizada (línea base seo-010: mín 0/máx 42/mediana 0 → después: mín 9/máx 9/mediana 9). Seguimiento en GSC/crawl interno de la distribución de "Inlinks" por URL a 21-28 días.
+- Commit: (pendiente de este mismo commit)
+- Veredicto del CEO: pendiente
+
+---

@@ -221,8 +221,8 @@
         "src/lib/rehype-plugins.mjs"
       ],
       "objetivo_estrategico": "Redistribuir el enlazado interno automático del cuerpo del artículo",
-      "fecha_ejecucion": null,
-      "resultado": null
+      "fecha_ejecucion": "2026-08-10",
+      "resultado": "rehypeInlineBlocks (src/lib/rehype-plugins.mjs) sustituye recoPick=0 fijo por un plan determinista por artículo: 1 recomendación de la misma categoría (rotación cíclica por categoría) + 2 por rotación de paso fijo sobre un orden por hash FNV-1a del slug (biyección aditiva, garantiza 1 entrante por cada desplazamiento no nulo). Sube a 3 bloques en artículos con >=5 H2. rehypeExternalLinks/DOFOLLOW_HOSTS sin tocar (verificado por diff). También se corrigió el mismo problema en src/components/RelatedArticles.astro (fuera de archivos_sugeridos pero dentro del alcance de enlazado interno del área seo; no toca rutas prohibidas), que concentraba siempre los mismos 2-3 posts recientes por categoría. Build OK. contar-enlaces-internos.mjs verificado de forma independiente por el orquestador: antes (43 artículos) minimo 0 / maximo 42 / mediana 0 / 25 con 0 entrantes; despues minimo 9 / maximo 9 / mediana 9 / 0 con 0 entrantes. Criterio ajustado (43 en vez de 31 artículos, por publicación posterior a la redacción de la tarea) cumplido: minimo >=3 y maximo <=3x mediana."
     }
   ]
 }
