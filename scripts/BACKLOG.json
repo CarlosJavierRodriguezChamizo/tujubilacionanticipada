@@ -205,8 +205,8 @@
         "scripts/contar-enlaces-internos.mjs"
       ],
       "objetivo_estrategico": "Redistribuir el enlazado interno automático del cuerpo del artículo",
-      "fecha_ejecucion": null,
-      "resultado": null
+      "fecha_ejecucion": "2026-08-10",
+      "resultado": "Creado scripts/contar-enlaces-internos.mjs: cuenta enlaces internos entrantes desde el cuerpo de otros artículos (bloques 'inline-reco' de rehypeInlineBlocks y sección 'Artículos relacionados' de RelatedArticles.astro) sobre dist/blog/*/index.html, ignorando breadcrumbs/menú/footer/CTA. Validado con grep cruzado (42=42) sobre el slug de mayor recuento. Línea base 'antes' confirmada: 43 artículos analizados, mínimo 0, máximo 42, mediana 0, 25 URLs con 0 entrantes (≥20 requerido), 5 URLs con ≥25 entrantes (≥2 requerido). Build OK."
     },
     {
       "id": "seo-011",

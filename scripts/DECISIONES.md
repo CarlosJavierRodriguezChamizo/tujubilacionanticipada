@@ -132,3 +132,15 @@ Formato:
 - Veredicto del CEO: pendiente
 
 ---
+
+## 2026-08-10 — seo-010 Crear script de medición de enlaces internos entrantes sobre /dist (seo)
+- Archivos: scripts/contar-enlaces-internos.mjs (nuevo)
+- Qué: Script Node independiente que, tras `npm run build`, cuenta enlaces internos entrantes por artículo desde el cuerpo de otros artículos (bloques "Lectura recomendada" de rehypeInlineBlocks y sección "Artículos relacionados" de RelatedArticles.astro), ignorando breadcrumbs, menú, footer y CTA. Validado con grep cruzado (42=42) sobre el slug de mayor recuento.
+- Por qué: No existía herramienta objetiva y repetible para medir la concentración de enlazado interno; es la línea base "antes" necesaria para verificar el efecto de seo-011.
+- Hipótesis: Un script de medición permite verificar de forma objetiva el diagnóstico "unos pocos artículos concentran la mayoría de entrantes y muchos tienen 0", y más adelante medir seo-011.
+- Criterio de éxito: Al menos 2 URLs con ≥25 entrantes y al menos 20 URLs con 0 entrantes. Cumplido: 43 artículos analizados, mínimo 0, máximo 42, mediana 0, 25 URLs con 0 entrantes, 5 URLs con ≥25 entrantes. `npm run build` OK.
+- Métrica y plazo: Línea base "antes" trasladada aquí; se comparará contra la salida del mismo script tras seo-011.
+- Commit: (pendiente de este mismo commit)
+- Veredicto del CEO: pendiente
+
+---
