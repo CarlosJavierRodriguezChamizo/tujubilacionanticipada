@@ -120,3 +120,15 @@ Formato:
 - Veredicto del CEO: pendiente
 
 ---
+
+## 2026-08-10 — ux-002 Enlazar la caja "Revisado por" del artículo a la página del revisor (ux)
+- Archivos: src/layouts/BlogPost.astro
+- Qué: La foto y el nombre "Javier Rodríguez" en el aside "Revisado por" ahora son `<a href="/equipo/javier-rodriguez">`, calculando la ruta a partir de REVIEWERS[data.reviewedBy] en vez de hardcodear el slug. Añadido focus-visible y subrayado en el nombre para no depender solo del color. Sin JS, sin credenciales ni cifras nuevas.
+- Por qué: La caja no enlazaba a ningún sitio; poder verificar con un clic quién revisa el contenido refuerza la confianza percibida en contenido YMYL.
+- Hipótesis: Un enlace desde el nombre/foto del revisor a su página de entidad mejora la confianza percibida.
+- Criterio de éxito: 31+/31 artículos con reviewedBy definido tienen el enlace dentro del bloque "Revisado por". Cumplido (43/43 en el dataset actual). `npm run build` OK.
+- Métrica y plazo: Clics salientes a /equipo/javier-rodriguez desde páginas de blog en Analytics, 2-4 semanas.
+- Commit: (pendiente de este mismo commit)
+- Veredicto del CEO: pendiente
+
+---

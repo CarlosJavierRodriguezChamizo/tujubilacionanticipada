@@ -157,8 +157,8 @@
         "src/layouts/BlogPost.astro"
       ],
       "objetivo_estrategico": "Página de entidad del revisor, enlazada desde los 31 artículos",
-      "fecha_ejecucion": null,
-      "resultado": null
+      "fecha_ejecucion": "2026-08-10",
+      "resultado": "El aside 'Revisado por' en BlogPost.astro ahora enlaza tanto la foto como el nombre 'Javier Rodríguez' a /equipo/javier-rodriguez vía <a href>, sin JS, calculando la ruta a partir de REVIEWERS[data.reviewedBy] (sin hardcodear el slug). Añadido focus-visible y subrayado en el nombre para no depender solo del color. Build OK. Grep confirma <a href=\"/equipo/javier-rodriguez\"> dentro del bloque 'Revisado por' en 43/43 artículos con reviewedBy definido en dist/blog/*/index.html."
     },
     {
       "id": "seo-008",
