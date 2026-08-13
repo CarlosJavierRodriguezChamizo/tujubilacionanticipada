@@ -134,20 +134,26 @@ const breadcrumb = breadcrumbSchema([
       data.reviewedBy && (
         <aside class="mx-auto mt-12 flex max-w-prose items-center gap-4 rounded-xl border border-paper-200 bg-paper-100 p-5">
           {reviewerImg && (
-            <img
-              src={reviewerImg}
-              alt={`Foto de ${data.reviewedBy}`}
-              width="64"
-              height="64"
-              loading="lazy"
-              class="h-16 w-16 shrink-0 rounded-full border border-paper-300 object-cover"
-            />
+            <a href="/equipo/javier-rodriguez" class="shrink-0">
+              <img
+                src={reviewerImg}
+                alt={`Foto de ${data.reviewedBy}`}
+                width="64"
+                height="64"
+                loading="lazy"
+                class="h-16 w-16 rounded-full border border-paper-300 object-cover"
+              />
+            </a>
           )}
           <div>
             <p class="text-xs font-semibold uppercase tracking-wide text-clay-700">
               Revisado por
             </p>
-            <p class="font-serif text-base font-semibold text-ink">{data.reviewedBy}</p>
+            <p class="font-serif text-base font-semibold text-ink">
+              <a href="/equipo/javier-rodriguez" class="hover:underline underline-offset-4">
+                {data.reviewedBy}
+              </a>
+            </p>
             {data.reviewerTitle && (
               <p class="mt-0.5 text-sm text-ink-soft">{data.reviewerTitle}</p>
             )}

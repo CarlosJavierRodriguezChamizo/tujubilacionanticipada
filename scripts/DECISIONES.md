@@ -119,4 +119,14 @@ Formato:
 - Commit: (pendiente de este mismo commit)
 - Veredicto del CEO: pendiente
 
+## 2026-08-13 — ux-002 Enlazar la caja "Revisado por" del artículo a la página del revisor (ux)
+- Archivos: src/layouts/BlogPost.astro
+- Qué: La foto y el nombre del revisor dentro del <aside> "Revisado por" son ahora <a href="/equipo/javier-rodriguez">, sin añadir texto, credencial ni cifra nueva.
+- Por qué: La caja de revisión editorial no enlazaba a ningún sitio; el lector no podía verificar en un clic quién avala el contenido en un sitio YMYL.
+- Hipótesis: Enlazar el nombre del revisor a su página de equipo aumenta la confianza percibida porque permite verificar credenciales sin fricción.
+- Criterio de éxito: 46/46 páginas con caja "Revisado por" en /dist/blog/*/index.html contienen el enlace. Cumplido y verificado (build, grep).
+- Métrica y plazo: No hay métrica de tráfico directa; posible medición futura de CTR sobre el enlace si se instrumenta.
+- Commit: (pendiente de este mismo commit)
+- Veredicto del CEO: pendiente
+
 ---

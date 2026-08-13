@@ -149,7 +149,7 @@
       "titulo": "Enlazar la caja 'Revisado por' del artículo a la página del revisor",
       "area": "ux",
       "prioridad": 9,
-      "estado": "pendiente",
+      "estado": "hecha",
       "hipotesis": "Si el nombre del revisor en la caja \"Revisado por\" de cada artículo (hoy texto plano dentro de un <aside> en BlogPost.astro) se convierte en un enlace a /equipo/javier-rodriguez, esperamos que el lector pueda verificar con un clic quién revisa el contenido, mejorando la confianza percibida en un sitio YMYL, porque hoy esa caja no enlaza a ningún sitio.",
       "criterio_exito": "En una muestra de /dist/blog/*/index.html, dentro del <aside> de \"Revisado por\", el nombre 'Javier Rodríguez' (o su foto) es un <a href=\"/equipo/javier-rodriguez\">; el enlace funciona sin JavaScript y no se añade ninguna credencial o cifra nueva a la caja.",
       "metrica": "Para los 31 artículos con reviewedBy definido en /dist/blog/*/index.html, grep confirma un <a href=\"/equipo/javier-rodriguez\"> dentro del bloque \"Revisado por\"; 31/31 cumplen.",
@@ -157,8 +157,8 @@
         "src/layouts/BlogPost.astro"
       ],
       "objetivo_estrategico": "Página de entidad del revisor, enlazada desde los 31 artículos",
-      "fecha_ejecucion": null,
-      "resultado": null
+      "fecha_ejecucion": "2026-08-13",
+      "resultado": "El aside \"Revisado por\" en BlogPost.astro envuelve ahora la foto y el nombre del revisor en <a href=\"/equipo/javier-rodriguez\">, sin añadir credenciales ni cifras nuevas. Build OK (67 páginas). Verificación por grep: 46/46 páginas con caja \"Revisado por\" en /dist/blog/*/index.html contienen el enlace."
     },
     {
       "id": "seo-008",
