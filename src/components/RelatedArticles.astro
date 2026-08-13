@@ -12,12 +12,34 @@ const { post, max = 3 } = Astro.props;
 const all = await getPublishedPosts();
 const others = all.filter((p) => p.slug !== post.slug);
 
-// Prioriza misma categoría; completa con los más recientes si faltan.
+// Hash determinista (djb2-like) del slug: da un punto de partida propio por
+// artículo en vez de tomar siempre los mismos "más recientes" de la
+// categoría (que antes concentraban casi todos los entrantes en 1-2 posts
+// por categoría al usar siempre el índice 0 del listado ordenado por fecha).
+function hashSlug(slug: string): number {
+  let h = 5381;
+  for (let i = 0; i < slug.length; i++) {
+    h = (h * 33 + slug.charCodeAt(i)) >>> 0;
+  }
+  return h;
+}
+function rotated<T>(arr: T[], offset: number): T[] {
+  if (arr.length === 0) return [];
+  const start = offset % arr.length;
+  return [...arr.slice(start), ...arr.slice(0, start)];
+}
+
+// Prioriza misma categoría (rotada por slug); completa con el resto (también
+// rotado) si faltan candidatos.
+const offset = hashSlug(post.slug);
 const sameCategory = others.filter(
   (p) => p.data.category === post.data.category
 );
 const rest = others.filter((p) => p.data.category !== post.data.category);
-const related = [...sameCategory, ...rest].slice(0, max);
+const related = [...rotated(sameCategory, offset), ...rotated(rest, offset)].slice(
+  0,
+  max
+);
 ---
 
 {

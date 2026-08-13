@@ -213,7 +213,7 @@
       "titulo": "Redistribuir la selección de 'lectura recomendada' en rehypeInlineBlocks",
       "area": "seo",
       "prioridad": 13,
-      "estado": "pendiente",
+      "estado": "hecha",
       "hipotesis": "Si rehypeInlineBlocks (src/lib/rehype-plugins.mjs) deja de arrancar siempre en recoPick=0 y en su lugar elige un punto de partida determinista por artículo (p.ej. un hash del slug de origen módulo others.length), priorizando primero los artículos de la misma categoría (usando el campo category añadido en seo-009) y sube a 3 bloques de recomendación en artículos con ≥5 H2, esperamos que el enlazado interno automático se reparta por todo el índice en vez de concentrarse en los 2 primeros artículos alfabéticos, porque hoy 'prácticamente todos los artículos enlazan a los dos mismos posts' al usar siempre el mismo índice de partida sobre un array ordenado alfabéticamente por readdirSync.",
       "criterio_exito": "Depende de seo-009 y seo-010. Tras `npm run build`, ejecutando scripts/contar-enlaces-internos.mjs: ninguna de las 31 URLs de artículo tiene menos de 3 enlaces internos entrantes desde el cuerpo, y ninguna tiene más de 3× la mediana de entrantes; `npm run build` (incluye astro check) pasa; rehypeExternalLinks y su lista DOFOLLOW_HOSTS quedan sin modificar.",
       "metrica": "Comparación de la salida de scripts/contar-enlaces-internos.mjs antes (seo-010, mínimo 0, máximo ~30) vs después de esta tarea (mínimo ≥3, máximo ≤3×mediana).",
@@ -221,8 +221,8 @@
         "src/lib/rehype-plugins.mjs"
       ],
       "objetivo_estrategico": "Redistribuir el enlazado interno automático del cuerpo del artículo",
-      "fecha_ejecucion": null,
-      "resultado": null
+      "fecha_ejecucion": "2026-08-13",
+      "resultado": "rehype-plugins.mjs: nuevo hashStr()+rotated() para elegir un punto de partida determinista por slug en vez de recoPick=0 fijo, priorizando misma categoría primero (campo category de seo-009); sube a 3 bloques de reco en artículos con ≥5 H2. RelatedArticles.astro: mismo mecanismo hash+rotación aplicado al orden de sameCategory/rest, que también arrancaba siempre en índice 0. rehypeExternalLinks/DOFOLLOW_HOSTS sin tocar. Build OK (67 páginas). Medición con contar-enlaces-internos.mjs — antes: mín 0, máx 45, mediana 0, 28/46 en cero; después: mín 3, máx 15, mediana 9, 0/46 en cero. Criterio de éxito cumplido (mín≥3, máx≤3×mediana=27)."
     }
   ]
 }

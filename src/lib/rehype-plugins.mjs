@@ -87,6 +87,38 @@ function currentSlug(file) {
   return m ? m[1] : '';
 }
 
+/** Hash determinista (djb2-like) de una cadena, siempre positivo. */
+function hashStr(str) {
+  let h = 5381;
+  for (let i = 0; i < str.length; i++) {
+    h = (h * 33 + str.charCodeAt(i)) >>> 0;
+  }
+  return h;
+}
+
+/** Rota un array a partir de un desplazamiento (mismo array si está vacío). */
+function rotated(arr, offset) {
+  if (arr.length === 0) return [];
+  const start = offset % arr.length;
+  return arr.slice(start).concat(arr.slice(0, start));
+}
+
+/**
+ * Orden de candidatos a "lectura recomendada" para un artículo dado: prioriza
+ * los de la misma categoría (rotados a partir de un punto de partida
+ * determinista por slug, no siempre 0) y a continuación el resto (también
+ * rotado). Así el enlazado interno se reparte por todo el índice en vez de
+ * concentrarse siempre en los mismos 1-2 artículos alfabéticamente primeros.
+ */
+function buildRecoOrder(slug, category, others) {
+  const sameCategory = category
+    ? others.filter((p) => p.category === category)
+    : [];
+  const rest = others.filter((p) => !(category && p.category === category));
+  const offset = hashStr(slug);
+  return [...rotated(sameCategory, offset), ...rotated(rest, offset)];
+}
+
 function advisorNode() {
   return el('aside', { className: ['inline-cta'] }, [
     el('p', { className: ['inline-cta__text'] }, [
@@ -129,6 +161,9 @@ export function rehypeInlineBlocks(posts = []) {
   return () => (tree, file) => {
     const slug = currentSlug(file);
     const others = posts.filter((p) => p.slug !== slug);
+    const current = posts.find((p) => p.slug === slug);
+    const category = current ? current.category : '';
+    const recoOrder = buildRecoOrder(slug, category, others);
 
     const h2 = [];
     (tree.children || []).forEach((n, i) => {
@@ -141,18 +176,35 @@ export function rehypeInlineBlocks(posts = []) {
       { ord: 3, type: 'reco' },
       { ord: 4, type: 'advisor' },
     ];
+    // Artículos con ≥5 H2 reciben un tercer bloque de "lectura recomendada"
+    // (más superficie de enlazado interno en piezas largas).
+    if (h2.length >= 5) {
+      plan.push({ ord: 5, type: 'reco' });
+    }
 
     const inserts = [];
     let recoPick = 0;
     let advisorCount = 0;
     for (const p of plan) {
-      const at = h2[p.ord];
+      const at = h2[p.ord] !== undefined ? h2[p.ord] : undefined;
+      if (p.type === 'reco' && at === undefined && p.ord === 5) {
+        // Sin cabecera h2[5] disponible (raro con ≥5 H2 pero sin la 6ª):
+        // añade el tercer bloque al final del artículo en vez de omitirlo.
+        if (recoOrder.length) {
+          inserts.push({
+            at: tree.children.length,
+            node: recoNode(recoOrder[recoPick % recoOrder.length]),
+          });
+          recoPick++;
+        }
+        continue;
+      }
       if (at === undefined) continue;
       if (p.type === 'advisor') {
         inserts.push({ at, node: advisorNode() });
         advisorCount++;
-      } else if (others.length) {
-        inserts.push({ at, node: recoNode(others[recoPick % others.length]) });
+      } else if (recoOrder.length) {
+        inserts.push({ at, node: recoNode(recoOrder[recoPick % recoOrder.length]) });
         recoPick++;
       }
     }

@@ -119,6 +119,16 @@ Formato:
 - Commit: (pendiente de este mismo commit)
 - Veredicto del CEO: pendiente
 
+## 2026-08-13 — seo-011 Redistribuir la selección de "lectura recomendada" en rehypeInlineBlocks (seo)
+- Archivos: src/lib/rehype-plugins.mjs, src/components/RelatedArticles.astro
+- Qué: hashStr()+rotated() eligen un punto de partida determinista por slug (en vez de recoPick=0 fijo), priorizando primero los artículos de la misma categoría; sube a 3 bloques de "lectura recomendada" en artículos con ≥5 H2. Se aplicó el mismo mecanismo a RelatedArticles.astro, que también arrancaba siempre en el índice 0 dentro de sameCategory/rest. rehypeExternalLinks y DOFOLLOW_HOSTS sin modificar.
+- Por qué: seo-010 confirmó que el desequilibrio era más severo que lo estimado (28/46 URLs con 0 entrantes) y tenía dos causas, no una: el arranque fijo en rehypeInlineBlocks y el mismo patrón en RelatedArticles.astro.
+- Hipótesis: Confirmada tras corregir ambos puntos — antes: mín 0, máx 45, mediana 0, 28/46 (61%) en cero; después: mín 3, máx 15, mediana 9, 0/46 en cero.
+- Criterio de éxito: mínimo ≥3 entrantes y máximo ≤3×mediana (27). Cumplido (mín 3, máx 15). Build OK (67 páginas).
+- Métrica y plazo: node scripts/contar-enlaces-internos.mjs tras cada build; comparación en GSC (Enlaces internos) a ~21 días sobre páginas del blog con 0-1 enlaces internos detectados y concentración en las mismas URLs.
+- Commit: (pendiente de este mismo commit)
+- Veredicto del CEO: pendiente
+
 ## 2026-08-13 — seo-010 Crear script de medición de enlaces internos entrantes sobre /dist (seo)
 - Archivos: scripts/contar-enlaces-internos.mjs (nuevo)
 - Qué: Script Node ESM sin dependencias nuevas que, tras `npm run build`, cuenta apariciones de href="/blog/<slug>" solo dentro de los bloques "Lectura recomendada" (inline-reco) y "Artículos relacionados" (RelatedArticles), ignorando nav/breadcrumb/footer/CTA. Imprime tabla por URL más mínimo, máximo y mediana.
