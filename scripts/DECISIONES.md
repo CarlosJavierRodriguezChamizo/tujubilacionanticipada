@@ -119,6 +119,16 @@ Formato:
 - Commit: (pendiente de este mismo commit)
 - Veredicto del CEO: pendiente
 
+## 2026-08-13 — seo-010 Crear script de medición de enlaces internos entrantes sobre /dist (seo)
+- Archivos: scripts/contar-enlaces-internos.mjs (nuevo)
+- Qué: Script Node ESM sin dependencias nuevas que, tras `npm run build`, cuenta apariciones de href="/blog/<slug>" solo dentro de los bloques "Lectura recomendada" (inline-reco) y "Artículos relacionados" (RelatedArticles), ignorando nav/breadcrumb/footer/CTA. Imprime tabla por URL más mínimo, máximo y mediana.
+- Por qué: No existía ninguna herramienta objetiva y repetible para verificar el diagnóstico de concentración de enlaces internos antes de tocar el algoritmo de selección (seo-011).
+- Hipótesis: Confirmada — el desequilibrio es más severo que lo estimado: sobre 46 artículos, mínimo 0, máximo 45 (dos URLs concentran casi todo: /blog/52-anos-sin-15-cotizados y /blog/anos-cotizados-para-jubilarse), mediana 0, 28/46 (61%) con 0 entrantes.
+- Criterio de éxito: Script creado y ejecutado con éxito tras build; línea base capturada. Cumplido.
+- Métrica y plazo: Línea base "antes" para comparar tras seo-011 (inmediato) y en GSC a ~21 días.
+- Commit: (pendiente de este mismo commit)
+- Veredicto del CEO: pendiente
+
 ## 2026-08-13 — ux-002 Enlazar la caja "Revisado por" del artículo a la página del revisor (ux)
 - Archivos: src/layouts/BlogPost.astro
 - Qué: La foto y el nombre del revisor dentro del <aside> "Revisado por" son ahora <a href="/equipo/javier-rodriguez">, sin añadir texto, credencial ni cifra nueva.

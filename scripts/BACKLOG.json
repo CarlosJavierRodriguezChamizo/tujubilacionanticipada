@@ -197,7 +197,7 @@
       "titulo": "Crear script de medición de enlaces internos entrantes sobre /dist",
       "area": "seo",
       "prioridad": 12,
-      "estado": "pendiente",
+      "estado": "hecha",
       "hipotesis": "Si construimos scripts/contar-enlaces-internos.mjs, que tras `npm run build` cuenta cuántas veces aparece cada URL /blog/<slug> como href entrante desde el cuerpo (bloques 'Lectura recomendada' y RelatedArticles) de otros artículos en /dist, esperamos poder verificar de forma objetiva y repetible el diagnóstico 'dos artículos concentran ~30 entrantes y 23 tienen 0', y más adelante medir el resultado de seo-011, porque hoy no existe en el repo ninguna herramienta que mida esto.",
       "criterio_exito": "Existe scripts/contar-enlaces-internos.mjs; ejecutado con `node scripts/contar-enlaces-internos.mjs` tras un `npm run build`, imprime una tabla con las 31 URLs de artículo y su nº de enlaces internos entrantes desde el cuerpo de otros artículos; ejecutado hoy (antes de tocar rehype-plugins.mjs) confirma el diagnóstico: al menos 2 URLs con ≥25 entrantes y al menos 20 URLs con 0 entrantes.",
       "metrica": "Salida del script: recuento por URL, mínimo, máximo y mediana de entrantes. Este resultado es la línea base 'antes' que el orquestador traslada a DECISIONES.md.",
@@ -205,8 +205,8 @@
         "scripts/contar-enlaces-internos.mjs"
       ],
       "objetivo_estrategico": "Redistribuir el enlazado interno automático del cuerpo del artículo",
-      "fecha_ejecucion": null,
-      "resultado": null
+      "fecha_ejecucion": "2026-08-13",
+      "resultado": "Creado scripts/contar-enlaces-internos.mjs (Node ESM, sin dependencias nuevas). Cuenta hrefs entrantes /blog/<slug> solo desde bloques 'Lectura recomendada' (inline-reco) y 'Artículos relacionados' (RelatedArticles), ignorando nav/breadcrumb/footer. Build OK (67 páginas). Línea base sobre 46 artículos: mínimo 0, máximo 45 (concentrado en /blog/52-anos-sin-15-cotizados y /blog/anos-cotizados-para-jubilarse), mediana 0, 28/46 (61%) con 0 entrantes. Confirma el diagnóstico de concentración extrema."
     },
     {
       "id": "seo-011",
