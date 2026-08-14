@@ -119,4 +119,34 @@ Formato:
 - Commit: (pendiente de este mismo commit)
 - Veredicto del CEO: pendiente
 
+## 2026-08-07 — ux-002 Enlazar la caja "Revisado por" del artículo a la página del revisor (ux)
+- Archivos: src/layouts/BlogPost.astro
+- Qué: El nombre y la foto del revisor en la caja "Revisado por" ahora quedan envueltos en `<a href="/equipo/javier-rodriguez">` (mapeo local REVIEWER_URLS por nombre), sin añadir credenciales ni cifras nuevas.
+- Por qué: La caja "Revisado por" no enlazaba a ningún sitio; el lector no podía verificar con un clic quién revisa el contenido.
+- Hipótesis: Enlazar el nombre del revisor a su página mejora la confianza percibida en un sitio YMYL.
+- Criterio de éxito: 40/40 artículos con reviewedBy definido contienen el enlace dentro del bloque "Revisado por" (el criterio original citaba 31; el número real de artículos publicados ha crecido). Cumplido y verificado (build, grep).
+- Métrica y plazo: GSC/analítica a 30 días — clics salientes desde la caja "Revisado por" hacia /equipo/javier-rodriguez.
+- Commit: (pendiente de este mismo commit)
+- Veredicto del CEO: pendiente
+
+## 2026-08-07 — seo-010 Crear script de medición de enlaces internos entrantes sobre /dist (seo)
+- Archivos: scripts/contar-enlaces-internos.mjs (nuevo)
+- Qué: Script Node ESM que cuenta, tras `npm run build`, cuántas veces aparece cada URL /blog/<slug> como href entrante desde los bloques "Lectura recomendada" y "Artículos relacionados" del cuerpo de otros artículos, excluyendo nav/breadcrumb/header/footer/caja de revisor. Línea base "antes": 40 artículos, 320 enlaces, mínimo 0, máximo 45, mediana 0, 23 artículos con 0 entrantes.
+- Por qué: No existía forma objetiva y repetible de verificar el diagnóstico "dos artículos concentran ~30 entrantes y el resto tiene 0", ni de medir el efecto de seo-011.
+- Hipótesis: Medir de forma reproducible el enlazado interno entrante permite verificar el diagnóstico de concentración y, después, el resultado de redistribuirlo.
+- Criterio de éxito: El script existe, imprime tabla + mínimo/máximo/mediana, y confirma el diagnóstico de concentración. Cumplido y verificado (ejecución propia del orquestador coincide con el informe del agente).
+- Métrica y plazo: Línea base para comparar contra la ejecución de seo-011 el mismo día.
+- Commit: (pendiente de este mismo commit)
+- Veredicto del CEO: pendiente
+
+## 2026-08-07 — seo-011 Redistribuir la selección de "lectura recomendada" en rehypeInlineBlocks (seo)
+- Archivos: src/lib/rehype-plugins.mjs, src/components/RelatedArticles.astro
+- Qué: hashString() (djb2 determinista) + pickBalancedTargets() sustituyen el punto de partida fijo recoPick=0 sobre el array alfabético; prioriza primero artículos de la misma category (seo-009), sube a 3 bloques de recomendación con ≥5 H2. El fallback por fecha de RelatedArticles.astro también pasa a pickBalancedTargets (con salt distinta) porque por sí solo concentraba hasta 28 entrantes en un artículo. rehypeExternalLinks/DOFOLLOW_HOSTS sin modificar.
+- Por qué: El enlazado interno automático arrancaba siempre en el mismo índice sobre un array ordenado alfabéticamente, concentrando casi todo en los 2 primeros artículos.
+- Hipótesis: Un punto de partida determinista por artículo, con prioridad de categoría, reparte el enlazado interno automático por todo el índice.
+- Criterio de éxito: mínimo ≥3 entrantes y máximo ≤3×mediana. Cumplido y verificado: antes (mínimo 0 / máximo 45 / mediana 0 / 23 artículos con 0 entrantes) → después (mínimo 9 / máximo 9 / mediana 9 / 0 artículos con 0 entrantes), medido con scripts/contar-enlaces-internos.mjs (seo-010). Build OK (astro check incluido).
+- Métrica y plazo: GSC a 21-30 días — cobertura/rastreo relativo de los 23 artículos que antes tenían 0 enlaces internos entrantes.
+- Commit: (pendiente de este mismo commit)
+- Veredicto del CEO: pendiente
+
 ---

@@ -2,6 +2,7 @@
 import type { CollectionEntry } from 'astro:content';
 import ArticleCard from './ArticleCard.astro';
 import { getPublishedPosts } from '../lib/posts';
+import { pickBalancedTargets, rotateByHash } from '../lib/rehype-plugins.mjs';
 
 interface Props {
   post: CollectionEntry<'blog'>;
@@ -10,14 +11,25 @@ interface Props {
 
 const { post, max = 3 } = Astro.props;
 const all = await getPublishedPosts();
-const others = all.filter((p) => p.slug !== post.slug);
 
-// Prioriza misma categoría; completa con los más recientes si faltan.
-const sameCategory = others.filter(
-  (p) => p.data.category === post.data.category
-);
-const rest = others.filter((p) => p.data.category !== post.data.category);
-const related = [...sameCategory, ...rest].slice(0, max);
+// Prioriza misma categoría; completa con el resto si faltan. Dentro de la
+// categoría, la selección usa pickBalancedTargets (compartido con
+// rehypeInlineBlocks): un punto de partida determinista por artículo
+// (hash del slug) que además garantiza un reparto homogéneo de enlaces
+// entrantes, en vez de que todos los artículos sin suficientes compañeros
+// de categoría caigan siempre en los mismos "más recientes por fecha".
+const sameCategory = all.filter((p) => p.data.category === post.data.category);
+const picks = pickBalancedTargets(sameCategory, post.slug, max, 'related');
+
+let related = picks;
+if (related.length < max) {
+  const seen = new Set([...related.map((p) => p.slug), post.slug]);
+  const rest = all.filter((p) => !seen.has(p.slug));
+  related = [
+    ...related,
+    ...rotateByHash(rest, post.slug + 'related').slice(0, max - related.length),
+  ];
+}
 ---
 
 {
