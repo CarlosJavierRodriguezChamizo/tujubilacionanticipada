@@ -12,12 +12,31 @@ const { post, max = 3 } = Astro.props;
 const all = await getPublishedPosts();
 const others = all.filter((p) => p.slug !== post.slug);
 
-// Prioriza misma categoría; completa con los más recientes si faltan.
-const sameCategory = others.filter(
-  (p) => p.data.category === post.data.category
-);
-const rest = others.filter((p) => p.data.category !== post.data.category);
-const related = [...sameCategory, ...rest].slice(0, max);
+// Prioriza misma categoría. Reparto: en vez de mostrar siempre a TODOS los
+// artículos de una categoría los mismos `max` compañeros más recientes (lo
+// que concentraba el enlazado entrante en 2-3 posts por categoría), cada
+// artículo recomienda a los `max` "siguientes" en una rotación cíclica
+// determinista por categoría (orden estable por slug). Al ser el
+// desplazamiento (1..max) el mismo para todos los artículos de la categoría,
+// cada miembro recibe, de forma garantizada, exactamente `max` recomendaciones
+// entrantes desde dentro de su propia categoría.
+const fullCategory = all
+  .filter((p) => p.data.category === post.data.category)
+  .sort((a, b) => a.slug.localeCompare(b.slug));
+
+let related;
+if (fullCategory.length > max) {
+  const size = fullCategory.length;
+  const rank = fullCategory.findIndex((p) => p.slug === post.slug);
+  const base = rank === -1 ? 0 : rank;
+  related = Array.from({ length: max }, (_, i) => fullCategory[(base + i + 1) % size]);
+} else {
+  // Categoría demasiado pequeña para rotar sin salir de ella: completa con
+  // los más recientes de otras categorías, como antes.
+  const sameCategory = others.filter((p) => p.data.category === post.data.category);
+  const rest = others.filter((p) => p.data.category !== post.data.category);
+  related = [...sameCategory, ...rest].slice(0, max);
+}
 ---
 
 {

@@ -21,6 +21,10 @@ const shareUrl = new URL(path, SITE.url).toString();
 const minutos = readingTimeMinutes(post.body);
 const heroImage = resolveHeroImage(post.slug, data.heroImage);
 const reviewerImg = data.reviewedBy ? REVIEWERS[data.reviewedBy] : undefined;
+// La foto del revisor vive en /equipo/<slug>.jpg; su página de perfil es
+// la misma ruta sin extensión. Si el revisor no tiene foto registrada en
+// REVIEWERS, no hay enlace (evita apuntar a una página inexistente).
+const reviewerHref = reviewerImg ? reviewerImg.replace(/\.[^./]+$/, '') : undefined;
 
 // El eyebrow de categoría solo enlaza a su silo si esa categoría tiene
 // página de silo generada (mismo umbral que en
@@ -134,20 +138,30 @@ const breadcrumb = breadcrumbSchema([
       data.reviewedBy && (
         <aside class="mx-auto mt-12 flex max-w-prose items-center gap-4 rounded-xl border border-paper-200 bg-paper-100 p-5">
           {reviewerImg && (
-            <img
-              src={reviewerImg}
-              alt={`Foto de ${data.reviewedBy}`}
-              width="64"
-              height="64"
-              loading="lazy"
-              class="h-16 w-16 shrink-0 rounded-full border border-paper-300 object-cover"
-            />
+            <a href={reviewerHref} class="shrink-0 rounded-full focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-clay-700">
+              <img
+                src={reviewerImg}
+                alt={`Foto de ${data.reviewedBy}`}
+                width="64"
+                height="64"
+                loading="lazy"
+                class="h-16 w-16 rounded-full border border-paper-300 object-cover"
+              />
+            </a>
           )}
           <div>
             <p class="text-xs font-semibold uppercase tracking-wide text-clay-700">
               Revisado por
             </p>
-            <p class="font-serif text-base font-semibold text-ink">{data.reviewedBy}</p>
+            <p class="font-serif text-base font-semibold text-ink">
+              {reviewerHref ? (
+                <a href={reviewerHref} class="underline decoration-clay-700/50 underline-offset-2 hover:decoration-clay-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-clay-700">
+                  {data.reviewedBy}
+                </a>
+              ) : (
+                data.reviewedBy
+              )}
+            </p>
             {data.reviewerTitle && (
               <p class="mt-0.5 text-sm text-ink-soft">{data.reviewerTitle}</p>
             )}

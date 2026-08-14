@@ -120,3 +120,39 @@ Formato:
 - Veredicto del CEO: pendiente
 
 ---
+
+## 2026-08-10 — ux-002 Enlazar la caja "Revisado por" del artículo a la página del revisor (ux)
+- Archivos: src/layouts/BlogPost.astro
+- Qué: La foto y el nombre "Javier Rodríguez" en el aside "Revisado por" ahora son `<a href="/equipo/javier-rodriguez">`, calculando la ruta a partir de REVIEWERS[data.reviewedBy] en vez de hardcodear el slug. Añadido focus-visible y subrayado en el nombre para no depender solo del color. Sin JS, sin credenciales ni cifras nuevas.
+- Por qué: La caja no enlazaba a ningún sitio; poder verificar con un clic quién revisa el contenido refuerza la confianza percibida en contenido YMYL.
+- Hipótesis: Un enlace desde el nombre/foto del revisor a su página de entidad mejora la confianza percibida.
+- Criterio de éxito: 31+/31 artículos con reviewedBy definido tienen el enlace dentro del bloque "Revisado por". Cumplido (43/43 en el dataset actual). `npm run build` OK.
+- Métrica y plazo: Clics salientes a /equipo/javier-rodriguez desde páginas de blog en Analytics, 2-4 semanas.
+- Commit: (pendiente de este mismo commit)
+- Veredicto del CEO: pendiente
+
+---
+
+## 2026-08-10 — seo-010 Crear script de medición de enlaces internos entrantes sobre /dist (seo)
+- Archivos: scripts/contar-enlaces-internos.mjs (nuevo)
+- Qué: Script Node independiente que, tras `npm run build`, cuenta enlaces internos entrantes por artículo desde el cuerpo de otros artículos (bloques "Lectura recomendada" de rehypeInlineBlocks y sección "Artículos relacionados" de RelatedArticles.astro), ignorando breadcrumbs, menú, footer y CTA. Validado con grep cruzado (42=42) sobre el slug de mayor recuento.
+- Por qué: No existía herramienta objetiva y repetible para medir la concentración de enlazado interno; es la línea base "antes" necesaria para verificar el efecto de seo-011.
+- Hipótesis: Un script de medición permite verificar de forma objetiva el diagnóstico "unos pocos artículos concentran la mayoría de entrantes y muchos tienen 0", y más adelante medir seo-011.
+- Criterio de éxito: Al menos 2 URLs con ≥25 entrantes y al menos 20 URLs con 0 entrantes. Cumplido: 43 artículos analizados, mínimo 0, máximo 42, mediana 0, 25 URLs con 0 entrantes, 5 URLs con ≥25 entrantes. `npm run build` OK.
+- Métrica y plazo: Línea base "antes" trasladada aquí; se comparará contra la salida del mismo script tras seo-011.
+- Commit: (pendiente de este mismo commit)
+- Veredicto del CEO: pendiente
+
+---
+
+## 2026-08-10 — seo-011 Redistribuir la selección de "lectura recomendada" en rehypeInlineBlocks (seo)
+- Archivos: src/lib/rehype-plugins.mjs, src/components/RelatedArticles.astro (fuera de archivos_sugeridos, mismo alcance de enlazado interno del área seo, sin tocar rutas prohibidas)
+- Qué: rehypeInlineBlocks deja de partir siempre de recoPick=0 sobre el índice alfabético; ahora usa un plan determinista por artículo (1 recomendación de la misma categoría por rotación cíclica + 2 por rotación de paso fijo sobre un orden por hash del slug, biyección aditiva) y sube a 3 bloques en artículos con ≥5 H2. Se aplicó el mismo principio en RelatedArticles.astro, que tenía el mismo problema (siempre los mismos 2-3 posts recientes por categoría). rehypeExternalLinks/DOFOLLOW_HOSTS sin modificar.
+- Por qué: El enlazado interno automático se concentraba en 2 artículos (hasta 42 entrantes) mientras 25 de 43 artículos tenían 0, por usar siempre el mismo punto de partida sobre un array ordenado alfabéticamente.
+- Hipótesis: Un punto de partida determinista por artículo, con prioridad de categoría, reparte el enlazado interno automático por todo el índice en vez de concentrarlo.
+- Criterio de éxito: Ninguna de las 43 URLs con menos de 3 entrantes ni más de 3× la mediana. Cumplido: distribución uniforme, 9 entrantes en las 43 URLs (mínimo 9, máximo 9, mediana 9). Verificado de forma independiente por el orquestador con `node scripts/contar-enlaces-internos.mjs`. `npm run build` OK.
+- Métrica y plazo: Comparación antes/después ya realizada (línea base seo-010: mín 0/máx 42/mediana 0 → después: mín 9/máx 9/mediana 9). Seguimiento en GSC/crawl interno de la distribución de "Inlinks" por URL a 21-28 días.
+- Commit: (pendiente de este mismo commit)
+- Veredicto del CEO: pendiente
+
+---
