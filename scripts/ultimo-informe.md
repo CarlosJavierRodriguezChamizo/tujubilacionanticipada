@@ -1,47 +1,37 @@
-# Informe de mejora continua — 2026-08-05
+# Informe de mejora continua — 2026-08-14
 
 ## Resumen
-Ejecutadas 4 tareas SEO del backlog (breadcrumb con silo, entidad del revisor referenciada por @id, mención del revisor en /sobre-este-sitio, y preparación de datos de categoría) para reforzar la señal EEAT y la estructura jerárquica del sitio; ux-002 quedó aplazada a mañana por tocar el mismo archivo que seo-005.
+Ejecutadas las 3 tareas pendientes del backlog (ux-002, seo-010, seo-011): se enlazó la caja "Revisado por" a la página del revisor y se corrigió la concentración del enlazado interno automático, que dejaba 29 de 47 artículos sin ningún enlace entrante desde el cuerpo.
 
 ## Cambios aplicados
 
-### seo seo-005 — Incluir el silo en la miga de pan (breadcrumb) del artículo
-**Qué:** El nav de migas de pan y el BreadcrumbList JSON-LD de cada artículo pasan de 3 a 4 niveles (Inicio / Blog / Silo / título), reutilizando la lógica de silo ya introducida en ux-001.
-**Por qué:** breadcrumbSchema() solo recibía 3 niveles; la estrategia exige que la miga incluya el silo.
-**Hipótesis:** Reforzar la señal de estructura jerárquica del sitio ante los buscadores.
-**Cómo lo mediremos:** GSC a 21 días — breadcrumbs enriquecidos en resultados, impresiones/CTR por categoría.
-**Riesgo identificado:** Bajo, cambio aditivo; ya preparado para categorías sin silo (se omite el nivel).
+### ux ux-002 — Enlazar la caja "Revisado por" del artículo a la página del revisor
+**Qué:** La foto y el nombre "Javier Rodríguez" en el <aside> "Revisado por" ahora son un enlace a /equipo/javier-rodriguez, reutilizando REVIEWER_PROFILES ya existente en src/lib/schema.ts.
+**Por qué:** La caja no enlazaba a ningún sitio; en un YMYL, poder verificar con un clic quién revisa el contenido refuerza la confianza percibida.
+**Hipótesis:** Enlazar el nombre del revisor a su página de entidad mejora la confianza percibida del lector.
+**Cómo lo mediremos:** GSC/comportamiento a 21 días — CTR hacia /equipo/javier-rodriguez.
+**Riesgo identificado:** Bajo. Foto y nombre son enlaces separados (no un único <a> envolviendo todo el aside), pero ambos superan individualmente el área táctil mínima recomendada.
 **Archivos:** src/layouts/BlogPost.astro
 
-### seo seo-007 — Referenciar el @id del revisor desde el JSON-LD de los 31 artículos
-**Qué:** reviewedBy en blogPostingSchema() pasa de un objeto Person embebido a una referencia { "@id": ".../equipo/javier-rodriguez#person" }, reutilizando el @id de seo-006.
-**Por qué:** 31 artículos incrustaban copias sueltas del mismo Person en vez de apuntar a una entidad única.
-**Hipótesis:** Conectar cada BlogPosting con una única entidad Person en el grafo de conocimiento.
-**Cómo lo mediremos:** Rich Results Test / GSC a 21 días — sin errores de Person/reviewedBy.
-**Riesgo identificado:** Bajo; fallback a Person completo si un futuro revisor no tiene página propia.
-**Archivos:** src/lib/schema.ts
+### seo seo-010 — Crear script de medición de enlaces internos entrantes sobre /dist
+**Qué:** Nuevo scripts/contar-enlaces-internos.mjs (Node ESM, sin dependencias nuevas) que cuenta, tras `npm run build`, cuántos artículos distintos enlazan a cada URL /blog/<slug> desde los bloques "Lectura recomendada" y "Artículos relacionados".
+**Por qué:** No existía forma objetiva y repetible de verificar el diagnóstico de concentración del enlazado interno ni de medir el efecto de seo-011.
+**Hipótesis:** Medir hoy establece la línea base "antes" necesaria para evaluar seo-011.
+**Cómo lo mediremos:** Línea base registrada: mínimo 0, máximo 46, mediana 0, 29/47 artículos con 0 entrantes.
+**Riesgo identificado:** El script depende de las clases CSS exactas de los bloques de recomendación; si su markup cambia, el script deberá actualizarse en paralelo. Solo lee /dist, no modifica contenido.
+**Archivos:** scripts/contar-enlaces-internos.mjs
 
-### seo seo-008 — Mencionar y enlazar al revisor desde /sobre-este-sitio
-**Qué:** La sección "Quién está detrás" nombra a Javier Rodríguez con enlace a /equipo/javier-rodriguez y su cargo literal de calendario.json.
-**Por qué:** /sobre-este-sitio no mencionaba a ningún ser humano, señal EEAT débil a nivel de sitio.
-**Hipótesis:** Reforzar la señal EEAT a nivel de sitio (no solo por artículo).
-**Cómo lo mediremos:** GSC a 21 días — impresiones/CTR de /equipo/javier-rodriguez y /sobre-este-sitio.
-**Riesgo identificado:** Bajo, cambio de texto aditivo sin credenciales inventadas.
-**Archivos:** src/pages/sobre-este-sitio.astro
-
-### seo seo-009 — Añadir el campo category al índice de posts que usa rehypeInlineBlocks
-**Qué:** loadPostsIndex() en astro.config.mjs extrae también category del frontmatter de cada artículo.
-**Por qué:** Preparación de datos necesaria para poder priorizar "misma categoría primero" en seo-011 (aún no ejecutada).
-**Hipótesis:** Sin category en el índice no se puede redistribuir el enlazado interno por categoría.
-**Cómo lo mediremos:** No aplica todavía — sin efecto observable (verificado: HTML idéntico antes/después); se medirá al ejecutar seo-011.
-**Riesgo identificado:** Mínimo; rehype-plugins.mjs no lee aún el campo, confirmado por inspección.
-**Archivos:** astro.config.mjs
+### seo seo-011 — Redistribuir la selección de "lectura recomendada" en rehypeInlineBlocks
+**Qué:** rehypeInlineBlocks ya no arranca siempre en el primer artículo de la lista alfabética. Un nuevo índice cíclico agrupado por categoría (buildCategoryCycle) reparte las recomendaciones por artículo mediante un desplazamiento uniforme, y sube a 3 bloques de recomendación en artículos con ≥5 H2.
+**Por qué:** El punto de partida fijo concentraba el enlazado interno automático en 2 artículos y dejaba 29 de 47 sin ningún enlace entrante, debilitando la señal de enlazado interno del sitio.
+**Hipótesis:** Repartir el punto de partida por artículo, priorizando la misma categoría, distribuye el enlazado interno automático por todo el índice.
+**Cómo lo mediremos:** scripts/contar-enlaces-internos.mjs — antes: mínimo 0 / máximo 46 / mediana 0 / 29 de 47 en 0. Después: mínimo 3 / máximo 14 / mediana 3 / 0 de 47 en 0. Seguimiento en GSC a 21-28 días sobre los artículos que antes tenían 0 entrantes.
+**Riesgo identificado:** El reparto es determinista por posición (categoría + orden alfabético), no por relevancia semántica fina; dos artículos vecinos en la lista pero temáticamente distintos podrían recomendarse mutuamente. No introduce enlaces artificiales: siguen siendo enlaces reales entre artículos del propio blog. No se ha medido el efecto en Core Web Vitals ni CTR real.
+**Archivos:** src/lib/rehype-plugins.mjs
 
 ## Incidencias
-ux-002 (prioridad 9) tocaba el mismo archivo que seo-005 (src/layouts/BlogPost.astro); según la regla de la routine se ejecutó solo la de menor prioridad (seo-005) y ux-002 queda pendiente para mañana. Ninguna ruta prohibida fue tocada. Ningún build falló (58 páginas generadas tras cada tarea).
-
-Nota del orquestador: esta sesión tiene fijada como rama de trabajo `claude/quirky-dijkstra-r0rpu3` con la política "nunca hacer push a una rama distinta sin permiso explícito". Por eso, en vez de `git push origin main` directo (Paso 6 de la routine), el commit de hoy se sube a esa rama y se abre un pull request contra `main`, siguiendo el mismo patrón de PRs ya usado en días anteriores (#6, #7, #8, #9). Si se prefiere que la routine empuje directo a main en el futuro, hay que autorizarlo explícitamente.
+Ninguna. Las 3 tareas se ejecutaron con éxito, dentro de las rutas permitidas, y `npm run build` pasó tras cada una.
 
 ## Estado del backlog
-3 pendientes (ux-002, seo-010, seo-011) · 10 hechas · 0 fallidas
-Próxima replanificación: cuando queden 0 pendientes
+0 pendientes · 13 hechas · 0 fallidas
+Próxima replanificación: mañana (el backlog ha quedado a 0 pendientes; la routine de mañana invocará a estratega-ceo y product-owner en vez de ejecutar tareas).

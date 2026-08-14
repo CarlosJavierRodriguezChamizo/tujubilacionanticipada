@@ -87,6 +87,71 @@ function currentSlug(file) {
   return m ? m[1] : '';
 }
 
+/**
+ * Hash determinista (no criptográfico) de una cadena. Se usa como respaldo
+ * para calcular un punto de partida por artículo cuando no es posible situar
+ * el artículo en el índice ordenado (p. ej. `posts` vacío o slug no
+ * encontrado).
+ */
+function hashString(str) {
+  let h = 0;
+  for (let i = 0; i < str.length; i++) {
+    h = (h * 31 + str.charCodeAt(i)) | 0;
+  }
+  return Math.abs(h);
+}
+
+/**
+ * Construye, a partir del índice de artículos, una lista ordenada por
+ * categoría (los artículos de la misma categoría quedan contiguos,
+ * conservando dentro de cada categoría el orden original alfabético) y un
+ * mapa slug → posición en esa lista.
+ *
+ * Esto permite recomendar, para cada artículo, los siguientes N artículos en
+ * sentido cíclico a partir de su propia posición: como es un desplazamiento
+ * fijo (+1, +2, +3) aplicado por igual a todos los artículos, cada artículo
+ * del índice recibe garantizadamente una recomendación entrante por cada
+ * "vuelta" del ciclo — a diferencia de arrancar siempre en el índice 0 de un
+ * array ordenado alfabéticamente (el problema original: todos los artículos
+ * acababan enlazando a los mismos 2 primeros).
+ */
+function buildCategoryCycle(posts) {
+  const withIndex = posts.map((post, idx) => ({ post, idx }));
+  withIndex.sort((a, b) => {
+    const ca = a.post.category || '';
+    const cb = b.post.category || '';
+    if (ca === cb) return a.idx - b.idx; // conserva orden original dentro de cada categoría
+    return ca < cb ? -1 : 1;
+  });
+  const sorted = withIndex.map((w) => w.post);
+  const position = new Map(sorted.map((p, i) => [p.slug, i]));
+  return { sorted, position };
+}
+
+/**
+ * Devuelve hasta `max` artículos recomendados para `slug`, empezando por el
+ * siguiente artículo en el ciclo ordenado por categoría (prioriza así la
+ * misma categoría cuando hay varios artículos contiguos) y avanzando de
+ * forma determinista y distinta para cada artículo de origen.
+ */
+function pickRecoTargets(slug, cycle, max) {
+  const { sorted, position } = cycle;
+  const n = sorted.length;
+  if (n <= 1) return [];
+  const i = position.get(slug);
+  if (i === undefined) {
+    // Artículo no indexado (p. ej. borrador): respaldo determinista por hash.
+    const start = hashString(slug) % n;
+    const rotated = [...sorted.slice(start), ...sorted.slice(0, start)];
+    return rotated.slice(0, max);
+  }
+  const targets = [];
+  for (let k = 1; k <= max && k < n; k++) {
+    targets.push(sorted[(i + k) % n]);
+  }
+  return targets;
+}
+
 function advisorNode() {
   return el('aside', { className: ['inline-cta'] }, [
     el('p', { className: ['inline-cta__text'] }, [
@@ -124,11 +189,16 @@ function recoNode(post) {
  * de artículos (slug, title, description) que se pasa desde astro.config.
  */
 export function rehypeInlineBlocks(posts = []) {
+  // Se calcula una sola vez por build (no por artículo): índice ordenado por
+  // categoría usado para elegir de forma determinista y repartida qué
+  // artículos se recomiendan desde cada página.
+  const cycle = buildCategoryCycle(posts);
+
   // Devuelve un attacher (plugin) que a su vez devuelve el transformer, para que
   // unified lo registre correctamente cuando se pasa ya parametrizado.
   return () => (tree, file) => {
     const slug = currentSlug(file);
-    const others = posts.filter((p) => p.slug !== slug);
+    const others = pickRecoTargets(slug, cycle, 3);
 
     const h2 = [];
     (tree.children || []).forEach((n, i) => {
@@ -141,6 +211,11 @@ export function rehypeInlineBlocks(posts = []) {
       { ord: 3, type: 'reco' },
       { ord: 4, type: 'advisor' },
     ];
+    // Artículos con contenido extenso (≥5 H2) reciben un tercer bloque de
+    // "lectura recomendada" para repartir más enlaces internos entrantes.
+    if (h2.length >= 5) {
+      plan.push({ ord: 0, type: 'reco' });
+    }
 
     const inserts = [];
     let recoPick = 0;

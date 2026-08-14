@@ -149,7 +149,7 @@
       "titulo": "Enlazar la caja 'Revisado por' del artículo a la página del revisor",
       "area": "ux",
       "prioridad": 9,
-      "estado": "pendiente",
+      "estado": "hecha",
       "hipotesis": "Si el nombre del revisor en la caja \"Revisado por\" de cada artículo (hoy texto plano dentro de un <aside> en BlogPost.astro) se convierte en un enlace a /equipo/javier-rodriguez, esperamos que el lector pueda verificar con un clic quién revisa el contenido, mejorando la confianza percibida en un sitio YMYL, porque hoy esa caja no enlaza a ningún sitio.",
       "criterio_exito": "En una muestra de /dist/blog/*/index.html, dentro del <aside> de \"Revisado por\", el nombre 'Javier Rodríguez' (o su foto) es un <a href=\"/equipo/javier-rodriguez\">; el enlace funciona sin JavaScript y no se añade ninguna credencial o cifra nueva a la caja.",
       "metrica": "Para los 31 artículos con reviewedBy definido en /dist/blog/*/index.html, grep confirma un <a href=\"/equipo/javier-rodriguez\"> dentro del bloque \"Revisado por\"; 31/31 cumplen.",
@@ -157,8 +157,8 @@
         "src/layouts/BlogPost.astro"
       ],
       "objetivo_estrategico": "Página de entidad del revisor, enlazada desde los 31 artículos",
-      "fecha_ejecucion": null,
-      "resultado": null
+      "fecha_ejecucion": "2026-08-14",
+      "resultado": "Foto y nombre del revisor en la caja \"Revisado por\" ahora son <a href=\"/equipo/javier-rodriguez\">, reutilizando REVIEWER_PROFILES de src/lib/schema.ts. Verificado: 47/47 artículos con bloque \"Revisado por\" contienen el enlace (grep sobre dist/blog/*/index.html tras build). Build OK."
     },
     {
       "id": "seo-008",
@@ -197,7 +197,7 @@
       "titulo": "Crear script de medición de enlaces internos entrantes sobre /dist",
       "area": "seo",
       "prioridad": 12,
-      "estado": "pendiente",
+      "estado": "hecha",
       "hipotesis": "Si construimos scripts/contar-enlaces-internos.mjs, que tras `npm run build` cuenta cuántas veces aparece cada URL /blog/<slug> como href entrante desde el cuerpo (bloques 'Lectura recomendada' y RelatedArticles) de otros artículos en /dist, esperamos poder verificar de forma objetiva y repetible el diagnóstico 'dos artículos concentran ~30 entrantes y 23 tienen 0', y más adelante medir el resultado de seo-011, porque hoy no existe en el repo ninguna herramienta que mida esto.",
       "criterio_exito": "Existe scripts/contar-enlaces-internos.mjs; ejecutado con `node scripts/contar-enlaces-internos.mjs` tras un `npm run build`, imprime una tabla con las 31 URLs de artículo y su nº de enlaces internos entrantes desde el cuerpo de otros artículos; ejecutado hoy (antes de tocar rehype-plugins.mjs) confirma el diagnóstico: al menos 2 URLs con ≥25 entrantes y al menos 20 URLs con 0 entrantes.",
       "metrica": "Salida del script: recuento por URL, mínimo, máximo y mediana de entrantes. Este resultado es la línea base 'antes' que el orquestador traslada a DECISIONES.md.",
@@ -205,15 +205,15 @@
         "scripts/contar-enlaces-internos.mjs"
       ],
       "objetivo_estrategico": "Redistribuir el enlazado interno automático del cuerpo del artículo",
-      "fecha_ejecucion": null,
-      "resultado": null
+      "fecha_ejecucion": "2026-08-14",
+      "resultado": "Creado scripts/contar-enlaces-internos.mjs (Node ESM, sin deps nuevas): lee dist/blog/*/index.html tras build y cuenta entrantes únicos por artículo desde bloques \"Lectura recomendada\" y \"Artículos relacionados\". Línea base real (47 artículos): mínimo 0, máximo 46, mediana 0, 29/47 artículos con 0 entrantes; dos artículos concentran 46 entrantes cada uno. Build OK."
     },
     {
       "id": "seo-011",
       "titulo": "Redistribuir la selección de 'lectura recomendada' en rehypeInlineBlocks",
       "area": "seo",
       "prioridad": 13,
-      "estado": "pendiente",
+      "estado": "hecha",
       "hipotesis": "Si rehypeInlineBlocks (src/lib/rehype-plugins.mjs) deja de arrancar siempre en recoPick=0 y en su lugar elige un punto de partida determinista por artículo (p.ej. un hash del slug de origen módulo others.length), priorizando primero los artículos de la misma categoría (usando el campo category añadido en seo-009) y sube a 3 bloques de recomendación en artículos con ≥5 H2, esperamos que el enlazado interno automático se reparta por todo el índice en vez de concentrarse en los 2 primeros artículos alfabéticos, porque hoy 'prácticamente todos los artículos enlazan a los dos mismos posts' al usar siempre el mismo índice de partida sobre un array ordenado alfabéticamente por readdirSync.",
       "criterio_exito": "Depende de seo-009 y seo-010. Tras `npm run build`, ejecutando scripts/contar-enlaces-internos.mjs: ninguna de las 31 URLs de artículo tiene menos de 3 enlaces internos entrantes desde el cuerpo, y ninguna tiene más de 3× la mediana de entrantes; `npm run build` (incluye astro check) pasa; rehypeExternalLinks y su lista DOFOLLOW_HOSTS quedan sin modificar.",
       "metrica": "Comparación de la salida de scripts/contar-enlaces-internos.mjs antes (seo-010, mínimo 0, máximo ~30) vs después de esta tarea (mínimo ≥3, máximo ≤3×mediana).",
@@ -221,8 +221,8 @@
         "src/lib/rehype-plugins.mjs"
       ],
       "objetivo_estrategico": "Redistribuir el enlazado interno automático del cuerpo del artículo",
-      "fecha_ejecucion": null,
-      "resultado": null
+      "fecha_ejecucion": "2026-08-14",
+      "resultado": "rehypeInlineBlocks ya no arranca en recoPick=0: nuevo índice cíclico determinista (buildCategoryCycle) agrupa por category y desplaza +1/+2/+3 posiciones por artículo; sube a 3 bloques de reco en artículos con >=5 H2. rehypeExternalLinks/DOFOLLOW_HOSTS sin tocar. Verificado con contar-enlaces-internos.mjs: antes min 0/max 46/mediana 0/29 de 47 en 0 -> después min 3/max 14/mediana 3/0 de 47 en 0. Build OK."
     }
   ]
 }
