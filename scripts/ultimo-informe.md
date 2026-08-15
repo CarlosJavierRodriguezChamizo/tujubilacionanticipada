@@ -1,37 +1,27 @@
-# Informe de mejora continua — 2026-08-14
+# Informe de mejora continua — 2026-08-15
 
 ## Resumen
-Ejecutadas las 3 tareas pendientes del backlog (ux-002, seo-010, seo-011): se enlazó la caja "Revisado por" a la página del revisor y se corrigió la concentración del enlazado interno automático, que dejaba 29 de 47 artículos sin ningún enlace entrante desde el cuerpo.
+Día de replanificación: el backlog llegó a 0 tareas pendientes, así que se ha revisado la estrategia y generado un nuevo backlog en vez de ejecutar tareas.
 
-## Cambios aplicados
+## Replanificación
 
-### ux ux-002 — Enlazar la caja "Revisado por" del artículo a la página del revisor
-**Qué:** La foto y el nombre "Javier Rodríguez" en el <aside> "Revisado por" ahora son un enlace a /equipo/javier-rodriguez, reutilizando REVIEWER_PROFILES ya existente en src/lib/schema.ts.
-**Por qué:** La caja no enlazaba a ningún sitio; en un YMYL, poder verificar con un clic quién revisa el contenido refuerza la confianza percibida.
-**Hipótesis:** Enlazar el nombre del revisor a su página de entidad mejora la confianza percibida del lector.
-**Cómo lo mediremos:** GSC/comportamiento a 21 días — CTR hacia /equipo/javier-rodriguez.
-**Riesgo identificado:** Bajo. Foto y nombre son enlaces separados (no un único <a> envolviendo todo el aside), pero ambos superan individualmente el área táctil mínima recomendada.
-**Archivos:** src/layouts/BlogPost.astro
+### Revisión de estrategia (estratega-ceo)
+**Qué:** Reescritura completa de `scripts/ESTRATEGIA.md` tras evaluar las 13 hipótesis del ciclo anterior (silos de categoría, migas de pan, entidad del revisor).
+**Veredicto del ciclo anterior:** 8 confirmadas con evidencia (destaca seo-011: enlazado interno pasó de mín. 0/máx. 46/mediana 0/29 de 47 artículos sin entrantes a mín. 3/máx. 14/mediana 3/0 de 48 en cero), 3 confirmadas solo como artefacto sin datos de efecto, 1 refutada (seo-006: la página del revisor no llegó a ser una "entidad verificable" — sin `sameAs` ni `worksFor`), 1 parcial (seo-007) y 1 sin datos suficientes (ux-002). Balance: 11/13 confirmadas a nivel de artefacto, 0 a nivel de negocio (sin acceso a GSC/GA4).
+**Ciclo cerrado:** la arquitectura de silos/migas/revisor se declara cerrada — no se itera más sobre ella.
+**Nuevo cuello de botella:** las 5 URLs que concentran el 65% del volumen de búsqueda (89.600 de 137.050 búsq./mes) tienen dos problemas activos: canibalización (cambios-2026 vs novedades-2026; /simulador vs como-interpretar-simulador-jubilacion; y la entrada el 2026-08-24 de guia-completa-jubilacion-anticipada-2026 contra que-es-la-jubilacion-anticipada) y falta de contenido único suficiente (/simulador tiene solo 71 palabras en `<main>` pese a ser la URL más enlazada del sitio, sin funcionar sin JavaScript).
+**Objetivo nuevo:** para el 2026-09-14, las 5 URLs del "conjunto money" deben cumplir unicidad (ninguna comparte consulta con otra URL indexable) y suficiencia (≥1.200 palabras únicas en `<main>` y utilidad sin JavaScript).
+**Deudas señaladas con fecha límite (no se tocan este ciclo):** formulario de `/asesoramiento` sin JS; `author` JSON-LD de los 48 artículos como Organization suelta sin referenciar el `@id` `#organization`.
 
-### seo seo-010 — Crear script de medición de enlaces internos entrantes sobre /dist
-**Qué:** Nuevo scripts/contar-enlaces-internos.mjs (Node ESM, sin dependencias nuevas) que cuenta, tras `npm run build`, cuántos artículos distintos enlazan a cada URL /blog/<slug> desde los bloques "Lectura recomendada" y "Artículos relacionados".
-**Por qué:** No existía forma objetiva y repetible de verificar el diagnóstico de concentración del enlazado interno ni de medir el efecto de seo-011.
-**Hipótesis:** Medir hoy establece la línea base "antes" necesaria para evaluar seo-011.
-**Cómo lo mediremos:** Línea base registrada: mínimo 0, máximo 46, mediana 0, 29/47 artículos con 0 entrantes.
-**Riesgo identificado:** El script depende de las clases CSS exactas de los bloques de recomendación; si su markup cambia, el script deberá actualizarse en paralelo. Solo lee /dist, no modifica contenido.
-**Archivos:** scripts/contar-enlaces-internos.mjs
-
-### seo seo-011 — Redistribuir la selección de "lectura recomendada" en rehypeInlineBlocks
-**Qué:** rehypeInlineBlocks ya no arranca siempre en el primer artículo de la lista alfabética. Un nuevo índice cíclico agrupado por categoría (buildCategoryCycle) reparte las recomendaciones por artículo mediante un desplazamiento uniforme, y sube a 3 bloques de recomendación en artículos con ≥5 H2.
-**Por qué:** El punto de partida fijo concentraba el enlazado interno automático en 2 artículos y dejaba 29 de 47 sin ningún enlace entrante, debilitando la señal de enlazado interno del sitio.
-**Hipótesis:** Repartir el punto de partida por artículo, priorizando la misma categoría, distribuye el enlazado interno automático por todo el índice.
-**Cómo lo mediremos:** scripts/contar-enlaces-internos.mjs — antes: mínimo 0 / máximo 46 / mediana 0 / 29 de 47 en 0. Después: mínimo 3 / máximo 14 / mediana 3 / 0 de 47 en 0. Seguimiento en GSC a 21-28 días sobre los artículos que antes tenían 0 entrantes.
-**Riesgo identificado:** El reparto es determinista por posición (categoría + orden alfabético), no por relevancia semántica fina; dos artículos vecinos en la lista pero temáticamente distintos podrían recomendarse mutuamente. No introduce enlaces artificiales: siguen siendo enlaces reales entre artículos del propio blog. No se ha medido el efecto en Core Web Vitals ni CTR real.
-**Archivos:** src/lib/rehype-plugins.mjs
+### Nuevo backlog (product-owner)
+**Qué:** 12 tareas nuevas en `scripts/BACKLOG.json` (10 seo, 2 ux, 0 cro — CRO queda fuera de alcance este ciclo por falta de tráfico medible y oferta declarada), ordenadas por prioridad en 3 bloques: (1) auditoría del conjunto money + consolidación canonical de las URLs canibalizadas (seo-012 a seo-017), (2) reconstrucción de `/simulador` como documento competitivo con escenarios precalculados estáticos (seo-018 a seo-021), (3) accesibilidad de las tablas nuevas y aviso `<noscript>` (ux-003, ux-004).
+**Por qué:** traduce el objetivo del "conjunto money" en tareas ejecutables de ≤3 archivos cada una, ninguna dependiente de métricas de GSC/GA4 (prohibido explícitamente por la nueva estrategia), todas verificables con `npm run build` o grep sobre `/dist`.
+**Decisiones del CEO no traducidas a tarea:** las dos deudas con fecha límite (formulario sin JS, `author` suelto) se dejan fuera deliberadamente — el propio CEO las marcó como "no se tocan este ciclo"; tampoco se generó ninguna tarea CRO ni nada del apartado "fuera de alcance" de la estrategia (copy, guía PDF, notificaciones push, textos legales, `sameAs`, link building, rediseños).
+**Archivos:** scripts/ESTRATEGIA.md, scripts/BACKLOG.json
 
 ## Incidencias
-Ninguna. Las 3 tareas se ejecutaron con éxito, dentro de las rutas permitidas, y `npm run build` pasó tras cada una.
+Ninguna. Ambos subagentes devolvieron su informe estructurado; `ultima_replanificacion` actualizada a 2026-08-15; no se tocaron rutas prohibidas.
 
 ## Estado del backlog
-0 pendientes · 13 hechas · 0 fallidas
-Próxima replanificación: mañana (el backlog ha quedado a 0 pendientes; la routine de mañana invocará a estratega-ceo y product-owner en vez de ejecutar tareas).
+12 pendientes · 13 hechas · 0 fallidas
+Próxima replanificación: cuando queden 0 pendientes. No se han ejecutado tareas hoy — el ciclo de ejecución empieza mañana con las 5 tareas de menor prioridad (seo-012 a seo-016).

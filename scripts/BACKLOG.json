@@ -13,7 +13,7 @@
     ],
     "ejecutar_tareas_el_dia_de_replanificacion": true
   },
-  "ultima_replanificacion": "2026-07-29",
+  "ultima_replanificacion": "2026-08-15",
   "tareas": [
     {
       "id": "seo-001",
@@ -223,6 +223,178 @@
       "objetivo_estrategico": "Redistribuir el enlazado interno automático del cuerpo del artículo",
       "fecha_ejecucion": "2026-08-14",
       "resultado": "rehypeInlineBlocks ya no arranca en recoPick=0: nuevo índice cíclico determinista (buildCategoryCycle) agrupa por category y desplaza +1/+2/+3 posiciones por artículo; sube a 3 bloques de reco en artículos con >=5 H2. rehypeExternalLinks/DOFOLLOW_HOSTS sin tocar. Verificado con contar-enlaces-internos.mjs: antes min 0/max 46/mediana 0/29 de 47 en 0 -> después min 3/max 14/mediana 3/0 de 47 en 0. Build OK."
+    },
+    {
+      "id": "seo-012",
+      "titulo": "Crear script de auditoría del conjunto money sobre /dist",
+      "area": "seo",
+      "prioridad": 1,
+      "estado": "pendiente",
+      "hipotesis": "Si creamos scripts/auditar-money-set.mjs que, tras `npm run build`, deriva el conjunto money desde scripts/calendario.json (solo lectura: /simulador + artículos con >=5.000 búsq./mes) y mide sobre /dist palabras únicas en <main>, enlaces internos entrantes, canonical declarado, tipos de JSON-LD y si otra URL indexable del sitemap declara su misma keyword exacta, esperamos obtener un 'antes' objetivo y repetible del estado de unicidad y suficiencia del conjunto money, porque hoy ese diagnóstico solo existe como medición manual del CEO en ESTRATEGIA.md y no hay ninguna herramienta en el repo que lo reproduzca ni que permita comparar un 'después' cuando se ejecuten las líneas 2 y 3.",
+      "criterio_exito": "El script existe y se ejecuta con `node scripts/auditar-money-set.mjs` tras `npm run build`, sin depender de Search Console. Deriva el conjunto money leyendo scripts/calendario.json (>=5.000 búsq./mes + /simulador); imprime por URL: palabras únicas en <main>, enlaces internos entrantes, canonical, tipos de JSON-LD presentes, y si otra URL indexable del sitemap declara su misma keyword. Recorre todo el sitemap buscando pares keyword-duplicada. Si existe scripts/datos/*.csv lo cruza (impresiones/clics/posición); si no existe, lo indica por consola y usa 0. Termina con código de salida 1 si alguna URL del conjunto tiene <1.200 palabras o comparte keyword con otra URL indexable. Ejecutado hoy debe reportar código 1, /simulador con 71 palabras, y 2 pares canibalizados ya publicados (jubilacion-anticipada-cambios-2026/novedades-2026 y /simulador/como-interpretar-simulador-jubilacion).",
+      "metrica": "Salida por consola del propio script (código de salida, tabla por URL, lista de pares canibalizados). Esta salida 'antes' se pega en DECISIONES.md antes de ejecutar cualquier tarea que modifique una URL del conjunto money (seo-013 en adelante).",
+      "archivos_sugeridos": [
+        "scripts/auditar-money-set.mjs"
+      ],
+      "objetivo_estrategico": "Línea de trabajo 1 (ESTRATEGIA.md): 'Instrumento de auditoría del conjunto money sobre /dist... va primero a propósito... para que exista un antes que nadie pueda discutir'."
+    },
+    {
+      "id": "seo-013",
+      "titulo": "Crear el mapa de consolidación canonical en src/lib/canonical-map.ts",
+      "area": "seo",
+      "prioridad": 2,
+      "estado": "pendiente",
+      "hipotesis": "Si creamos src/lib/canonical-map.ts, que deriva de scripts/calendario.json (solo lectura) los pares de artículos publicados que declaran la misma keyword exacta y resuelve cada par asignando la canónica al de fecha de publicación más antigua (excepción: si el más reciente tiene >=1,5x las palabras del más antiguo -leídas del .mdx fuente en src/content/blog/, solo lectura-, el módulo lo marca como 'requiere revisión del CEO' en vez de decidir solo), esperamos tener una única fuente de verdad reutilizable por el layout del artículo y por el sitemap, porque hoy esa regla no existe en ningún sitio del repo y cada par de URLs canibalizadas se resolvería a mano, incluida la que entra el 2026-08-24.",
+      "criterio_exito": "El módulo exporta getCanonicalSlug(slug): string | undefined (slug de destino si ese slug queda consolidado hacia otro; undefined si es la canónica o no forma parte de ningún par) y una lista de pares marcados 'requiere revisión'. Aplicado a los datos de hoy: getCanonicalSlug('jubilacion-anticipada-novedades-2026') === 'jubilacion-anticipada-cambios-2026' (novedades 2.521 pal. vs cambios 2.531 pal., no supera el umbral 1,5x). Una prueba (script ad-hoc o test unitario) simulando 'guia-completa-jubilacion-anticipada-2026' con publicado:true confirma que la regla lo resuelve solo contra 'que-es-la-jubilacion-anticipada' sin intervención humana, tal como exige el falsable de la Línea 2. `npm run build` sigue en verde (el módulo aún no se consume desde ninguna página).",
+      "metrica": "Ejecución directa de getCanonicalSlug() sobre los slugs citados, comparada con los pares que scripts/auditar-money-set.mjs (seo-012) reportó como canibalizados hoy.",
+      "archivos_sugeridos": [
+        "src/lib/canonical-map.ts"
+      ],
+      "objetivo_estrategico": "Línea de trabajo 2 (ESTRATEGIA.md): 'un mapa de consolidación en src/lib/... alimentado por una regla derivada de scripts/calendario.json: cuando dos URLs publicadas declaran la misma keyword exacta, la de fecha de publicación más antigua es la canónica... excepción de seguridad si la más reciente tiene >=1,5x palabras únicas'."
+    },
+    {
+      "id": "seo-014",
+      "titulo": "Emitir <link rel=canonical> hacia la URL consolidada en los artículos canibalizados",
+      "area": "seo",
+      "prioridad": 3,
+      "estado": "pendiente",
+      "hipotesis": "Si BlogPost.astro consulta getCanonicalSlug() (seo-013) para el post actual y, cuando existe destino, pasa la URL consolidada como un nuevo prop `canonicalPath` a través de Base.astro hasta BaseHead.astro (que hoy solo calcula el canonical a partir de su propio `path`), esperamos que la URL más reciente de cada par canibalizado emita <link rel=\"canonical\"> hacia la más antigua en vez de declararse canónica de sí misma, porque hoy cada URL del par tiene su propio canonical (verificado en /dist) y eso reparte entre las dos la señal de la misma consulta.",
+      "criterio_exito": "Tras `npm run build`, dist/blog/jubilacion-anticipada-novedades-2026/index.html contiene <link rel=\"canonical\" href=\"https://tujubilacionanticipada.com/blog/jubilacion-anticipada-cambios-2026\">; dist/blog/jubilacion-anticipada-cambios-2026/index.html sigue apuntando a sí misma; ninguna de las dos URLs recibe noindex (la consolidación es solo canonical, nunca noindex); `npm run build` (incluye astro check) pasa.",
+      "metrica": "grep de <link rel=\"canonical\" en ambos HTML de /dist; ejecución de scripts/auditar-money-set.mjs (seo-012) tras el build y comparación con la salida 'antes' pegada en DECISIONES.md.",
+      "archivos_sugeridos": [
+        "src/components/BaseHead.astro",
+        "src/layouts/Base.astro",
+        "src/layouts/BlogPost.astro"
+      ],
+      "objetivo_estrategico": "Objetivo del ciclo (ESTRATEGIA.md): unicidad — 'ninguna de ellas comparte consulta objetivo con otra URL indexable del sitio'; restricción: 'la canibalización se resuelve con canonical, nunca con noindex'."
+    },
+    {
+      "id": "seo-015",
+      "titulo": "Excluir del sitemap las URLs consolidadas por el mapa canonical",
+      "area": "seo",
+      "prioridad": 4,
+      "estado": "pendiente",
+      "hipotesis": "Si el filtro `sitemap({ filter })` de astro.config.mjs excluye también las páginas /blog/<slug> cuyo slug esté consolidado hacia otro según src/lib/canonical-map.ts (seo-013), esperamos que el sitemap deje de anunciar como indexable una URL que su propio <link rel=canonical> (seo-014) ya declara que no es la principal, porque hoy el sitemap solo excluye aviso-legal/privacidad/cookies/paginación y seguiría listando ambas URLs de cada par canibalizado como si fueran independientes.",
+      "criterio_exito": "Tras `npm run build`, /blog/jubilacion-anticipada-novedades-2026 no aparece en ningún dist/sitemap-*.xml; /blog/jubilacion-anticipada-cambios-2026 sí aparece; `npm run build` pasa.",
+      "metrica": "grep de 'jubilacion-anticipada-novedades-2026' en dist/sitemap-0.xml (0 resultados esperados) y de 'jubilacion-anticipada-cambios-2026' (1 esperado); ejecución de scripts/auditar-money-set.mjs (seo-012) para confirmar que ese par ya no se reporta como canibalizado.",
+      "archivos_sugeridos": [
+        "astro.config.mjs"
+      ],
+      "objetivo_estrategico": "Falsable de la Línea 2 (ESTRATEGIA.md): 'no aparece en sitemap-0.xml; el script de la línea 1 reporta 0 pares canibalizados'."
+    },
+    {
+      "id": "seo-016",
+      "titulo": "Diferenciar el title y el H1 de /simulador frente al artículo como-interpretar-simulador-jubilacion",
+      "area": "seo",
+      "prioridad": 5,
+      "estado": "pendiente",
+      "hipotesis": "Si cambiamos el <title>/H1 de /simulador (hoy 'Simulador de jubilación anticipada', casi intercambiable con el título del artículo 'Simulador de jubilación: cómo interpretar...') para que declare explícitamente intención de herramienta ('Calcula tu jubilación anticipada: simulador gratuito' o similar, con verbo de acción), esperamos separar la señal de intención entre /simulador (herramienta) y como-interpretar-simulador-jubilacion (guía informacional), porque este par no se resuelve con canonical -son documentos legítimamente distintos- sino diferenciando título y H1, y hoy ambos compiten con títulos casi iguales por la consulta de 60.000 búsq./mes.",
+      "criterio_exito": "El frontmatter/H1 del artículo (intocable, vive en src/content/blog/**) no cambia; solo cambian <title> y <h1> de src/pages/simulador.astro; el nuevo título/H1 contiene un verbo de acción y no reutiliza la fórmula 'Simulador de jubilación: cómo interpretar'; `npm run build` pasa.",
+      "metrica": "grep del nuevo <title>/<h1> en dist/simulador/index.html, comparado textualmente con el título de dist/blog/como-interpretar-simulador-jubilacion/index.html para confirmar que ya no son variaciones triviales entre sí.",
+      "archivos_sugeridos": [
+        "src/pages/simulador.astro"
+      ],
+      "objetivo_estrategico": "Línea de trabajo 2 (ESTRATEGIA.md): 'El par /simulador vs como-interpretar-simulador-jubilacion... se resuelve diferenciando el title y el H1 de /simulador... como el title del artículo es intocable, el que se mueve es /simulador'."
+    },
+    {
+      "id": "seo-017",
+      "titulo": "Alinear mainEntityOfPage del JSON-LD con el canonical externo en artículos consolidados",
+      "area": "seo",
+      "prioridad": 6,
+      "estado": "pendiente",
+      "hipotesis": "Si blogPostingSchema() en src/lib/schema.ts consulta getCanonicalSlug() (seo-013) y, cuando el post está consolidado hacia otro, apunta mainEntityOfPage y url del propio JSON-LD al destino canónico en vez de a sí mismo, esperamos eliminar la contradicción entre el <link rel=canonical> (seo-014, que ya dice 'la página principal es otra') y el JSON-LD (que hoy seguiría declarándose a sí mismo como entidad principal), porque un rastreador que ve ambas señales enfrentadas puede no consolidar ninguna de las dos URLs.",
+      "criterio_exito": "Tras `npm run build`, el JSON-LD BlogPosting de dist/blog/jubilacion-anticipada-novedades-2026/index.html tiene mainEntityOfPage.@id y url apuntando a la URL de jubilacion-anticipada-cambios-2026, no a sí mismo; el BlogPosting de jubilacion-anticipada-cambios-2026 sigue apuntando a sí mismo; `npm run build` pasa.",
+      "metrica": "grep de mainEntityOfPage en ambos dist/blog/*/index.html, comparado contra el <link rel=canonical> de cada uno (deben coincidir).",
+      "archivos_sugeridos": [
+        "src/lib/schema.ts"
+      ],
+      "objetivo_estrategico": "Restricción añadida en este ciclo (ESTRATEGIA.md): 'la canibalización se resuelve con canonical... canonical consolida las señales de una URL que puede ya tener enlaces'; esta tarea evita que el propio JSON-LD contradiga esa consolidación."
+    },
+    {
+      "id": "seo-018",
+      "titulo": "Extraer el motor de cálculo puro del simulador a src/lib/pension-calculo.ts",
+      "area": "seo",
+      "prioridad": 7,
+      "estado": "pendiente",
+      "hipotesis": "Si extraemos las funciones puras de cálculo (porcentajePension, calcularEscenario y las constantes normativas) de src/components/Simulador.jsx a un nuevo módulo compartido src/lib/pension-calculo.ts, sin cambiar ninguna fórmula ni cifra, esperamos poder generar en build una tabla de escenarios estática desde src/pages/simulador.astro reutilizando exactamente el mismo motor que usa la isla React, porque hoy esa lógica solo existe dentro del componente cliente y no es accesible desde una página .astro en build; el objetivo es reubicar el motor, no reescribirlo.",
+      "criterio_exito": "src/lib/pension-calculo.ts exporta las mismas funciones/constantes con la misma implementación (sin cambios numéricos); Simulador.jsx las importa desde ahí en vez de definirlas localmente; para un mismo conjunto de inputs, el resultado de calcularEscenario() antes y después del refactor es idéntico; `npm run build` pasa. Si al mover la fórmula se detecta que algún coeficiente o cálculo actual es incorrecto respecto a la normativa vigente, la tarea se detiene y lo reporta al CEO en vez de corregirlo por iniciativa propia.",
+      "metrica": "Comparación de la salida de calcularEscenario() para >=5 combinaciones de edad/años cotizados/base reguladora antes y después del refactor: deben ser idénticas.",
+      "archivos_sugeridos": [
+        "src/components/Simulador.jsx",
+        "src/lib/pension-calculo.ts"
+      ],
+      "objetivo_estrategico": "Línea de trabajo 3 (ESTRATEGIA.md): '/simulador... la línea 3 añade contenido, escenarios estáticos y fuentes; no reescribe el motor de cálculo' — paso previo necesario para generar escenarios en build."
+    },
+    {
+      "id": "seo-019",
+      "titulo": "Renderizar en /simulador una tabla estática de escenarios precalculados",
+      "area": "seo",
+      "prioridad": 8,
+      "estado": "pendiente",
+      "hipotesis": "Si src/pages/simulador.astro usa src/lib/pension-calculo.ts (seo-018) para renderizar en build una tabla HTML con >=40 combinaciones de escenario (edad x años cotizados x tramo de base reguladora), visible y legible con JavaScript desactivado, dejando la isla React <Simulador client:load> como mejora progresiva sobre esa misma tabla, esperamos que <main> pase de 71 palabras únicas a un documento sustancialmente más largo y que un usuario sin JS pueda leer una estimación para su caso, porque hoy toda la página depende de una isla React que no ejecuta nada sin JavaScript.",
+      "criterio_exito": "Tras `npm run build`, dist/simulador/index.html contiene una tabla estática con >=40 filas de escenario generada en build (no por JS); simulando la eliminación de la isla React del HTML, la tabla sigue presente y legible; el DISCLAIMER (src/consts.ts) sigue visible fuera de la isla React; ejecutando scripts/auditar-money-set.mjs (seo-012) tras el build, /simulador reporta >=1.200 palabras únicas en <main> (antes: 71). Si al generar los escenarios se detecta un dato normativo incorrecto, la tarea se detiene y lo reporta al CEO.",
+      "metrica": "Salida de scripts/auditar-money-set.mjs antes (71 palabras, seo-012) vs después de esta tarea, pegada en DECISIONES.md; conteo de filas de la tabla en dist/simulador/index.html >=40.",
+      "archivos_sugeridos": [
+        "src/pages/simulador.astro"
+      ],
+      "objetivo_estrategico": "Falsable de la Línea 3 (ESTRATEGIA.md): '<main> de /simulador >=1.200 palabras únicas (hoy 71); >=40 combinaciones de escenario presentes en el HTML estático; con la isla React eliminada del HTML, la página sigue conteniendo una tabla de estimación legible'."
+    },
+    {
+      "id": "seo-020",
+      "titulo": "Añadir a /simulador las fuentes normativas, coeficientes reductores y enlace al simulador oficial de la Seguridad Social",
+      "area": "seo",
+      "prioridad": 9,
+      "estado": "pendiente",
+      "hipotesis": "Si añadimos a /simulador, como HTML estático, la fórmula y el artículo de la LGSS que respalda cada cálculo (enlazado dofollow a boe.es o seg-social.es), una tabla de coeficientes reductores vigentes con su fuente oficial, las limitaciones explícitas de la estimación y un enlace visible al simulador oficial de la Seguridad Social, esperamos que /simulador compita como documento frente al simulador oficial y la banca en vez de ocultar que existen alternativas oficiales, porque hoy la página no cita ninguna fuente normativa ni enlaza al simulador oficial, y ESTRATEGIA.md exige explicarlo, no ocultarlo.",
+      "criterio_exito": "dist/simulador/index.html contiene al menos un enlace dofollow (sin rel=nofollow, con target=_blank rel=noopener, replicando manualmente la convención de DOFOLLOW_HOSTS en src/lib/rehype-plugins.mjs porque esta página .astro no pasa por el pipeline de markdown) a seg-social.es o boe.es junto a cada coeficiente reductor citado; contiene un enlace visible al simulador oficial de la Seguridad Social; el DISCLAIMER sigue visible; ningún dato normativo se presenta como cálculo oficial. Si al documentar la fórmula se detecta un coeficiente incorrecto respecto a la normativa vigente, la tarea se detiene y lo reporta al CEO en vez de corregirlo por iniciativa propia.",
+      "metrica": "grep de href=\"https://www.seg-social.es y href=\"https://www.boe.es en dist/simulador/index.html; ejecución de scripts/auditar-money-set.mjs (seo-012) tras el build para confirmar el avance de palabras únicas en <main> respecto al 'antes' de seo-019.",
+      "archivos_sugeridos": [
+        "src/pages/simulador.astro"
+      ],
+      "objetivo_estrategico": "Línea de trabajo 3 (ESTRATEGIA.md): 'Qué calcula exactamente y con qué fórmula, con el artículo de la LGSS que la respalda... Limitaciones explícitas... y enlace al simulador oficial de la Seguridad Social. No se compite ocultando que existe: se compite explicándolo'."
+    },
+    {
+      "id": "seo-021",
+      "titulo": "Corregir el schema de /simulador para que no contradiga el HTML (browserRequirements) y mostrar visibles las preguntas del FAQPage",
+      "area": "seo",
+      "prioridad": 10,
+      "estado": "pendiente",
+      "hipotesis": "Si hacemos que webApplicationSchema() acepte un parámetro que indique si requiere JavaScript (en vez del valor fijo 'Requiere JavaScript' que hoy declara siempre) y lo marcamos como no requerido para /simulador tras añadir la tabla estática (seo-019/seo-020), y si además mostramos en el HTML de /simulador las 3 preguntas que faqSchema(faqs) ya declara en el JSON-LD (hoy invisibles en la página), esperamos que el schema deje de contradecir el propio HTML -que ya funciona sin JS- y que el FAQPage deje de incumplir la restricción de la estrategia que exige que las preguntas estén literalmente visibles, porque hoy browserRequirements dice siempre 'Requiere JavaScript' y ninguna de las 3 preguntas del array `faqs` aparece en el HTML renderizado.",
+      "criterio_exito": "webApplicationSchema() en src/lib/schema.ts recibe un nuevo parámetro opcional (p. ej. requiresJs?: boolean) y solo incluye browserRequirements cuando es true; dist/simulador/index.html deja de declarar browserRequirements:'Requiere JavaScript' en su JSON-LD; las 3 preguntas y respuestas de la constante `faqs` de simulador.astro aparecen como texto visible en el HTML (no solo en el JSON-LD); `npm run build` pasa; no se añade FAQPage a ninguna otra página que no muestre sus preguntas.",
+      "metrica": "grep de browserRequirements y de cada pregunta de `faqs` en dist/simulador/index.html antes/después de esta tarea.",
+      "archivos_sugeridos": [
+        "src/lib/schema.ts",
+        "src/pages/simulador.astro"
+      ],
+      "objetivo_estrategico": "Restricción añadida en este ciclo, Línea de trabajo 3 (ESTRATEGIA.md): 'FAQPage solo si las preguntas están literalmente visibles en la página'; y restricción permanente 'el sitio debe funcionar sin JavaScript... este ciclo se cierra la mitad del incumplimiento (línea 3)'."
+    },
+    {
+      "id": "ux-003",
+      "titulo": "Hacer accesibles (WCAG AA) las tablas nuevas de /simulador para el público de 50 a 65 años",
+      "area": "ux",
+      "prioridad": 11,
+      "estado": "pendiente",
+      "hipotesis": "Si la tabla estática de escenarios y la tabla de coeficientes reductores añadidas a /simulador (seo-019, seo-020) usan <caption>, <th scope='col'/'row'>, tamaño de fuente >=16px y contraste AA con los tokens de color ya validados del sitio, esperamos que sean legibles y navegables para el público objetivo de 50 a 65 años sin depender del estilo por defecto del navegador, porque el público de este sitio es explícitamente 50-65 años (restricción permanente de accesibilidad) y una tabla densa de >=40 filas sin semántica ni contraste adecuados es difícil de leer para ese perfil, especialmente con lector de pantalla o zoom.",
+      "criterio_exito": "Ambas tablas en dist/simulador/index.html tienen <caption>, cabeceras <th scope> correctas, y el contraste de texto/fondo cumple AA (ratio >=4.5:1 para texto normal) usando colores ya presentes en src/styles/global.css (no se introducen colores nuevos); la tabla es legible/desplazable en viewport móvil sin que el texto quede cortado; `npm run build` pasa.",
+      "metrica": "grep de <caption> y <th scope> en ambas tablas de dist/simulador/index.html; verificación manual de que los colores usados coinciden con los ya validados AA del sistema de diseño existente.",
+      "archivos_sugeridos": [
+        "src/pages/simulador.astro"
+      ],
+      "objetivo_estrategico": "Restricción permanente (ESTRATEGIA.md): 'Accesibilidad mínima WCAG AA — público objetivo de 50 a 65 años', aplicada al contenido nuevo de la Línea de trabajo 3."
+    },
+    {
+      "id": "ux-004",
+      "titulo": "Añadir un aviso <noscript> visible en /simulador que oriente hacia la tabla estática",
+      "area": "ux",
+      "prioridad": 12,
+      "estado": "pendiente",
+      "hipotesis": "Si añadimos un <noscript> visible en /simulador que explique que la calculadora interactiva requiere JavaScript y dirija al usuario a la tabla de escenarios estática de más abajo (seo-019), esperamos evitar que un usuario sin JavaScript interprete el formulario inerte como una página rota, porque hoy el botón 'Calcular mi jubilación' no responde sin JS y no hay ningún mensaje que lo explique ni que oriente hacia una alternativa, incumpliendo la restricción permanente 'el sitio debe funcionar sin JavaScript' incluso después de añadir la tabla estática.",
+      "criterio_exito": "dist/simulador/index.html contiene un <noscript> con texto visible (no solo comentario) que menciona la tabla de escenarios como alternativa sin JavaScript; con JS activado el <noscript> no se renderiza (comportamiento nativo del navegador); `npm run build` pasa.",
+      "metrica": "grep de <noscript> con contenido de texto en dist/simulador/index.html; revisión manual de que el mensaje no duplica ni contradice el DISCLAIMER existente.",
+      "archivos_sugeridos": [
+        "src/pages/simulador.astro"
+      ],
+      "objetivo_estrategico": "Restricción permanente (ESTRATEGIA.md): 'El sitio debe funcionar sin JavaScript... este ciclo se cierra la mitad del incumplimiento (línea 3)'."
     }
   ]
 }
