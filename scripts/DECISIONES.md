@@ -149,4 +149,14 @@ Formato:
 - Commit: (pendiente de este mismo commit)
 - Veredicto del CEO: pendiente
 
+## 2026-08-16 — seo-012 Crear script de auditoría del conjunto money sobre /dist (seo)
+- Archivos: scripts/auditar-money-set.mjs (nuevo)
+- Qué: Script Node ESM standalone que, tras `npm run build`, deriva el conjunto money solo desde scripts/calendario.json (lectura, sin escribir: /simulador + artículos publicados con volumen >=5.000 búsq./mes) y mide sobre /dist por URL: palabras visibles en <main>, enlaces internos entrantes desde todo /dist, canonical declarado, tipos @type de JSON-LD, y si otra URL indexable del sitemap declara su misma keyword (recorre las 67 URLs del sitemap). Cruza scripts/datos/*.csv si existe; hoy no existe, usa 0 y lo indica por consola. Sale con código 1 si alguna URL money tiene <1.200 palabras o comparte keyword con otra URL indexable.
+- Por qué: El diagnóstico de unicidad/suficiencia del conjunto money solo existía como medición manual del CEO en ESTRATEGIA.md; sin script repetible no hay forma objetiva de comparar el "antes" con el "después" de seo-013 en adelante.
+- Hipótesis: Un script repetible sobre /dist da un "antes" objetivo del conjunto money, reutilizable como "después" cuando se ejecuten las líneas 2 y 3 de la estrategia.
+- Criterio de éxito: Cumplido. Ejecutado hoy: código de salida 1, /simulador con 71 palabras, 2 pares canibalizados confirmados (jubilacion-anticipada-cambios-2026/novedades-2026 y /simulador/como-interpretar-simulador-jubilacion). `npm run build` pasa.
+- Métrica y plazo: Salida "antes" de este script, base de comparación para seo-013 (consolidación canonical) y seo-014 (diferenciación /simulador) en adelante.
+- Commit: (pendiente de este mismo commit)
+- Veredicto del CEO: pendiente
+
 ---
