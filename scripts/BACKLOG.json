@@ -261,7 +261,7 @@
       "titulo": "Emitir <link rel=canonical> hacia la URL consolidada en los artículos canibalizados",
       "area": "seo",
       "prioridad": 3,
-      "estado": "pendiente",
+      "estado": "hecha",
       "hipotesis": "Si BlogPost.astro consulta getCanonicalSlug() (seo-013) para el post actual y, cuando existe destino, pasa la URL consolidada como un nuevo prop `canonicalPath` a través de Base.astro hasta BaseHead.astro (que hoy solo calcula el canonical a partir de su propio `path`), esperamos que la URL más reciente de cada par canibalizado emita <link rel=\"canonical\"> hacia la más antigua en vez de declararse canónica de sí misma, porque hoy cada URL del par tiene su propio canonical (verificado en /dist) y eso reparte entre las dos la señal de la misma consulta.",
       "criterio_exito": "Tras `npm run build`, dist/blog/jubilacion-anticipada-novedades-2026/index.html contiene <link rel=\"canonical\" href=\"https://tujubilacionanticipada.com/blog/jubilacion-anticipada-cambios-2026\">; dist/blog/jubilacion-anticipada-cambios-2026/index.html sigue apuntando a sí misma; ninguna de las dos URLs recibe noindex (la consolidación es solo canonical, nunca noindex); `npm run build` (incluye astro check) pasa.",
       "metrica": "grep de <link rel=\"canonical\" en ambos HTML de /dist; ejecución de scripts/auditar-money-set.mjs (seo-012) tras el build y comparación con la salida 'antes' pegada en DECISIONES.md.",
@@ -270,7 +270,9 @@
         "src/layouts/Base.astro",
         "src/layouts/BlogPost.astro"
       ],
-      "objetivo_estrategico": "Objetivo del ciclo (ESTRATEGIA.md): unicidad — 'ninguna de ellas comparte consulta objetivo con otra URL indexable del sitio'; restricción: 'la canibalización se resuelve con canonical, nunca con noindex'."
+      "objetivo_estrategico": "Objetivo del ciclo (ESTRATEGIA.md): unicidad — 'ninguna de ellas comparte consulta objetivo con otra URL indexable del sitio'; restricción: 'la canibalización se resuelve con canonical, nunca con noindex'.",
+      "fecha_ejecucion": "2026-08-16",
+      "resultado": "BaseHead.astro acepta canonicalPath opcional (canonical = canonicalPath ?? path); og:url/twitter:url quedan autorreferenciales (decisión de diseño, fuera del criterio explícito). Base.astro repasa el prop. BlogPost.astro consulta getCanonicalSlug(post.slug) (seo-013) y pasa canonicalPath cuando existe destino. Verificado: dist/blog/jubilacion-anticipada-novedades-2026/index.html declara canonical hacia .../jubilacion-anticipada-cambios-2026; cambios-2026 sigue autorreferencial; 0 noindex en ambas. Build OK (71 páginas, astro check limpio)."
     },
     {
       "id": "seo-015",

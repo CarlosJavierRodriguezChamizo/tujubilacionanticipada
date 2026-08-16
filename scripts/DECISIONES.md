@@ -169,4 +169,14 @@ Formato:
 - Commit: (pendiente de este mismo commit)
 - Veredicto del CEO: pendiente
 
+## 2026-08-16 — seo-014 Emitir <link rel=canonical> hacia la URL consolidada en los artículos canibalizados (seo)
+- Archivos: src/components/BaseHead.astro, src/layouts/Base.astro, src/layouts/BlogPost.astro
+- Qué: BaseHead.astro acepta un prop opcional canonicalPath que, si está presente, gana sobre path para el <link rel="canonical"> (og:url/twitter:url quedan autorreferenciales por diseño, para no desviar la señal social de la página realmente compartida). Base.astro repasa el prop. BlogPost.astro consulta getCanonicalSlug(post.slug) (seo-013) y, cuando el post está consolidado hacia otro, pasa canonicalPath=/blog/<slug-canónico>. No se toca noindex en ningún caso.
+- Por qué: Cada URL del par canibalizado (jubilacion-anticipada-cambios-2026 / novedades-2026) emitía su propio canonical, repartiendo entre ambas la señal de la misma consulta ("jubilacion anticipada 2026").
+- Hipótesis: Que la URL más reciente declare canonical hacia la más antigua consolida la señal de la consulta compartida en una sola URL, sin despublicar ni noindexar contenido.
+- Criterio de éxito: Cumplido y verificado con grep tras build: novedades-2026 declara canonical hacia cambios-2026; cambios-2026 sigue autorreferencial; 0 noindex en ambas. `npm run build` (incluye astro check) pasa.
+- Métrica y plazo: scripts/auditar-money-set.mjs sigue reportando el par por keyword compartida (detecta por calendario, no por el valor del canonical — comportamiento esperado, no es señal de fallo). Seguimiento real en GSC a 21 días: consolidación de impresiones/clics de "jubilacion anticipada 2026" bajo la URL canónica.
+- Commit: (pendiente de este mismo commit)
+- Veredicto del CEO: pendiente
+
 ---
