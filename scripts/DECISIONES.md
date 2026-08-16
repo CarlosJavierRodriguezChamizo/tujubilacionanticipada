@@ -189,4 +189,14 @@ Formato:
 - Commit: (pendiente de este mismo commit)
 - Veredicto del CEO: pendiente
 
+## 2026-08-16 — seo-016 Diferenciar el title y el H1 de /simulador frente al artículo como-interpretar-simulador-jubilacion (seo)
+- Archivos: src/pages/simulador.astro
+- Qué: <title>/<h1> de /simulador cambian de "Simulador de jubilación anticipada" a "Calcula tu jubilación anticipada: simulador gratuito" (verbo de acción, intención de herramienta). name de webApplicationSchema()/webPageSchema() actualizado para no contradecir el title/H1 visible. El frontmatter/H1 del artículo como-interpretar-simulador-jubilacion.mdx no se toca.
+- Por qué: Ambos documentos competían con títulos casi intercambiables por la consulta de ~60.000 búsq./mes; al ser documentos legítimamente distintos (herramienta vs. guía informacional) no se resuelve con canonical, sino diferenciando la señal de intención.
+- Hipótesis: Un title/H1 con verbo de acción en /simulador separa la señal de intención transaccional de la informacional del artículo.
+- Criterio de éxito: Cumplido y verificado tras build: nuevo title/H1 de /simulador ya no es variación trivial del title del artículo (sin cambios); `npm run build` pasa.
+- Métrica y plazo: GSC a 21 días — impresiones/CTR/posición de "simulador jubilacion anticipada" para ambas URLs, verificando que empiezan a captar clusters de intención distintos en vez de canibalizarse.
+- Commit: (pendiente de este mismo commit)
+- Veredicto del CEO: pendiente
+
 ---

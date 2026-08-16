@@ -295,14 +295,16 @@
       "titulo": "Diferenciar el title y el H1 de /simulador frente al artículo como-interpretar-simulador-jubilacion",
       "area": "seo",
       "prioridad": 5,
-      "estado": "pendiente",
+      "estado": "hecha",
       "hipotesis": "Si cambiamos el <title>/H1 de /simulador (hoy 'Simulador de jubilación anticipada', casi intercambiable con el título del artículo 'Simulador de jubilación: cómo interpretar...') para que declare explícitamente intención de herramienta ('Calcula tu jubilación anticipada: simulador gratuito' o similar, con verbo de acción), esperamos separar la señal de intención entre /simulador (herramienta) y como-interpretar-simulador-jubilacion (guía informacional), porque este par no se resuelve con canonical -son documentos legítimamente distintos- sino diferenciando título y H1, y hoy ambos compiten con títulos casi iguales por la consulta de 60.000 búsq./mes.",
       "criterio_exito": "El frontmatter/H1 del artículo (intocable, vive en src/content/blog/**) no cambia; solo cambian <title> y <h1> de src/pages/simulador.astro; el nuevo título/H1 contiene un verbo de acción y no reutiliza la fórmula 'Simulador de jubilación: cómo interpretar'; `npm run build` pasa.",
       "metrica": "grep del nuevo <title>/<h1> en dist/simulador/index.html, comparado textualmente con el título de dist/blog/como-interpretar-simulador-jubilacion/index.html para confirmar que ya no son variaciones triviales entre sí.",
       "archivos_sugeridos": [
         "src/pages/simulador.astro"
       ],
-      "objetivo_estrategico": "Línea de trabajo 2 (ESTRATEGIA.md): 'El par /simulador vs como-interpretar-simulador-jubilacion... se resuelve diferenciando el title y el H1 de /simulador... como el title del artículo es intocable, el que se mueve es /simulador'."
+      "objetivo_estrategico": "Línea de trabajo 2 (ESTRATEGIA.md): 'El par /simulador vs como-interpretar-simulador-jubilacion... se resuelve diferenciando el title y el H1 de /simulador... como el title del artículo es intocable, el que se mueve es /simulador'.",
+      "fecha_ejecucion": "2026-08-16",
+      "resultado": "<title>/<h1> de src/pages/simulador.astro: 'Simulador de jubilación anticipada' → 'Calcula tu jubilación anticipada: simulador gratuito' (verbo de acción, ya no variación trivial del title del artículo). name de webApplicationSchema()/webPageSchema() actualizado en coherencia. Artículo como-interpretar-simulador-jubilacion.mdx intacto. Verificado tras build: title/h1 de /simulador y title del artículo ya no son variaciones triviales entre sí. Build OK."
     },
     {
       "id": "seo-017",
