@@ -159,4 +159,14 @@ Formato:
 - Commit: (pendiente de este mismo commit)
 - Veredicto del CEO: pendiente
 
+## 2026-08-16 — seo-013 Crear el mapa de consolidación canonical en src/lib/canonical-map.ts (seo)
+- Archivos: src/lib/canonical-map.ts (nuevo)
+- Qué: Módulo que deriva de scripts/calendario.json (lectura) los pares de artículos publicados con la misma keyword exacta normalizada, contando palabras desde el .mdx fuente (lectura) de cada uno. Resuelve la canónica al de fecha más antigua, salvo que el más reciente tenga >=1,5x las palabras del más antiguo, en cuyo caso el par se marca "requiere revisión del CEO" y no se resuelve solo. Expone getCanonicalSlug(slug), paresConsolidados, paresQueRequierenRevision y una función pura testeable resolverConsolidacion(). No se consume aún desde ninguna página.
+- Por qué: No existía ninguna fuente única de verdad para resolver canibalización de keyword; cada par se habría resuelto a mano, incluida la entrada del 2026-08-24.
+- Hipótesis: Una regla determinista derivada del calendario permite resolver consolidación canonical sin intervención humana, salvo el caso ambiguo (artículo más reciente sustancialmente más extenso) que se escala a revisión.
+- Criterio de éxito: Cumplido. getCanonicalSlug('jubilacion-anticipada-novedades-2026') === 'jubilacion-anticipada-cambios-2026' verificado; simulación de guia-completa-jubilacion-anticipada-2026 resuelve sola contra que-es-la-jubilacion-anticipada; caso forzado al umbral 1,5x escala a revisión correctamente. `npm run build` pasa (módulo aún no consumido).
+- Métrica y plazo: Cuando el módulo se consuma desde el layout/sitemap (tarea futura), medir en GSC a 21-30 días la consolidación de posición/impresiones hacia la URL canónica en los pares afectados.
+- Commit: (pendiente de este mismo commit)
+- Veredicto del CEO: pendiente
+
 ---
