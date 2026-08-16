@@ -179,4 +179,14 @@ Formato:
 - Commit: (pendiente de este mismo commit)
 - Veredicto del CEO: pendiente
 
+## 2026-08-16 — seo-015 Excluir del sitemap las URLs consolidadas por el mapa canonical (seo)
+- Archivos: astro.config.mjs
+- Qué: El filter de sitemap() en astro.config.mjs, además de excluir aviso-legal/privacidad/cookies/paginación (sin cambios), ahora consulta getCanonicalSlug(slug) (seo-013) para cada URL /blog/<slug>/ y excluye del sitemap las que estén consolidadas hacia otra.
+- Por qué: El sitemap seguía anunciando como indexable una URL que su propio <link rel=canonical> (seo-014) ya declaraba que no era la principal, contradiciendo esa señal ante los rastreadores.
+- Hipótesis: Excluir del sitemap la URL "perdedora" de cada par consolidado evita que el sitio la ofrezca como indexable de forma independiente.
+- Criterio de éxito: Cumplido y verificado tras build: jubilacion-anticipada-novedades-2026 ausente de dist/sitemap-0.xml; jubilacion-anticipada-cambios-2026 presente. `npm run build` pasa.
+- Métrica y plazo: Cobertura en GSC a 21-30 días — la URL excluida debería pasar a "Excluida - URL alternativa con etiqueta canónica adecuada". Nota: scripts/auditar-money-set.mjs (seo-012) sigue reportando este par como canibalizado porque su Regla 1 detecta por keyword+publicado en el calendario, sin filtrar por indexabilidad real del sitemap; queda como ítem de seguimiento para una futura tarea, no es un fallo de seo-015.
+- Commit: (pendiente de este mismo commit)
+- Veredicto del CEO: pendiente
+
 ---
