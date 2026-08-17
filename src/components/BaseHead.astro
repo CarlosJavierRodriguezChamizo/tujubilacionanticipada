@@ -6,6 +6,15 @@ interface Props {
   description: string;
   /** Ruta de la página (ej. "/blog"). Se usa para el canonical. */
   path?: string;
+  /**
+   * Ruta consolidada (ej. "/blog/otro-slug") hacia la que debe apuntar el
+   * <link rel="canonical"> cuando esta página es la "perdedora" de un par
+   * canibalizado (ver src/lib/canonical-map.ts). Si se indica, tiene
+   * prioridad sobre `path`/`Astro.url.pathname` solo para el cálculo del
+   * canonical; el resto de metadatos (og:url, twitter:url, indexación) no
+   * se ven afectados: la consolidación es solo canonical, nunca noindex.
+   */
+  canonicalPath?: string;
   /** Imagen OG absoluta o ruta en /public */
   image?: string;
   /** Tipo Open Graph */
@@ -18,13 +27,23 @@ const {
   title,
   description,
   path,
+  canonicalPath,
   image = SITE.defaultOgImage,
   ogType = 'website',
   noindex = false,
 } = Astro.props;
 
-// Canonical robusto: usa Astro.url contra el site configurado.
-const canonicalURL = new URL(path ?? Astro.url.pathname, Astro.site ?? SITE.url);
+// URL real de esta página (usada por og:url / twitter:url, que deben seguir
+// describiendo la página que efectivamente se está compartiendo).
+const pageURL = new URL(path ?? Astro.url.pathname, Astro.site ?? SITE.url);
+
+// Canonical robusto: usa Astro.url contra el site configurado. Si se indica
+// `canonicalPath` (par canibalizado consolidado), este gana sobre `path`
+// SOLO para el <link rel="canonical">.
+const canonicalURL = new URL(
+  canonicalPath ?? path ?? Astro.url.pathname,
+  Astro.site ?? SITE.url
+);
 const ogImageURL = new URL(image, Astro.site ?? SITE.url);
 
 // Título completo: evita duplicar la marca en la home.
@@ -112,7 +131,7 @@ const fullTitle = title === SITE.name ? title : `${title} | ${SITE.name}`;
 <meta property="og:type" content={ogType} />
 <meta property="og:site_name" content={SITE.name} />
 <meta property="og:locale" content={SITE.locale} />
-<meta property="og:url" content={canonicalURL} />
+<meta property="og:url" content={pageURL} />
 <meta property="og:title" content={fullTitle} />
 <meta property="og:description" content={description} />
 <meta property="og:image" content={ogImageURL} />
@@ -128,7 +147,7 @@ const fullTitle = title === SITE.name ? title : `${title} | ${SITE.name}`;
 
 <!-- Twitter -->
 <meta name="twitter:card" content="summary_large_image" />
-<meta name="twitter:url" content={canonicalURL} />
+<meta name="twitter:url" content={pageURL} />
 <meta name="twitter:title" content={fullTitle} />
 <meta name="twitter:description" content={description} />
 <meta name="twitter:image" content={ogImageURL} />

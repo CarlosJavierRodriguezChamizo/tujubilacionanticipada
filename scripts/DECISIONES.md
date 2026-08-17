@@ -149,4 +149,54 @@ Formato:
 - Commit: (pendiente de este mismo commit)
 - Veredicto del CEO: pendiente
 
+## 2026-08-16 — seo-012 Crear script de auditoría del conjunto money sobre /dist (seo)
+- Archivos: scripts/auditar-money-set.mjs (nuevo)
+- Qué: Script Node ESM standalone que, tras `npm run build`, deriva el conjunto money solo desde scripts/calendario.json (lectura, sin escribir: /simulador + artículos publicados con volumen >=5.000 búsq./mes) y mide sobre /dist por URL: palabras visibles en <main>, enlaces internos entrantes desde todo /dist, canonical declarado, tipos @type de JSON-LD, y si otra URL indexable del sitemap declara su misma keyword (recorre las 67 URLs del sitemap). Cruza scripts/datos/*.csv si existe; hoy no existe, usa 0 y lo indica por consola. Sale con código 1 si alguna URL money tiene <1.200 palabras o comparte keyword con otra URL indexable.
+- Por qué: El diagnóstico de unicidad/suficiencia del conjunto money solo existía como medición manual del CEO en ESTRATEGIA.md; sin script repetible no hay forma objetiva de comparar el "antes" con el "después" de seo-013 en adelante.
+- Hipótesis: Un script repetible sobre /dist da un "antes" objetivo del conjunto money, reutilizable como "después" cuando se ejecuten las líneas 2 y 3 de la estrategia.
+- Criterio de éxito: Cumplido. Ejecutado hoy: código de salida 1, /simulador con 71 palabras, 2 pares canibalizados confirmados (jubilacion-anticipada-cambios-2026/novedades-2026 y /simulador/como-interpretar-simulador-jubilacion). `npm run build` pasa.
+- Métrica y plazo: Salida "antes" de este script, base de comparación para seo-013 (consolidación canonical) y seo-014 (diferenciación /simulador) en adelante.
+- Commit: (pendiente de este mismo commit)
+- Veredicto del CEO: pendiente
+
+## 2026-08-16 — seo-013 Crear el mapa de consolidación canonical en src/lib/canonical-map.ts (seo)
+- Archivos: src/lib/canonical-map.ts (nuevo)
+- Qué: Módulo que deriva de scripts/calendario.json (lectura) los pares de artículos publicados con la misma keyword exacta normalizada, contando palabras desde el .mdx fuente (lectura) de cada uno. Resuelve la canónica al de fecha más antigua, salvo que el más reciente tenga >=1,5x las palabras del más antiguo, en cuyo caso el par se marca "requiere revisión del CEO" y no se resuelve solo. Expone getCanonicalSlug(slug), paresConsolidados, paresQueRequierenRevision y una función pura testeable resolverConsolidacion(). No se consume aún desde ninguna página.
+- Por qué: No existía ninguna fuente única de verdad para resolver canibalización de keyword; cada par se habría resuelto a mano, incluida la entrada del 2026-08-24.
+- Hipótesis: Una regla determinista derivada del calendario permite resolver consolidación canonical sin intervención humana, salvo el caso ambiguo (artículo más reciente sustancialmente más extenso) que se escala a revisión.
+- Criterio de éxito: Cumplido. getCanonicalSlug('jubilacion-anticipada-novedades-2026') === 'jubilacion-anticipada-cambios-2026' verificado; simulación de guia-completa-jubilacion-anticipada-2026 resuelve sola contra que-es-la-jubilacion-anticipada; caso forzado al umbral 1,5x escala a revisión correctamente. `npm run build` pasa (módulo aún no consumido).
+- Métrica y plazo: Cuando el módulo se consuma desde el layout/sitemap (tarea futura), medir en GSC a 21-30 días la consolidación de posición/impresiones hacia la URL canónica en los pares afectados.
+- Commit: (pendiente de este mismo commit)
+- Veredicto del CEO: pendiente
+
+## 2026-08-16 — seo-014 Emitir <link rel=canonical> hacia la URL consolidada en los artículos canibalizados (seo)
+- Archivos: src/components/BaseHead.astro, src/layouts/Base.astro, src/layouts/BlogPost.astro
+- Qué: BaseHead.astro acepta un prop opcional canonicalPath que, si está presente, gana sobre path para el <link rel="canonical"> (og:url/twitter:url quedan autorreferenciales por diseño, para no desviar la señal social de la página realmente compartida). Base.astro repasa el prop. BlogPost.astro consulta getCanonicalSlug(post.slug) (seo-013) y, cuando el post está consolidado hacia otro, pasa canonicalPath=/blog/<slug-canónico>. No se toca noindex en ningún caso.
+- Por qué: Cada URL del par canibalizado (jubilacion-anticipada-cambios-2026 / novedades-2026) emitía su propio canonical, repartiendo entre ambas la señal de la misma consulta ("jubilacion anticipada 2026").
+- Hipótesis: Que la URL más reciente declare canonical hacia la más antigua consolida la señal de la consulta compartida en una sola URL, sin despublicar ni noindexar contenido.
+- Criterio de éxito: Cumplido y verificado con grep tras build: novedades-2026 declara canonical hacia cambios-2026; cambios-2026 sigue autorreferencial; 0 noindex en ambas. `npm run build` (incluye astro check) pasa.
+- Métrica y plazo: scripts/auditar-money-set.mjs sigue reportando el par por keyword compartida (detecta por calendario, no por el valor del canonical — comportamiento esperado, no es señal de fallo). Seguimiento real en GSC a 21 días: consolidación de impresiones/clics de "jubilacion anticipada 2026" bajo la URL canónica.
+- Commit: (pendiente de este mismo commit)
+- Veredicto del CEO: pendiente
+
+## 2026-08-16 — seo-015 Excluir del sitemap las URLs consolidadas por el mapa canonical (seo)
+- Archivos: astro.config.mjs
+- Qué: El filter de sitemap() en astro.config.mjs, además de excluir aviso-legal/privacidad/cookies/paginación (sin cambios), ahora consulta getCanonicalSlug(slug) (seo-013) para cada URL /blog/<slug>/ y excluye del sitemap las que estén consolidadas hacia otra.
+- Por qué: El sitemap seguía anunciando como indexable una URL que su propio <link rel=canonical> (seo-014) ya declaraba que no era la principal, contradiciendo esa señal ante los rastreadores.
+- Hipótesis: Excluir del sitemap la URL "perdedora" de cada par consolidado evita que el sitio la ofrezca como indexable de forma independiente.
+- Criterio de éxito: Cumplido y verificado tras build: jubilacion-anticipada-novedades-2026 ausente de dist/sitemap-0.xml; jubilacion-anticipada-cambios-2026 presente. `npm run build` pasa.
+- Métrica y plazo: Cobertura en GSC a 21-30 días — la URL excluida debería pasar a "Excluida - URL alternativa con etiqueta canónica adecuada". Nota: scripts/auditar-money-set.mjs (seo-012) sigue reportando este par como canibalizado porque su Regla 1 detecta por keyword+publicado en el calendario, sin filtrar por indexabilidad real del sitemap; queda como ítem de seguimiento para una futura tarea, no es un fallo de seo-015.
+- Commit: (pendiente de este mismo commit)
+- Veredicto del CEO: pendiente
+
+## 2026-08-16 — seo-016 Diferenciar el title y el H1 de /simulador frente al artículo como-interpretar-simulador-jubilacion (seo)
+- Archivos: src/pages/simulador.astro
+- Qué: <title>/<h1> de /simulador cambian de "Simulador de jubilación anticipada" a "Calcula tu jubilación anticipada: simulador gratuito" (verbo de acción, intención de herramienta). name de webApplicationSchema()/webPageSchema() actualizado para no contradecir el title/H1 visible. El frontmatter/H1 del artículo como-interpretar-simulador-jubilacion.mdx no se toca.
+- Por qué: Ambos documentos competían con títulos casi intercambiables por la consulta de ~60.000 búsq./mes; al ser documentos legítimamente distintos (herramienta vs. guía informacional) no se resuelve con canonical, sino diferenciando la señal de intención.
+- Hipótesis: Un title/H1 con verbo de acción en /simulador separa la señal de intención transaccional de la informacional del artículo.
+- Criterio de éxito: Cumplido y verificado tras build: nuevo title/H1 de /simulador ya no es variación trivial del title del artículo (sin cambios); `npm run build` pasa.
+- Métrica y plazo: GSC a 21 días — impresiones/CTR/posición de "simulador jubilacion anticipada" para ambas URLs, verificando que empiezan a captar clusters de intención distintos en vez de canibalizarse.
+- Commit: (pendiente de este mismo commit)
+- Veredicto del CEO: pendiente
+
 ---

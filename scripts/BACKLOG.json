@@ -229,35 +229,39 @@
       "titulo": "Crear script de auditoría del conjunto money sobre /dist",
       "area": "seo",
       "prioridad": 1,
-      "estado": "pendiente",
+      "estado": "hecha",
       "hipotesis": "Si creamos scripts/auditar-money-set.mjs que, tras `npm run build`, deriva el conjunto money desde scripts/calendario.json (solo lectura: /simulador + artículos con >=5.000 búsq./mes) y mide sobre /dist palabras únicas en <main>, enlaces internos entrantes, canonical declarado, tipos de JSON-LD y si otra URL indexable del sitemap declara su misma keyword exacta, esperamos obtener un 'antes' objetivo y repetible del estado de unicidad y suficiencia del conjunto money, porque hoy ese diagnóstico solo existe como medición manual del CEO en ESTRATEGIA.md y no hay ninguna herramienta en el repo que lo reproduzca ni que permita comparar un 'después' cuando se ejecuten las líneas 2 y 3.",
       "criterio_exito": "El script existe y se ejecuta con `node scripts/auditar-money-set.mjs` tras `npm run build`, sin depender de Search Console. Deriva el conjunto money leyendo scripts/calendario.json (>=5.000 búsq./mes + /simulador); imprime por URL: palabras únicas en <main>, enlaces internos entrantes, canonical, tipos de JSON-LD presentes, y si otra URL indexable del sitemap declara su misma keyword. Recorre todo el sitemap buscando pares keyword-duplicada. Si existe scripts/datos/*.csv lo cruza (impresiones/clics/posición); si no existe, lo indica por consola y usa 0. Termina con código de salida 1 si alguna URL del conjunto tiene <1.200 palabras o comparte keyword con otra URL indexable. Ejecutado hoy debe reportar código 1, /simulador con 71 palabras, y 2 pares canibalizados ya publicados (jubilacion-anticipada-cambios-2026/novedades-2026 y /simulador/como-interpretar-simulador-jubilacion).",
       "metrica": "Salida por consola del propio script (código de salida, tabla por URL, lista de pares canibalizados). Esta salida 'antes' se pega en DECISIONES.md antes de ejecutar cualquier tarea que modifique una URL del conjunto money (seo-013 en adelante).",
       "archivos_sugeridos": [
         "scripts/auditar-money-set.mjs"
       ],
-      "objetivo_estrategico": "Línea de trabajo 1 (ESTRATEGIA.md): 'Instrumento de auditoría del conjunto money sobre /dist... va primero a propósito... para que exista un antes que nadie pueda discutir'."
+      "objetivo_estrategico": "Línea de trabajo 1 (ESTRATEGIA.md): 'Instrumento de auditoría del conjunto money sobre /dist... va primero a propósito... para que exista un antes que nadie pueda discutir'.",
+      "fecha_ejecucion": "2026-08-16",
+      "resultado": "Creado scripts/auditar-money-set.mjs (Node ESM, sin deps nuevas). Deriva el conjunto money solo desde calendario.json (/simulador + artículos >=5.000 búsq./mes), mide sobre /dist palabras en <main>, enlaces entrantes, canonical, tipos JSON-LD, y detecta pares canibalizados recorriendo el sitemap completo. Sin CSV en scripts/datos/ usa 0 e indica su ausencia. Ejecutado hoy: código de salida 1, /simulador con 71 palabras, 2 pares canibalizados confirmados (jubilacion-anticipada-cambios-2026/novedades-2026 y /simulador/como-interpretar-simulador-jubilacion), tal como exigía el criterio de éxito. Build OK."
     },
     {
       "id": "seo-013",
       "titulo": "Crear el mapa de consolidación canonical en src/lib/canonical-map.ts",
       "area": "seo",
       "prioridad": 2,
-      "estado": "pendiente",
+      "estado": "hecha",
       "hipotesis": "Si creamos src/lib/canonical-map.ts, que deriva de scripts/calendario.json (solo lectura) los pares de artículos publicados que declaran la misma keyword exacta y resuelve cada par asignando la canónica al de fecha de publicación más antigua (excepción: si el más reciente tiene >=1,5x las palabras del más antiguo -leídas del .mdx fuente en src/content/blog/, solo lectura-, el módulo lo marca como 'requiere revisión del CEO' en vez de decidir solo), esperamos tener una única fuente de verdad reutilizable por el layout del artículo y por el sitemap, porque hoy esa regla no existe en ningún sitio del repo y cada par de URLs canibalizadas se resolvería a mano, incluida la que entra el 2026-08-24.",
       "criterio_exito": "El módulo exporta getCanonicalSlug(slug): string | undefined (slug de destino si ese slug queda consolidado hacia otro; undefined si es la canónica o no forma parte de ningún par) y una lista de pares marcados 'requiere revisión'. Aplicado a los datos de hoy: getCanonicalSlug('jubilacion-anticipada-novedades-2026') === 'jubilacion-anticipada-cambios-2026' (novedades 2.521 pal. vs cambios 2.531 pal., no supera el umbral 1,5x). Una prueba (script ad-hoc o test unitario) simulando 'guia-completa-jubilacion-anticipada-2026' con publicado:true confirma que la regla lo resuelve solo contra 'que-es-la-jubilacion-anticipada' sin intervención humana, tal como exige el falsable de la Línea 2. `npm run build` sigue en verde (el módulo aún no se consume desde ninguna página).",
       "metrica": "Ejecución directa de getCanonicalSlug() sobre los slugs citados, comparada con los pares que scripts/auditar-money-set.mjs (seo-012) reportó como canibalizados hoy.",
       "archivos_sugeridos": [
         "src/lib/canonical-map.ts"
       ],
-      "objetivo_estrategico": "Línea de trabajo 2 (ESTRATEGIA.md): 'un mapa de consolidación en src/lib/... alimentado por una regla derivada de scripts/calendario.json: cuando dos URLs publicadas declaran la misma keyword exacta, la de fecha de publicación más antigua es la canónica... excepción de seguridad si la más reciente tiene >=1,5x palabras únicas'."
+      "objetivo_estrategico": "Línea de trabajo 2 (ESTRATEGIA.md): 'un mapa de consolidación en src/lib/... alimentado por una regla derivada de scripts/calendario.json: cuando dos URLs publicadas declaran la misma keyword exacta, la de fecha de publicación más antigua es la canónica... excepción de seguridad si la más reciente tiene >=1,5x palabras únicas'.",
+      "fecha_ejecucion": "2026-08-16",
+      "resultado": "Creado src/lib/canonical-map.ts. Deriva de calendario.json (lectura) los pares publicados con misma keyword exacta; cuenta palabras desde el .mdx fuente (lectura); resuelve canónica = fecha más antigua salvo que la más reciente tenga >=1,5x palabras (entonces va a paresQueRequierenRevision sin decidir). getCanonicalSlug('jubilacion-anticipada-novedades-2026') === 'jubilacion-anticipada-cambios-2026' verificado. Simulación de guia-completa-jubilacion-anticipada-2026 (publicado:true) resuelve sola contra que-es-la-jubilacion-anticipada; caso forzado a ratio 1.6x escala correctamente a revisión. Módulo aún no consumido desde ninguna página. Build OK (71 páginas), tsc --noEmit sin errores."
     },
     {
       "id": "seo-014",
       "titulo": "Emitir <link rel=canonical> hacia la URL consolidada en los artículos canibalizados",
       "area": "seo",
       "prioridad": 3,
-      "estado": "pendiente",
+      "estado": "hecha",
       "hipotesis": "Si BlogPost.astro consulta getCanonicalSlug() (seo-013) para el post actual y, cuando existe destino, pasa la URL consolidada como un nuevo prop `canonicalPath` a través de Base.astro hasta BaseHead.astro (que hoy solo calcula el canonical a partir de su propio `path`), esperamos que la URL más reciente de cada par canibalizado emita <link rel=\"canonical\"> hacia la más antigua en vez de declararse canónica de sí misma, porque hoy cada URL del par tiene su propio canonical (verificado en /dist) y eso reparte entre las dos la señal de la misma consulta.",
       "criterio_exito": "Tras `npm run build`, dist/blog/jubilacion-anticipada-novedades-2026/index.html contiene <link rel=\"canonical\" href=\"https://tujubilacionanticipada.com/blog/jubilacion-anticipada-cambios-2026\">; dist/blog/jubilacion-anticipada-cambios-2026/index.html sigue apuntando a sí misma; ninguna de las dos URLs recibe noindex (la consolidación es solo canonical, nunca noindex); `npm run build` (incluye astro check) pasa.",
       "metrica": "grep de <link rel=\"canonical\" en ambos HTML de /dist; ejecución de scripts/auditar-money-set.mjs (seo-012) tras el build y comparación con la salida 'antes' pegada en DECISIONES.md.",
@@ -266,35 +270,41 @@
         "src/layouts/Base.astro",
         "src/layouts/BlogPost.astro"
       ],
-      "objetivo_estrategico": "Objetivo del ciclo (ESTRATEGIA.md): unicidad — 'ninguna de ellas comparte consulta objetivo con otra URL indexable del sitio'; restricción: 'la canibalización se resuelve con canonical, nunca con noindex'."
+      "objetivo_estrategico": "Objetivo del ciclo (ESTRATEGIA.md): unicidad — 'ninguna de ellas comparte consulta objetivo con otra URL indexable del sitio'; restricción: 'la canibalización se resuelve con canonical, nunca con noindex'.",
+      "fecha_ejecucion": "2026-08-16",
+      "resultado": "BaseHead.astro acepta canonicalPath opcional (canonical = canonicalPath ?? path); og:url/twitter:url quedan autorreferenciales (decisión de diseño, fuera del criterio explícito). Base.astro repasa el prop. BlogPost.astro consulta getCanonicalSlug(post.slug) (seo-013) y pasa canonicalPath cuando existe destino. Verificado: dist/blog/jubilacion-anticipada-novedades-2026/index.html declara canonical hacia .../jubilacion-anticipada-cambios-2026; cambios-2026 sigue autorreferencial; 0 noindex en ambas. Build OK (71 páginas, astro check limpio)."
     },
     {
       "id": "seo-015",
       "titulo": "Excluir del sitemap las URLs consolidadas por el mapa canonical",
       "area": "seo",
       "prioridad": 4,
-      "estado": "pendiente",
+      "estado": "hecha",
       "hipotesis": "Si el filtro `sitemap({ filter })` de astro.config.mjs excluye también las páginas /blog/<slug> cuyo slug esté consolidado hacia otro según src/lib/canonical-map.ts (seo-013), esperamos que el sitemap deje de anunciar como indexable una URL que su propio <link rel=canonical> (seo-014) ya declara que no es la principal, porque hoy el sitemap solo excluye aviso-legal/privacidad/cookies/paginación y seguiría listando ambas URLs de cada par canibalizado como si fueran independientes.",
       "criterio_exito": "Tras `npm run build`, /blog/jubilacion-anticipada-novedades-2026 no aparece en ningún dist/sitemap-*.xml; /blog/jubilacion-anticipada-cambios-2026 sí aparece; `npm run build` pasa.",
       "metrica": "grep de 'jubilacion-anticipada-novedades-2026' en dist/sitemap-0.xml (0 resultados esperados) y de 'jubilacion-anticipada-cambios-2026' (1 esperado); ejecución de scripts/auditar-money-set.mjs (seo-012) para confirmar que ese par ya no se reporta como canibalizado.",
       "archivos_sugeridos": [
         "astro.config.mjs"
       ],
-      "objetivo_estrategico": "Falsable de la Línea 2 (ESTRATEGIA.md): 'no aparece en sitemap-0.xml; el script de la línea 1 reporta 0 pares canibalizados'."
+      "objetivo_estrategico": "Falsable de la Línea 2 (ESTRATEGIA.md): 'no aparece en sitemap-0.xml; el script de la línea 1 reporta 0 pares canibalizados'.",
+      "fecha_ejecucion": "2026-08-16",
+      "resultado": "astro.config.mjs importa getCanonicalSlug (seo-013) y el filter de sitemap() excluye además cualquier /blog/<slug>/ cuyo slug esté consolidado hacia otro. Verificado tras build: jubilacion-anticipada-novedades-2026 ausente de sitemap-0.xml, jubilacion-anticipada-cambios-2026 presente. Build OK. Hallazgo del subagente (no corregido en esta tarea, fuera de alcance): scripts/auditar-money-set.mjs (seo-012) sigue reportando ese par como canibalizado porque su Regla 1 no filtra por indexabilidad real del sitemap, solo por keyword+publicado; se propone ítem de seguimiento para alinear esa regla."
     },
     {
       "id": "seo-016",
       "titulo": "Diferenciar el title y el H1 de /simulador frente al artículo como-interpretar-simulador-jubilacion",
       "area": "seo",
       "prioridad": 5,
-      "estado": "pendiente",
+      "estado": "hecha",
       "hipotesis": "Si cambiamos el <title>/H1 de /simulador (hoy 'Simulador de jubilación anticipada', casi intercambiable con el título del artículo 'Simulador de jubilación: cómo interpretar...') para que declare explícitamente intención de herramienta ('Calcula tu jubilación anticipada: simulador gratuito' o similar, con verbo de acción), esperamos separar la señal de intención entre /simulador (herramienta) y como-interpretar-simulador-jubilacion (guía informacional), porque este par no se resuelve con canonical -son documentos legítimamente distintos- sino diferenciando título y H1, y hoy ambos compiten con títulos casi iguales por la consulta de 60.000 búsq./mes.",
       "criterio_exito": "El frontmatter/H1 del artículo (intocable, vive en src/content/blog/**) no cambia; solo cambian <title> y <h1> de src/pages/simulador.astro; el nuevo título/H1 contiene un verbo de acción y no reutiliza la fórmula 'Simulador de jubilación: cómo interpretar'; `npm run build` pasa.",
       "metrica": "grep del nuevo <title>/<h1> en dist/simulador/index.html, comparado textualmente con el título de dist/blog/como-interpretar-simulador-jubilacion/index.html para confirmar que ya no son variaciones triviales entre sí.",
       "archivos_sugeridos": [
         "src/pages/simulador.astro"
       ],
-      "objetivo_estrategico": "Línea de trabajo 2 (ESTRATEGIA.md): 'El par /simulador vs como-interpretar-simulador-jubilacion... se resuelve diferenciando el title y el H1 de /simulador... como el title del artículo es intocable, el que se mueve es /simulador'."
+      "objetivo_estrategico": "Línea de trabajo 2 (ESTRATEGIA.md): 'El par /simulador vs como-interpretar-simulador-jubilacion... se resuelve diferenciando el title y el H1 de /simulador... como el title del artículo es intocable, el que se mueve es /simulador'.",
+      "fecha_ejecucion": "2026-08-16",
+      "resultado": "<title>/<h1> de src/pages/simulador.astro: 'Simulador de jubilación anticipada' → 'Calcula tu jubilación anticipada: simulador gratuito' (verbo de acción, ya no variación trivial del title del artículo). name de webApplicationSchema()/webPageSchema() actualizado en coherencia. Artículo como-interpretar-simulador-jubilacion.mdx intacto. Verificado tras build: title/h1 de /simulador y title del artículo ya no son variaciones triviales entre sí. Build OK."
     },
     {
       "id": "seo-017",

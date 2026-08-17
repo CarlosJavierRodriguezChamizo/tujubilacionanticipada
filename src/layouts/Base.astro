@@ -12,6 +12,9 @@ interface Props {
   title: string;
   description: string;
   path?: string;
+  /** Ver BaseHead.astro: fuerza el <link rel="canonical"> hacia una ruta
+   * consolidada distinta de `path` (pares canibalizados, seo-013). */
+  canonicalPath?: string;
   image?: string;
   ogType?: 'website' | 'article';
   noindex?: boolean;
@@ -23,6 +26,7 @@ const {
   title,
   description,
   path,
+  canonicalPath,
   image,
   ogType = 'website',
   noindex = false,
@@ -45,6 +49,7 @@ const schemaList = [
       title={title}
       description={description}
       path={path}
+      canonicalPath={canonicalPath}
       image={image}
       ogType={ogType}
       noindex={noindex}
