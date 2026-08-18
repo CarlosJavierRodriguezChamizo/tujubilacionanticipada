@@ -245,14 +245,16 @@
       "titulo": "Crear el mapa de consolidación canonical en src/lib/canonical-map.ts",
       "area": "seo",
       "prioridad": 2,
-      "estado": "pendiente",
+      "estado": "hecha",
       "hipotesis": "Si creamos src/lib/canonical-map.ts, que deriva de scripts/calendario.json (solo lectura) los pares de artículos publicados que declaran la misma keyword exacta y resuelve cada par asignando la canónica al de fecha de publicación más antigua (excepción: si el más reciente tiene >=1,5x las palabras del más antiguo -leídas del .mdx fuente en src/content/blog/, solo lectura-, el módulo lo marca como 'requiere revisión del CEO' en vez de decidir solo), esperamos tener una única fuente de verdad reutilizable por el layout del artículo y por el sitemap, porque hoy esa regla no existe en ningún sitio del repo y cada par de URLs canibalizadas se resolvería a mano, incluida la que entra el 2026-08-24.",
       "criterio_exito": "El módulo exporta getCanonicalSlug(slug): string | undefined (slug de destino si ese slug queda consolidado hacia otro; undefined si es la canónica o no forma parte de ningún par) y una lista de pares marcados 'requiere revisión'. Aplicado a los datos de hoy: getCanonicalSlug('jubilacion-anticipada-novedades-2026') === 'jubilacion-anticipada-cambios-2026' (novedades 2.521 pal. vs cambios 2.531 pal., no supera el umbral 1,5x). Una prueba (script ad-hoc o test unitario) simulando 'guia-completa-jubilacion-anticipada-2026' con publicado:true confirma que la regla lo resuelve solo contra 'que-es-la-jubilacion-anticipada' sin intervención humana, tal como exige el falsable de la Línea 2. `npm run build` sigue en verde (el módulo aún no se consume desde ninguna página).",
       "metrica": "Ejecución directa de getCanonicalSlug() sobre los slugs citados, comparada con los pares que scripts/auditar-money-set.mjs (seo-012) reportó como canibalizados hoy.",
       "archivos_sugeridos": [
         "src/lib/canonical-map.ts"
       ],
-      "objetivo_estrategico": "Línea de trabajo 2 (ESTRATEGIA.md): 'un mapa de consolidación en src/lib/... alimentado por una regla derivada de scripts/calendario.json: cuando dos URLs publicadas declaran la misma keyword exacta, la de fecha de publicación más antigua es la canónica... excepción de seguridad si la más reciente tiene >=1,5x palabras únicas'."
+      "objetivo_estrategico": "Línea de trabajo 2 (ESTRATEGIA.md): 'un mapa de consolidación en src/lib/... alimentado por una regla derivada de scripts/calendario.json: cuando dos URLs publicadas declaran la misma keyword exacta, la de fecha de publicación más antigua es la canónica... excepción de seguridad si la más reciente tiene >=1,5x palabras únicas'.",
+      "fecha_ejecucion": "2026-08-18",
+      "resultado": "Creado src/lib/canonical-map.ts (solo lectura de calendario.json y de los .mdx fuente). getCanonicalSlug('jubilacion-anticipada-novedades-2026') === 'jubilacion-anticipada-cambios-2026', coincide con el único par canibalizado que reporta seo-012 hoy. Simulación de guia-completa-jubilacion-anticipada-2026 (aún no publicada) confirma que la regla la resuelve sola contra que-es-la-jubilacion-anticipada sin intervención humana. Casos límite (umbral 1,5x, contador de palabras no disponible) verificados: van a paresQueRequierenRevision sin asignar canonical. Build OK (73 páginas). No consumido aún desde ninguna página (fuera de alcance, corresponde a seo-014)."
     },
     {
       "id": "seo-014",

@@ -146,7 +146,7 @@ Formato:
 - Hipótesis: Un punto de partida repartido por artículo, con prioridad de categoría y más bloques en artículos largos, distribuye el enlazado interno automático por todo el índice.
 - Criterio de éxito: Cumplido. `npm run build` pasa; rehypeExternalLinks/DOFOLLOW_HOSTS intactos.
 - Métrica y plazo: scripts/contar-enlaces-internos.mjs — antes: mínimo 0, máximo 46, mediana 0, 29/47 con 0 entrantes. Después: mínimo 3, máximo 14, mediana 3, 0/47 con 0 entrantes. Seguimiento en GSC a 21-28 días: impresiones/clics de los artículos que antes tenían 0 enlaces internos entrantes.
-- Commit: (pendiente de este mismo commit)
+- Commit: 221d170
 - Veredicto del CEO: pendiente
 
 ## 2026-08-18 — seo-012 Crear script de auditoría del conjunto money sobre /dist (seo)
@@ -157,6 +157,17 @@ Formato:
 - Criterio de éxito: Cumplido y verificado. Ejecutado hoy: código de salida 1, /simulador con 71 palabras (coincide exactamente con el dato manual del CEO, validando la metodología de recuento), 2 pares canibalizados detectados en todo el sitio: jubilacion-anticipada-cambios-2026/novedades-2026 y /simulador vs como-interpretar-simulador-jubilacion.
 - Métrica y plazo: Línea base "antes" (esta entrada) — se compara contra la salida del mismo script después de ejecutar seo-013 a seo-017 (consolidación canonical) y seo-018 a seo-021 (ampliación de /simulador).
 - Riesgo identificado: El recuento de palabras de los 4 artículos (2.192–2.466) difiere ligeramente del rango que cita el CEO en ESTRATEGIA.md (2.253–2.581), probablemente por diferencias menores de decodificación de entidades HTML; no afecta a /simulador (71, exacto) ni a la detección de canibalización. La asociación de /simulador a su keyword depende de que exista exactamente un artículo publicado con "simulador" en su keyword; si eso cambia, el script avisa por consola en vez de fallar en silencio.
+- Commit: 221d170
+- Veredicto del CEO: pendiente
+
+## 2026-08-18 — seo-013 Crear el mapa de consolidación canonical en src/lib/canonical-map.ts (seo)
+- Archivos: src/lib/canonical-map.ts (nuevo)
+- Qué: Módulo de solo lectura (nunca escribe en calendario.json ni en src/content/blog/**) que agrupa artículos publicados por keyword normalizada, ordena cada par por fecha de publicación y asigna la canónica al más antiguo vía getCanonicalSlug(slug). Si el más reciente tiene >=1,5x las palabras del más antiguo (leídas del .mdx fuente), o si el contador de palabras falla para alguno, el par se marca en paresQueRequierenRevision sin asignar canonical. resolverParesCanonicos() recibe el contador de palabras como parámetro inyectable para poder simular escenarios sin tocar el filesystem real.
+- Por qué: No existía ninguna fuente única de verdad para resolver canibalización por keyword exacta; cada par (incluido el que entra el 2026-08-24) se resolvería a mano. La excepción de umbral evita que el módulo decida solo cuando el contenido más reciente es sustancialmente más completo — esos casos quedan para revisión humana, coherente con la exigencia EEAT de no tomar atajos automáticos en URLs YMYL.
+- Hipótesis: Una regla derivada de calendario.json resuelve automáticamente la mayoría de pares canibalizados, dejando solo los casos límite para revisión del CEO.
+- Criterio de éxito: Cumplido y verificado. getCanonicalSlug('jubilacion-anticipada-novedades-2026') === 'jubilacion-anticipada-cambios-2026' (único par publicado hoy, coincide con lo que reporta seo-012). Simulación de guia-completa-jubilacion-anticipada-2026 (publicado:false hoy) confirma que la regla la resuelve sola contra que-es-la-jubilacion-anticipada. Casos límite (umbral 1,5x, contador no disponible) verificados: van a revisión sin canonical asignado. Build OK (73 páginas, 0 errores/warnings nuevos de astro check).
+- Métrica y plazo: nº de pares en paresQueRequierenRevision a lo largo del tiempo (debería mantenerse bajo); cuando seo-014 consuma el módulo, impresiones/clics en GSC de las URLs consolidadas a 21 días.
+- Riesgo identificado: El recuento de palabras es heurístico (limpieza de frontmatter/imports/componentes Astro); dio 1.865–1.988 para el par novedades/cambios frente a los ~2.521/2.531 citados en la hipótesis original, pero el ratio queda muy por debajo de 1,5x en ambos casos, así que el resultado de negocio no cambia. Si un grupo de keyword tuviera >2 artículos publicados, cada "reciente" se compara solo contra el más antiguo del grupo, no entre sí. Módulo aún no consumido por ninguna página (corresponde a seo-014).
 - Commit: (pendiente de este mismo commit)
 - Veredicto del CEO: pendiente
 
