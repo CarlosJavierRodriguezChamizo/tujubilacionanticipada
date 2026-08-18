@@ -168,7 +168,18 @@ Formato:
 - Criterio de éxito: Cumplido y verificado. getCanonicalSlug('jubilacion-anticipada-novedades-2026') === 'jubilacion-anticipada-cambios-2026' (único par publicado hoy, coincide con lo que reporta seo-012). Simulación de guia-completa-jubilacion-anticipada-2026 (publicado:false hoy) confirma que la regla la resuelve sola contra que-es-la-jubilacion-anticipada. Casos límite (umbral 1,5x, contador no disponible) verificados: van a revisión sin canonical asignado. Build OK (73 páginas, 0 errores/warnings nuevos de astro check).
 - Métrica y plazo: nº de pares en paresQueRequierenRevision a lo largo del tiempo (debería mantenerse bajo); cuando seo-014 consuma el módulo, impresiones/clics en GSC de las URLs consolidadas a 21 días.
 - Riesgo identificado: El recuento de palabras es heurístico (limpieza de frontmatter/imports/componentes Astro); dio 1.865–1.988 para el par novedades/cambios frente a los ~2.521/2.531 citados en la hipótesis original, pero el ratio queda muy por debajo de 1,5x en ambos casos, así que el resultado de negocio no cambia. Si un grupo de keyword tuviera >2 artículos publicados, cada "reciente" se compara solo contra el más antiguo del grupo, no entre sí. Módulo aún no consumido por ninguna página (corresponde a seo-014).
-- Commit: (pendiente de este mismo commit)
+- Commit: 7828663
+- Veredicto del CEO: pendiente
+
+## 2026-08-18 — seo-014 Emitir <link rel=canonical> hacia la URL consolidada en los artículos canibalizados (seo) — FALLIDA
+- Archivos: ninguno permanece modificado (src/components/BaseHead.astro, src/layouts/Base.astro, src/layouts/BlogPost.astro editados y revertidos)
+- Qué: Se implementó el diseño exacto pedido (prop `canonicalPath` en cascada BlogPost→Base→BaseHead, consultando `getCanonicalSlug(post.slug)` de seo-013), pero `npm run build` falló en la fase `astro build` y el cambio se revirtió con `git checkout`.
+- Por qué falló: Bug preexistente en src/lib/canonical-map.ts (seo-013): `REPO_ROOT` se calcula con `dirname(fileURLToPath(import.meta.url))` asumiendo que el módulo siempre vive en `src/lib/`. Al consumirse por primera vez desde una página real (BlogPost.astro), Vite empaqueta el módulo dentro de `dist/pages/blog/_slug_.astro.mjs`; `import.meta.url` pasa a apuntar ahí, `REPO_ROOT` resuelve a `dist/` en vez de a la raíz del repo, y la lectura de `scripts/calendario.json` (que ocurre en el top-level del módulo, al importarlo) revienta con ENOENT. El bug estaba latente porque canonical-map.ts nunca había sido importado desde una página real hasta este intento.
+- Hipótesis: (sin cambios respecto al backlog original — no se pudo evaluar, el criterio de éxito no llegó a ejecutarse).
+- Criterio de éxito: No cumplido — build roto, sin dist/ válido generado con los cambios aplicados.
+- Métrica y plazo: No aplica — no se generó ningún HTML con canonicals consolidados que medir.
+- Riesgo identificado: Ninguno introducido en el repo (revertido íntegramente, build en verde en el commit 7828663 sin los cambios). El riesgo real es que la Línea 2 completa (seo-014 a seo-017) queda bloqueada hasta corregir la resolución de REPO_ROOT en canonical-map.ts — se recomienda una tarea previa dedicada (p.ej. usar `process.cwd()` en vez de `import.meta.url`) antes de reintentar seo-014.
+- Commit: (sin commit — no hay cambios que publicar de esta tarea)
 - Veredicto del CEO: pendiente
 
 ---
