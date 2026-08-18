@@ -190,6 +190,17 @@ Formato:
 - Criterio de éxito: Cumplido y verificado. jubilacion-anticipada-novedades-2026 ausente de dist/sitemap-0.xml (grep -c = 0); jubilacion-anticipada-cambios-2026 presente (grep -c = 1). Build OK (73 páginas).
 - Métrica y plazo: auditar-money-set.mjs (seo-012) confirma que el par novedades/cambios ya no aparece en la lista de canibalizados detectados en el sitemap. Seguimiento en GSC a 21 días: cobertura de novedades-2026 pasando a "no enviada en sitemap".
 - Riesgo identificado: Este cambio se cargó desde astro.config.mjs, un contexto de Node normal (no bundle de página), por lo que no reprodujo el bug de REPO_ROOT que tumbó seo-014; si en el futuro cambia cómo Astro carga su config, el mismo bug podría reaparecer aquí. Sin redirección 301 (no aplica: la URL sigue siendo accesible directamente, solo deja de listarse en el sitemap).
+- Commit: 4b0a07d
+- Veredicto del CEO: pendiente
+
+## 2026-08-18 — seo-016 Diferenciar el title y el H1 de /simulador frente al artículo como-interpretar-simulador-jubilacion (seo)
+- Archivos: src/pages/simulador.astro
+- Qué: <title> de /simulador cambia de "Simulador de jubilación anticipada" a "Calcula tu jubilación anticipada: simulador gratuito"; <h1> pasa a "Calcula tu jubilación anticipada". Por coherencia interna del mismo archivo, se actualizó también el campo `name` de webApplicationSchema y webPageSchema al mismo texto. No se tocó src/content/blog/** ni el frontmatter/H1 del artículo.
+- Por qué: /simulador (herramienta) y el artículo como-interpretar-simulador-jubilacion (guía informacional) competían con títulos casi intercambiables por la misma keyword de ~60.000 búsq./mes; este par no se resuelve con canonical (son documentos legítimamente distintos), sino diferenciando intención mediante título y H1 con verbo de acción.
+- Hipótesis: Un título/H1 con verbo de acción explícito en /simulador separa la señal de intención transaccional (herramienta) de la intención informacional (guía) para la misma consulta.
+- Criterio de éxito: Cumplido y verificado. dist/simulador/index.html: title="Calcula tu jubilación anticipada: simulador gratuito | Tu Jubilación Anticipada", h1="Calcula tu jubilación anticipada", un único <h1>, sin noindex. dist/blog/como-interpretar-simulador-jubilacion/index.html sin cambios (title/h1 originales intactos). Build OK (73 páginas).
+- Métrica y plazo: GSC a 21 días — impresiones/CTR de /simulador vs. el artículo para "simulador de jubilación" y variantes; se espera que /simulador gane peso en consultas transaccionales ("calcular", "simulador gratis") y el artículo mantenga las informacionales ("cómo interpretar").
+- Riesgo identificado: El <title> completo con sufijo del sitio queda en 85 caracteres, Google podría truncarlo en SERP (no afecta al criterio de éxito, vigilar snippet real en GSC). El cambio de `name` en el JSON-LD desalinea cualquier tracking externo que dependiera del texto exacto anterior — es contenido legítimo del propio schema, no una propiedad inventada.
 - Commit: (pendiente de este mismo commit)
 - Veredicto del CEO: pendiente
 
