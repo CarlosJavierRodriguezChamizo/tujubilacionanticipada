@@ -12,6 +12,7 @@ import {
   rehypeExternalLinks,
   rehypeInlineBlocks,
 } from './src/lib/rehype-plugins.mjs';
+import { getCanonicalSlug } from './src/lib/canonical-map.ts';
 
 // Índice de artículos (para las "lecturas recomendadas" intercaladas).
 function loadPostsIndex() {
@@ -61,10 +62,18 @@ export default defineConfig({
     tailwind({ applyBaseStyles: false }),
     mdx(),
     sitemap({
-      // Excluye del sitemap las páginas noindex y la paginación redundante.
-      filter: (page) =>
-        !/\/(aviso-legal|privacidad|cookies)\/?$/.test(page) &&
-        !/\/blog\/page\/1\/?$/.test(page),
+      // Excluye del sitemap las páginas noindex, la paginación redundante y
+      // los artículos consolidados hacia otro vía canonical-map.ts (seo-013).
+      filter: (page) => {
+        if (/\/(aviso-legal|privacidad|cookies)\/?$/.test(page)) return false;
+        if (/\/blog\/page\/1\/?$/.test(page)) return false;
+        const match = page.match(/\/blog\/([^/]+)\/?$/);
+        if (match) {
+          const slug = match[1];
+          if (getCanonicalSlug(slug) !== undefined) return false;
+        }
+        return true;
+      },
     }),
   ],
 });

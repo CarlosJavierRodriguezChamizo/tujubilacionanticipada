@@ -182,4 +182,15 @@ Formato:
 - Commit: (sin commit — no hay cambios que publicar de esta tarea)
 - Veredicto del CEO: pendiente
 
+## 2026-08-18 — seo-015 Excluir del sitemap las URLs consolidadas por el mapa canonical (seo)
+- Archivos: astro.config.mjs
+- Qué: El `filter` del integration `sitemap()` extrae el slug de cada URL /blog/<slug>/ y, si getCanonicalSlug(slug) (seo-013) devuelve un destino, la excluye de dist/sitemap-*.xml. No se toca la generación de la página HTML en sí (sigue existiendo, solo deja de listarse en el sitemap). No se tocó canonical-map.ts ni src/content/blog/**.
+- Por qué: seo-013 ya identifica qué URL cede autoridad por canibalización de keyword exacta; sin este cambio el sitemap seguía anunciando ambas URLs del par como indexables por igual. Nota importante: seo-014 (el <link rel=canonical> en el HTML) falló hoy por un bug de canonical-map.ts, así que esta tarea deja el par sin canonical en el HTML pero ya sin ambas URLs en el sitemap — señal parcial, a completar cuando se resuelva seo-014.
+- Hipótesis: Excluir del sitemap la URL consolidada evita que Google la trate como indexable independiente mientras se resuelve la señal completa de canonical.
+- Criterio de éxito: Cumplido y verificado. jubilacion-anticipada-novedades-2026 ausente de dist/sitemap-0.xml (grep -c = 0); jubilacion-anticipada-cambios-2026 presente (grep -c = 1). Build OK (73 páginas).
+- Métrica y plazo: auditar-money-set.mjs (seo-012) confirma que el par novedades/cambios ya no aparece en la lista de canibalizados detectados en el sitemap. Seguimiento en GSC a 21 días: cobertura de novedades-2026 pasando a "no enviada en sitemap".
+- Riesgo identificado: Este cambio se cargó desde astro.config.mjs, un contexto de Node normal (no bundle de página), por lo que no reprodujo el bug de REPO_ROOT que tumbó seo-014; si en el futuro cambia cómo Astro carga su config, el mismo bug podría reaparecer aquí. Sin redirección 301 (no aplica: la URL sigue siendo accesible directamente, solo deja de listarse en el sitemap).
+- Commit: (pendiente de este mismo commit)
+- Veredicto del CEO: pendiente
+
 ---
