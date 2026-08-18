@@ -229,14 +229,16 @@
       "titulo": "Crear script de auditoría del conjunto money sobre /dist",
       "area": "seo",
       "prioridad": 1,
-      "estado": "pendiente",
+      "estado": "hecha",
       "hipotesis": "Si creamos scripts/auditar-money-set.mjs que, tras `npm run build`, deriva el conjunto money desde scripts/calendario.json (solo lectura: /simulador + artículos con >=5.000 búsq./mes) y mide sobre /dist palabras únicas en <main>, enlaces internos entrantes, canonical declarado, tipos de JSON-LD y si otra URL indexable del sitemap declara su misma keyword exacta, esperamos obtener un 'antes' objetivo y repetible del estado de unicidad y suficiencia del conjunto money, porque hoy ese diagnóstico solo existe como medición manual del CEO en ESTRATEGIA.md y no hay ninguna herramienta en el repo que lo reproduzca ni que permita comparar un 'después' cuando se ejecuten las líneas 2 y 3.",
       "criterio_exito": "El script existe y se ejecuta con `node scripts/auditar-money-set.mjs` tras `npm run build`, sin depender de Search Console. Deriva el conjunto money leyendo scripts/calendario.json (>=5.000 búsq./mes + /simulador); imprime por URL: palabras únicas en <main>, enlaces internos entrantes, canonical, tipos de JSON-LD presentes, y si otra URL indexable del sitemap declara su misma keyword. Recorre todo el sitemap buscando pares keyword-duplicada. Si existe scripts/datos/*.csv lo cruza (impresiones/clics/posición); si no existe, lo indica por consola y usa 0. Termina con código de salida 1 si alguna URL del conjunto tiene <1.200 palabras o comparte keyword con otra URL indexable. Ejecutado hoy debe reportar código 1, /simulador con 71 palabras, y 2 pares canibalizados ya publicados (jubilacion-anticipada-cambios-2026/novedades-2026 y /simulador/como-interpretar-simulador-jubilacion).",
       "metrica": "Salida por consola del propio script (código de salida, tabla por URL, lista de pares canibalizados). Esta salida 'antes' se pega en DECISIONES.md antes de ejecutar cualquier tarea que modifique una URL del conjunto money (seo-013 en adelante).",
       "archivos_sugeridos": [
         "scripts/auditar-money-set.mjs"
       ],
-      "objetivo_estrategico": "Línea de trabajo 1 (ESTRATEGIA.md): 'Instrumento de auditoría del conjunto money sobre /dist... va primero a propósito... para que exista un antes que nadie pueda discutir'."
+      "objetivo_estrategico": "Línea de trabajo 1 (ESTRATEGIA.md): 'Instrumento de auditoría del conjunto money sobre /dist... va primero a propósito... para que exista un antes que nadie pueda discutir'.",
+      "fecha_ejecucion": "2026-08-18",
+      "resultado": "Creado scripts/auditar-money-set.mjs (Node ESM, sin deps nuevas). Deriva el conjunto money (5 URLs: /simulador + 4 artículos >=5.000 búsq./mes) desde calendario.json (solo lectura) y mide sobre /dist: palabras visibles en <main>, enlaces internos entrantes, canonical, tipos JSON-LD, noindex, y canibalización de keyword contra todo el sitemap. Ejecutado hoy: código de salida 1 (esperado), /simulador con 71 palabras (coincide con el dato manual del CEO), 2 pares canibalizados detectados: jubilacion-anticipada-cambios-2026/novedades-2026 y /simulador vs como-interpretar-simulador-jubilacion. Build OK (73 páginas). git status confirma que solo se tocó ese archivo."
     },
     {
       "id": "seo-013",

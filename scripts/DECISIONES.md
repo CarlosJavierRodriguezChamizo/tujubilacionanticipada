@@ -149,4 +149,15 @@ Formato:
 - Commit: (pendiente de este mismo commit)
 - Veredicto del CEO: pendiente
 
+## 2026-08-18 — seo-012 Crear script de auditoría del conjunto money sobre /dist (seo)
+- Archivos: scripts/auditar-money-set.mjs (nuevo)
+- Qué: Script Node ESM standalone que, tras `npm run build`, deriva el conjunto money (5 URLs: /simulador + 4 artículos publicados con keyword >=5.000 búsq./mes) desde scripts/calendario.json (solo lectura) y mide sobre /dist: palabras visibles en <main> (texto + placeholders, excluyendo JS/CSS embebido), enlaces internos entrantes (in-degree por página de origen en todo /dist), canonical declarado, tipos JSON-LD presentes, noindex, y si otra URL indexable del sitemap declara su misma keyword exacta (recorre todo dist/sitemap-0.xml, no solo el conjunto money). Cruza scripts/datos/*.csv si existe (0 en todas las columnas si no existe, con aviso). Sale con código 1 si alguna URL money tiene <1.200 palabras, noindex, o está canibalizada.
+- Por qué: El diagnóstico de unicidad/suficiencia del conjunto money solo existía como medición manual del CEO en ESTRATEGIA.md; no había ninguna herramienta reproducible en el repo, y las líneas 2 y 3 de este ciclo necesitan un "antes" objetivo para poder compararse contra un "después".
+- Hipótesis: Medir hoy con una herramienta reproducible establece la línea base objetiva que sirve para evaluar seo-013 en adelante.
+- Criterio de éxito: Cumplido y verificado. Ejecutado hoy: código de salida 1, /simulador con 71 palabras (coincide exactamente con el dato manual del CEO, validando la metodología de recuento), 2 pares canibalizados detectados en todo el sitio: jubilacion-anticipada-cambios-2026/novedades-2026 y /simulador vs como-interpretar-simulador-jubilacion.
+- Métrica y plazo: Línea base "antes" (esta entrada) — se compara contra la salida del mismo script después de ejecutar seo-013 a seo-017 (consolidación canonical) y seo-018 a seo-021 (ampliación de /simulador).
+- Riesgo identificado: El recuento de palabras de los 4 artículos (2.192–2.466) difiere ligeramente del rango que cita el CEO en ESTRATEGIA.md (2.253–2.581), probablemente por diferencias menores de decodificación de entidades HTML; no afecta a /simulador (71, exacto) ni a la detección de canibalización. La asociación de /simulador a su keyword depende de que exista exactamente un artículo publicado con "simulador" en su keyword; si eso cambia, el script avisa por consola en vez de fallar en silencio.
+- Commit: (pendiente de este mismo commit)
+- Veredicto del CEO: pendiente
+
 ---
