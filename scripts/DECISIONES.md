@@ -204,4 +204,37 @@ Formato:
 - Commit: (pendiente de este mismo commit)
 - Veredicto del CEO: pendiente
 
+## 2026-08-19 — seo-017 Alinear mainEntityOfPage del JSON-LD con el canonical externo en artículos consolidados (seo)
+- Archivos: src/lib/schema.ts
+- Qué: blogPostingSchema() consulta getCanonicalSlug() (seo-013) y, si el post está consolidado hacia otro, apunta mainEntityOfPage.@id y url del BlogPosting al destino canónico en vez de a sí mismo. El @id del propio documento (`${url}#article`) se mantiene autorreferente por identificar el documento físico, no la entidad principal declarada.
+- Por qué: El <link rel=canonical> (cuando exista, ver seo-014) dice "la página principal es otra" mientras el JSON-LD seguía declarándose a sí mismo como mainEntityOfPage; un rastreador con señales contradictorias puede no consolidar ninguna de las dos URLs.
+- Hipótesis: Alinear el JSON-LD con el destino de getCanonicalSlug() elimina la contradicción interna en el HTML del artículo consolidado.
+- Criterio de éxito: Cumplido y verificado. jubilacion-anticipada-novedades-2026: mainEntityOfPage/url → cambios-2026. cambios-2026 y artículos no consolidados siguen autorreferenciándose. Build OK (74 páginas).
+- Métrica y plazo: grep de mainEntityOfPage en ambos dist/blog/*/index.html tras cada build (verificado); GSC a 21 días una vez completado también seo-014 (ver riesgo).
+- Riesgo identificado: El bug de REPO_ROOT en canonical-map.ts que tumbó seo-014 no se reprodujo hoy al consumirse desde schema.ts/BlogPost.astro en un build limpio (posible causa: el pipeline SSR de Astro no escribe bundles intermedios .astro.mjs en disco antes de renderizar). Como seo-014 sigue revertida, el <link rel=canonical> de novedades-2026 sigue autorreferenciándose mientras el JSON-LD ya apunta a cambios-2026 — discrepancia temporal hasta reintentar seo-014, que ahora podría no estar bloqueada por el mismo bug.
+- Commit: (pendiente de este mismo commit)
+- Veredicto del CEO: pendiente
+
+## 2026-08-19 — seo-018 Extraer el motor de cálculo puro del simulador a src/lib/pension-calculo.ts (seo)
+- Archivos: src/lib/pension-calculo.ts (nuevo), src/components/Simulador.jsx
+- Qué: Refactor de reubicación pura: constantes normativas, porcentajePension, calcularEscenario y fechaDesdeEdad se mueven de Simulador.jsx a un módulo compartido tipado src/lib/pension-calculo.ts, sin cambiar ninguna fórmula ni cifra. Simulador.jsx importa desde ahí.
+- Por qué: El motor de cálculo solo existía dentro de la isla cliente React y no era accesible desde una página .astro en build; paso previo necesario para generar en el futuro una tabla de escenarios estática reutilizando el mismo motor.
+- Hipótesis: Reubicar el motor a un módulo compartido permite generar en build una tabla de escenarios reutilizando exactamente la misma lógica que la isla React.
+- Criterio de éxito: Cumplido y verificado. 6/6 combinaciones de calcularEscenario() idénticas antes/después del refactor. Build OK (74 páginas).
+- Métrica y plazo: No aplica todavía (el consumo desde simulador.astro para generar la tabla estática es una tarea posterior, ver seo-019).
+- Riesgo identificado — IMPORTANTE, requiere revisión antes de continuar la Línea 3: durante la extracción se detectó que EDAD_LEGAL_PLENA (66a8m) y UMBRAL_COTIZACION_EDAD_REDUCIDA (38.5) corresponden a valores de 2025, no a los vigentes en 2026; y que PENAL_VOLUNTARIA_TRIMESTRE/PENAL_FORZOSA_TRIMESTRE usan un porcentaje fijo por trimestre en vez de coeficientes decrecientes por tramos de años cotizados. No se corrigió por ser un refactor puro fuera de alcance; ya estaba en producción antes de esta tarea (solo se reubicó, no se introdujo). Bloquea seo-019 (ver esa entrada) hasta que se revise con fuente experta/oficial.
+- Commit: (pendiente de este mismo commit)
+- Veredicto del CEO: pendiente
+
+## 2026-08-19 — seo-019 Renderizar en /simulador una tabla estática de escenarios precalculados (seo) — FALLIDA
+- Archivos: ninguno modificado
+- Qué: Antes de escribir en src/pages/simulador.astro, se verificó contra fuentes externas el riesgo normativo ya señalado por seo-018. Se confirmó que EDAD_LEGAL_PLENA (66a8m) y UMBRAL_COTIZACION_EDAD_REDUCIDA (38.5) en src/lib/pension-calculo.ts corresponden a la normativa de 2025, no a la vigente en 2026 (66a10m / 38a3m, según varias fuentes coincidentes: Instituto Santalucía, USO, Campmany Abogados, OVB). La tarea se detuvo sin escribir ningún archivo ni ejecutar build.
+- Por qué falló: Publicar una tabla estática indexable de ≥40 filas con la fecha de jubilación estimada calculada a partir de una edad legal incorrecta, en un sitio YMYL sobre pensiones, habría escalado el error de la isla React (dinámico, no indexado) a contenido estático servido en el HTML y el sitemap. El propio criterio de la tarea exige detenerse ante un dato normativo incorrecto en vez de corregirlo por iniciativa propia o publicar de todos modos.
+- Hipótesis: (sin evaluar — el criterio de éxito no llegó a ejecutarse).
+- Criterio de éxito: No cumplido — tarea detenida por precaución antes de generar contenido.
+- Métrica y plazo: No aplica.
+- Riesgo identificado: Mientras estas constantes no se corrijan en src/lib/pension-calculo.ts, tanto la isla React en producción (impacto SEO menor, no indexado) como cualquier tarea futura que las consuma (incluida esta) arrastrarán el mismo dato desactualizado. Recomendación explícita al CEO: (1) corregir EDAD_LEGAL_PLENA a 66+10/12 y UMBRAL_COTIZACION_EDAD_REDUCIDA a 38.25 con revisión de una fuente experta/oficial (no solo por un agente), y de paso revisar los coeficientes de penalización por trimestre señalados en seo-018; (2) relanzar seo-019 una vez corregido.
+- Commit: (sin commit — no hay cambios que publicar de esta tarea)
+- Veredicto del CEO: pendiente
+
 ---

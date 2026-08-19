@@ -9,6 +9,7 @@
 import type { CollectionEntry } from 'astro:content';
 import { SITE, SOCIAL_PROFILES, REVIEWERS } from '../consts';
 import { resolveHeroImage } from './posts';
+import { getCanonicalSlug } from './canonical-map';
 
 type JsonLd = Record<string, unknown>;
 
@@ -147,6 +148,14 @@ export function blogPostingSchema(post: CollectionEntry<'blog'>): JsonLd {
   const path = `/blog/${post.slug}`;
   const url = absUrl(path);
   const { data } = post;
+
+  // Si el artículo está consolidado (canibalización de keyword, seo-013) hacia
+  // otro, el JSON-LD debe declarar como entidad principal la URL de destino,
+  // no la propia: evita contradecir al <link rel=canonical> (seo-014/seo-015),
+  // que ya apunta hacia allí.
+  const destinoCanonico = getCanonicalSlug(post.slug);
+  const mainEntityUrl = destinoCanonico ? absUrl(`/blog/${destinoCanonico}`) : url;
+
   return {
     '@context': 'https://schema.org',
     '@type': data.schema ?? 'BlogPosting',
@@ -156,8 +165,8 @@ export function blogPostingSchema(post: CollectionEntry<'blog'>): JsonLd {
     datePublished: data.pubDate.toISOString(),
     dateModified: (data.updatedDate ?? data.pubDate).toISOString(),
     inLanguage: SITE.lang,
-    url,
-    mainEntityOfPage: { '@type': 'WebPage', '@id': url },
+    url: mainEntityUrl,
+    mainEntityOfPage: { '@type': 'WebPage', '@id': mainEntityUrl },
     isPartOf: { '@id': WEBSITE_ID },
     articleSection: data.category,
     ...(data.tags.length > 0 ? { keywords: data.tags.join(', ') } : {}),

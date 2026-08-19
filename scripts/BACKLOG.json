@@ -311,21 +311,23 @@
       "titulo": "Alinear mainEntityOfPage del JSON-LD con el canonical externo en artículos consolidados",
       "area": "seo",
       "prioridad": 6,
-      "estado": "pendiente",
+      "estado": "hecha",
       "hipotesis": "Si blogPostingSchema() en src/lib/schema.ts consulta getCanonicalSlug() (seo-013) y, cuando el post está consolidado hacia otro, apunta mainEntityOfPage y url del propio JSON-LD al destino canónico en vez de a sí mismo, esperamos eliminar la contradicción entre el <link rel=canonical> (seo-014, que ya dice 'la página principal es otra') y el JSON-LD (que hoy seguiría declarándose a sí mismo como entidad principal), porque un rastreador que ve ambas señales enfrentadas puede no consolidar ninguna de las dos URLs.",
       "criterio_exito": "Tras `npm run build`, el JSON-LD BlogPosting de dist/blog/jubilacion-anticipada-novedades-2026/index.html tiene mainEntityOfPage.@id y url apuntando a la URL de jubilacion-anticipada-cambios-2026, no a sí mismo; el BlogPosting de jubilacion-anticipada-cambios-2026 sigue apuntando a sí mismo; `npm run build` pasa.",
       "metrica": "grep de mainEntityOfPage en ambos dist/blog/*/index.html, comparado contra el <link rel=canonical> de cada uno (deben coincidir).",
       "archivos_sugeridos": [
         "src/lib/schema.ts"
       ],
-      "objetivo_estrategico": "Restricción añadida en este ciclo (ESTRATEGIA.md): 'la canibalización se resuelve con canonical... canonical consolida las señales de una URL que puede ya tener enlaces'; esta tarea evita que el propio JSON-LD contradiga esa consolidación."
+      "objetivo_estrategico": "Restricción añadida en este ciclo (ESTRATEGIA.md): 'la canibalización se resuelve con canonical... canonical consolida las señales de una URL que puede ya tener enlaces'; esta tarea evita que el propio JSON-LD contradiga esa consolidación.",
+      "fecha_ejecucion": "2026-08-19",
+      "resultado": "blogPostingSchema() en src/lib/schema.ts consulta ahora getCanonicalSlug() (seo-013) y, si el post está consolidado hacia otro, apunta mainEntityOfPage.@id y url al destino canónico en vez de a sí mismo (@id del propio documento se mantiene autorreferente). Verificado: jubilacion-anticipada-novedades-2026 -> mainEntityOfPage/url apuntan a jubilacion-anticipada-cambios-2026; cambios-2026 y artículos no consolidados siguen autorreferenciándose. Build OK (74 páginas). El bug de REPO_ROOT en canonical-map.ts que tumbó seo-014 no se reprodujo al consumirse desde schema.ts/BlogPost.astro en un build limpio. Incidencia: como seo-014 sigue sin implementarse (revertida), el <link rel=canonical> de novedades-2026 sigue autorreferenciándose mientras el JSON-LD ya apunta a cambios-2026 — discrepancia temporal hasta que se reintente seo-014, ahora que el bug de REPO_ROOT parece no reproducirse. Único archivo tocado: src/lib/schema.ts."
     },
     {
       "id": "seo-018",
       "titulo": "Extraer el motor de cálculo puro del simulador a src/lib/pension-calculo.ts",
       "area": "seo",
       "prioridad": 7,
-      "estado": "pendiente",
+      "estado": "hecha",
       "hipotesis": "Si extraemos las funciones puras de cálculo (porcentajePension, calcularEscenario y las constantes normativas) de src/components/Simulador.jsx a un nuevo módulo compartido src/lib/pension-calculo.ts, sin cambiar ninguna fórmula ni cifra, esperamos poder generar en build una tabla de escenarios estática desde src/pages/simulador.astro reutilizando exactamente el mismo motor que usa la isla React, porque hoy esa lógica solo existe dentro del componente cliente y no es accesible desde una página .astro en build; el objetivo es reubicar el motor, no reescribirlo.",
       "criterio_exito": "src/lib/pension-calculo.ts exporta las mismas funciones/constantes con la misma implementación (sin cambios numéricos); Simulador.jsx las importa desde ahí en vez de definirlas localmente; para un mismo conjunto de inputs, el resultado de calcularEscenario() antes y después del refactor es idéntico; `npm run build` pasa. Si al mover la fórmula se detecta que algún coeficiente o cálculo actual es incorrecto respecto a la normativa vigente, la tarea se detiene y lo reporta al CEO en vez de corregirlo por iniciativa propia.",
       "metrica": "Comparación de la salida de calcularEscenario() para >=5 combinaciones de edad/años cotizados/base reguladora antes y después del refactor: deben ser idénticas.",
@@ -333,21 +335,25 @@
         "src/components/Simulador.jsx",
         "src/lib/pension-calculo.ts"
       ],
-      "objetivo_estrategico": "Línea de trabajo 3 (ESTRATEGIA.md): '/simulador... la línea 3 añade contenido, escenarios estáticos y fuentes; no reescribe el motor de cálculo' — paso previo necesario para generar escenarios en build."
+      "objetivo_estrategico": "Línea de trabajo 3 (ESTRATEGIA.md): '/simulador... la línea 3 añade contenido, escenarios estáticos y fuentes; no reescribe el motor de cálculo' — paso previo necesario para generar escenarios en build.",
+      "fecha_ejecucion": "2026-08-19",
+      "resultado": "Motor puro (constantes normativas, porcentajePension, calcularEscenario, fechaDesdeEdad) movido de Simulador.jsx a src/lib/pension-calculo.ts (nuevo, tipado con interfaces). Simulador.jsx importa desde ahí; sin cambios numéricos (verificado: 6/6 combinaciones idénticas antes/después). Build OK (74 páginas). RIESGO NORMATIVO REPORTADO (no corregido, fuera de alcance de este refactor puro): EDAD_LEGAL_PLENA (66a8m) y UMBRAL_COTIZACION_EDAD_REDUCIDA (38.5) corresponden a valores de 2025, no a los vigentes en 2026 (66a10m / 38a3m). Este dato ya estaba en producción antes de esta tarea (solo se reubicó, no se introdujo); requiere revisión y corrección antes de que seo-019 pueda ejecutarse con seguridad. Archivos: src/lib/pension-calculo.ts (nuevo), src/components/Simulador.jsx (modificado)."
     },
     {
       "id": "seo-019",
       "titulo": "Renderizar en /simulador una tabla estática de escenarios precalculados",
       "area": "seo",
       "prioridad": 8,
-      "estado": "pendiente",
+      "estado": "fallida",
       "hipotesis": "Si src/pages/simulador.astro usa src/lib/pension-calculo.ts (seo-018) para renderizar en build una tabla HTML con >=40 combinaciones de escenario (edad x años cotizados x tramo de base reguladora), visible y legible con JavaScript desactivado, dejando la isla React <Simulador client:load> como mejora progresiva sobre esa misma tabla, esperamos que <main> pase de 71 palabras únicas a un documento sustancialmente más largo y que un usuario sin JS pueda leer una estimación para su caso, porque hoy toda la página depende de una isla React que no ejecuta nada sin JavaScript.",
       "criterio_exito": "Tras `npm run build`, dist/simulador/index.html contiene una tabla estática con >=40 filas de escenario generada en build (no por JS); simulando la eliminación de la isla React del HTML, la tabla sigue presente y legible; el DISCLAIMER (src/consts.ts) sigue visible fuera de la isla React; ejecutando scripts/auditar-money-set.mjs (seo-012) tras el build, /simulador reporta >=1.200 palabras únicas en <main> (antes: 71). Si al generar los escenarios se detecta un dato normativo incorrecto, la tarea se detiene y lo reporta al CEO.",
       "metrica": "Salida de scripts/auditar-money-set.mjs antes (71 palabras, seo-012) vs después de esta tarea, pegada en DECISIONES.md; conteo de filas de la tabla en dist/simulador/index.html >=40.",
       "archivos_sugeridos": [
         "src/pages/simulador.astro"
       ],
-      "objetivo_estrategico": "Falsable de la Línea 3 (ESTRATEGIA.md): '<main> de /simulador >=1.200 palabras únicas (hoy 71); >=40 combinaciones de escenario presentes en el HTML estático; con la isla React eliminada del HTML, la página sigue conteniendo una tabla de estimación legible'."
+      "objetivo_estrategico": "Falsable de la Línea 3 (ESTRATEGIA.md): '<main> de /simulador >=1.200 palabras únicas (hoy 71); >=40 combinaciones de escenario presentes en el HTML estático; con la isla React eliminada del HTML, la página sigue conteniendo una tabla de estimación legible'.",
+      "fecha_ejecucion": "2026-08-19",
+      "resultado": "FALLIDA por precaución normativa, sin tocar ningún archivo. Antes de escribir en simulador.astro, se verificó el riesgo ya señalado por seo-018 contra fuentes externas: EDAD_LEGAL_PLENA (66a8m) y UMBRAL_COTIZACION_EDAD_REDUCIDA (38.5) en src/lib/pension-calculo.ts corresponden a la normativa de 2025, no a la vigente en 2026 (66a10m / 38a3m, contrastado en varias fuentes coincidentes). Publicar una tabla estática indexable de >=40 filas con la fecha de jubilación estimada mal calculada en un sitio YMYL se consideró un riesgo inaceptable. Tarea detenida, sin build ejecutado (no había cambios que verificar). Recomendación: corregir las dos constantes en pension-calculo.ts (con revisión experta) antes de reintentar seo-019."
     },
     {
       "id": "seo-020",

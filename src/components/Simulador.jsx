@@ -1,23 +1,17 @@
 import { useState } from 'react';
-
-/* ───────────────────────── Parámetros normativos (orientativos) ─────────────────────────
- * Cifras simplificadas con fines divulgativos. No son un cálculo oficial.
- */
-const UMBRAL_COTIZACION_EDAD_REDUCIDA = 38.5; // años cotizados para jubilarse a los 65
-const EDAD_LEGAL_REDUCIDA = 65; // con >= 38,5 años cotizados
-const EDAD_LEGAL_PLENA = 66 + 8 / 12; // 66 años y 8 meses, con menos cotización
-
-const ANTICIPO_VOLUNTARIA_ANIOS = 2; // máx. 2 años antes
-const ANTICIPO_FORZOSA_ANIOS = 4; // máx. 4 años antes
-const PENAL_VOLUNTARIA_TRIMESTRE = 1.875; // % por trimestre
-const PENAL_FORZOSA_TRIMESTRE = 1.625; // % por trimestre
-
-const MIN_COTIZACION_PENSION = 15; // mínimo para pensión contributiva
-const COTIZACION_PENSION_PLENA = 36; // años para el 100 % de la base
-const REQ_COTIZACION_VOLUNTARIA = 35; // mínimo de acceso a la voluntaria
-const REQ_COTIZACION_FORZOSA = 33; // mínimo de acceso a la forzosa
-
-const MAX_PENSION_MENSUAL = 3267.6; // tope máximo orientativo (referencia 2025)
+import {
+  UMBRAL_COTIZACION_EDAD_REDUCIDA,
+  EDAD_LEGAL_REDUCIDA,
+  EDAD_LEGAL_PLENA,
+  ANTICIPO_VOLUNTARIA_ANIOS,
+  ANTICIPO_FORZOSA_ANIOS,
+  PENAL_VOLUNTARIA_TRIMESTRE,
+  PENAL_FORZOSA_TRIMESTRE,
+  MIN_COTIZACION_PENSION,
+  REQ_COTIZACION_VOLUNTARIA,
+  REQ_COTIZACION_FORZOSA,
+  calcularEscenario,
+} from '../lib/pension-calculo';
 
 /* ───────────────────────── Utilidades ───────────────────────── */
 const eur = new Intl.NumberFormat('es-ES', {
@@ -38,73 +32,6 @@ function formatEdad(edadDecimal) {
   const meses = Math.round((edadDecimal - anios) * 12);
   if (meses === 0) return `${anios} años`;
   return `${anios} años y ${meses} ${meses === 1 ? 'mes' : 'meses'}`;
-}
-
-function fechaDesdeEdad(edadActual, edadObjetivo) {
-  const mesesRestantes = Math.round((edadObjetivo - edadActual) * 12);
-  if (mesesRestantes <= 0) return { texto: 'Ya tienes esta edad', pasada: true };
-  const ahora = new Date();
-  const objetivo = new Date(ahora.getFullYear(), ahora.getMonth() + mesesRestantes, 1);
-  const texto = new Intl.DateTimeFormat('es-ES', {
-    month: 'long',
-    year: 'numeric',
-  }).format(objetivo);
-  return { texto: texto.charAt(0).toUpperCase() + texto.slice(1), pasada: false };
-}
-
-/** Porcentaje de la base reguladora según años cotizados (escala simplificada). */
-function porcentajePension(aniosCotizados) {
-  if (aniosCotizados < MIN_COTIZACION_PENSION) return 0;
-  if (aniosCotizados >= COTIZACION_PENSION_PLENA) return 100;
-  // Escala lineal: 50 % a los 15 años → 100 % a los 36 años.
-  const tramo = (aniosCotizados - MIN_COTIZACION_PENSION) /
-    (COTIZACION_PENSION_PLENA - MIN_COTIZACION_PENSION);
-  return 50 + tramo * 50;
-}
-
-function calcularEscenario({
-  edadActual,
-  aniosCotizadosActuales,
-  baseReguladora,
-  edadJubilacion,
-  aniosAnticipo,
-  penalPorTrimestre,
-  requisitoCotizacion,
-}) {
-  // Años cotizados estimados en el momento de jubilarse (se sigue cotizando hasta entonces).
-  const aniosExtra = Math.max(0, edadJubilacion - edadActual);
-  const aniosCotizadosTotal = aniosCotizadosActuales + aniosExtra;
-
-  const porcentaje = porcentajePension(aniosCotizadosTotal);
-  let pensionBruta = (baseReguladora * porcentaje) / 100;
-
-  const trimestres = Math.round(aniosAnticipo * 4);
-  const penalizacionPct = trimestres * penalPorTrimestre;
-  const reduccionEuros = (pensionBruta * penalizacionPct) / 100;
-  let pensionFinal = pensionBruta - reduccionEuros;
-
-  // Tope máximo orientativo.
-  const superaTope = pensionFinal > MAX_PENSION_MENSUAL;
-  if (superaTope) pensionFinal = MAX_PENSION_MENSUAL;
-
-  const cumpleRequisito =
-    requisitoCotizacion == null || aniosCotizadosTotal >= requisitoCotizacion;
-  const cumplePensionMinima = aniosCotizadosTotal >= MIN_COTIZACION_PENSION;
-
-  return {
-    edadJubilacion,
-    aniosCotizadosTotal,
-    porcentaje,
-    pensionBruta,
-    penalizacionPct,
-    reduccionEuros,
-    pensionFinal,
-    fecha: fechaDesdeEdad(edadActual, edadJubilacion),
-    cumpleRequisito,
-    cumplePensionMinima,
-    requisitoCotizacion,
-    superaTope,
-  };
 }
 
 /* ───────────────────────── Componente ───────────────────────── */
