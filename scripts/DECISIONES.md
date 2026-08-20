@@ -237,4 +237,15 @@ Formato:
 - Commit: (sin commit — no hay cambios que publicar de esta tarea)
 - Veredicto del CEO: pendiente
 
+## 2026-08-20 — seo-020 Añadir a /simulador las fuentes normativas, coeficientes reductores y enlace al simulador oficial de la Seguridad Social (seo)
+- Archivos: src/pages/simulador.astro
+- Qué: Nueva sección tras el formulario del simulador con la fórmula y enlace dofollow a los arts. 207/208 de la LGSS en boe.es; los 2 coeficientes actuales del motor (1,875%/1,625% por trimestre), cada uno con enlace dofollow a seg-social.es y advertencia de que son cifras simplificadas; limitaciones explícitas de la estimación; bloque destacado con enlace dofollow al simulador oficial de la Seguridad Social. El DISCLAIMER existente y el motor de cálculo no se tocaron.
+- Por qué: /simulador no citaba ninguna fuente normativa ni enlazaba al simulador oficial pese a competir por "simulador jubilacion" (60.000 búsq./mes); ESTRATEGIA.md exige explicar las alternativas oficiales, no ocultarlas.
+- Hipótesis: Si añadimos a /simulador, como HTML estático, la fórmula y el artículo de la LGSS que respalda cada cálculo (enlazado dofollow a boe.es o seg-social.es), una tabla de coeficientes reductores vigentes con su fuente oficial, las limitaciones explícitas de la estimación y un enlace visible al simulador oficial de la Seguridad Social, esperamos que /simulador compita como documento frente al simulador oficial y la banca en vez de ocultar que existen alternativas oficiales, porque hoy la página no cita ninguna fuente normativa ni enlaza al simulador oficial, y ESTRATEGIA.md exige explicarlo, no ocultarlo.
+- Criterio de éxito: Cumplido y verificado. dist/simulador/index.html: 2 enlaces dofollow a boe.es (arts. 207/208), 3 a seg-social.es (2 junto a los coeficientes + el simulador oficial), ninguno con rel=nofollow, DISCLAIMER presente. Build OK (75 páginas).
+- Métrica y plazo: Palabras únicas en <main> de /simulador: 71→399 (auditar-money-set.mjs), sigue por debajo del umbral de 1200 de ESTRATEGIA.md — pendiente de la tabla de escenarios (seo-019, bloqueada). GSC a 21 días para impresiones/clics de "simulador jubilacion" y variantes normativas.
+- Riesgo identificado: (1) Los anclajes #a207/#a208 y la URL del simulador oficial no se verificaron por fetch directo — el proxy de este entorno bloquea egress a boe.es/seg-social.es (mismo bloqueo ya documentado en ESTRATEGIA.md). (2) **No corregido, solo reportado**: los coeficientes 1,875%/1,625% del motor (src/lib/pension-calculo.ts) parecen ser un tipo plano por trimestre; fuentes secundarias (Instituto Santalucía, BBVA, CaixaBank) describen el coeficiente reductor real post Ley 21/2021 como una tabla variable por meses de anticipo y años cotizados. Coincide con lo ya señalado sin resolver en seo-018/seo-019 sobre la edad legal y el umbral de cotización desactualizados en el mismo módulo. Recomendación explícita: el CEO/estratega debe revisar con fuente oficial verificada antes de que cualquier tarea futura vuelva a tocar el motor de cálculo o publique cifras normativas derivadas de él.
+- Commit: (pendiente de este mismo commit)
+- Veredicto del CEO: pendiente
+
 ---

@@ -71,4 +71,119 @@ const schema = [
       <Simulador client:load disclaimer={DISCLAIMER} />
     </div>
   </section>
+
+  <section class="container-prose pb-12 sm:pb-16">
+    <div class="max-w-3xl">
+      <h2 class="text-2xl font-semibold sm:text-3xl">
+        Qué calcula este simulador y en qué se basa
+      </h2>
+      <p class="mt-4 leading-relaxed text-ink-soft">
+        El simulador aplica el porcentaje que corresponde a tus años cotizados
+        sobre tu base reguladora y, si adelantas la jubilación, resta una
+        penalización por cada trimestre de anticipo. Es un cálculo
+        <strong>simplificado y orientativo</strong>, pensado para dar una
+        primera referencia: no es el cálculo oficial de la Seguridad Social ni
+        lo sustituye.
+      </p>
+      <p class="mt-4 leading-relaxed text-ink-soft">
+        La jubilación anticipada por voluntad del interesado está regulada en
+        el{' '}
+        <a
+          href="https://www.boe.es/buscar/act.php?id=BOE-A-2015-11724#a208"
+          target="_blank"
+          rel="noopener"
+          class="font-medium text-brand-700 underline hover:text-clay-700"
+        >
+          artículo 208 del texto refundido de la Ley General de la Seguridad
+          Social (BOE)
+        </a>
+        , y la jubilación anticipada por causa no imputable al trabajador
+        (forzosa, por ejemplo tras un ERE o un despido) en el{' '}
+        <a
+          href="https://www.boe.es/buscar/act.php?id=BOE-A-2015-11724#a207"
+          target="_blank"
+          rel="noopener"
+          class="font-medium text-brand-700 underline hover:text-clay-700"
+        >
+          artículo 207 de la misma ley (BOE)
+        </a>
+        .
+      </p>
+
+      <h3 class="mt-8 text-xl font-semibold text-ink">
+        Los coeficientes que usa este simulador
+      </h3>
+      <ul class="mt-4 list-disc space-y-3 pl-5 text-ink-soft">
+        <li>
+          <strong>Anticipada voluntaria:</strong> 1,875&nbsp;% de penalización
+          por trimestre adelantado, hasta un máximo de 2 años antes de la edad
+          legal. Es una cifra única y simplificada para todos los casos: la{' '}
+          <a
+            href="https://www.seg-social.es"
+            target="_blank"
+            rel="noopener"
+            class="font-medium text-brand-700 underline hover:text-clay-700"
+          >
+            Seguridad Social
+          </a>{' '}
+          aplica una tabla oficial de coeficientes reductores que varía según
+          los meses concretos de anticipo y los años cotizados, y que puede
+          diferir de esta cifra en tu caso.
+        </li>
+        <li>
+          <strong>Anticipada forzosa:</strong> 1,625&nbsp;% de penalización
+          por trimestre adelantado, hasta un máximo de 4 años antes de la edad
+          legal. Es igualmente una simplificación: consulta la tabla oficial
+          vigente en la{' '}
+          <a
+            href="https://www.seg-social.es"
+            target="_blank"
+            rel="noopener"
+            class="font-medium text-brand-700 underline hover:text-clay-700"
+          >
+            Seguridad Social
+          </a>{' '}
+          para conocer el coeficiente exacto de tu situación.
+        </li>
+      </ul>
+
+      <h3 class="mt-8 text-xl font-semibold text-ink">
+        Limitaciones de esta estimación
+      </h3>
+      <ul class="mt-4 list-disc space-y-2 pl-5 text-ink-soft">
+        <li>
+          No aplica la tabla oficial completa de coeficientes reductores, que
+          varía por tramos de meses de anticipo y de años cotizados.
+        </li>
+        <li>
+          No incluye complementos, mínimos ni el tope máximo real de pensión
+          (usa uno orientativo), ni tu situación fiscal.
+        </li>
+        <li>
+          No considera regímenes especiales, periodos asimilados ni lagunas de
+          cotización.
+        </li>
+        <li>
+          La base reguladora real se calcula con reglas específicas que este
+          simulador no reproduce: usa la que introduzcas como aproximación.
+        </li>
+      </ul>
+
+      <div class="mt-8 rounded-xl border border-brand-200 bg-brand-50 p-5">
+        <p class="text-sm leading-relaxed text-ink">
+          <strong>¿Quieres un cálculo con la tabla oficial completa y tu historial real de cotización?</strong>{' '}
+          Usa el{' '}
+          <a
+            href="https://prestaciones.seg-social.es/simulador-servicio/simulador-pension-jubilacion.html"
+            target="_blank"
+            rel="noopener"
+            class="font-semibold text-brand-700 underline hover:text-clay-700"
+          >
+            simulador oficial de pensión de jubilación de la Seguridad Social
+          </a>
+          , que accede a tus datos de cotización reales.
+        </p>
+      </div>
+    </div>
+  </section>
 </Base>
