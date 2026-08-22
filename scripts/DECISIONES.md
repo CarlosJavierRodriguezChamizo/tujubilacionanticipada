@@ -238,3 +238,16 @@ Formato:
 - Veredicto del CEO: pendiente
 
 ---
+
+## 2026-08-22 — seo-020 Añadir a /simulador las fuentes normativas, coeficientes reductores y enlace al simulador oficial de la Seguridad Social (seo) — FALLIDA
+- Archivos: ninguno modificado
+- Qué: Antes de escribir en src/pages/simulador.astro, se contrastaron fuentes externas (Instituto Santalucía, BBVA Mi Jubilación, Campmany Abogados, y los PDF oficiales de seg-social.es citados por ellas) para documentar correctamente los coeficientes reductores vigentes exigidos por el criterio de éxito. La tarea se detuvo sin tocar ningún archivo, mismo criterio de parada que seo-019.
+- Por qué falló: Los coeficientes reductores vigentes en 2026 (RDL 2/2023) son mensuales y escalonados en 4 tramos de años cotizados (<38,5 / 38,5-41,5 / 41,5-44,5 / >=44,5 años), con reducción total entre 3,26% y 21% según meses de adelanto y tramo. Esto contradice directamente el modelo de src/lib/pension-calculo.ts, que aplica un porcentaje FIJO por trimestre (PENAL_VOLUNTARIA_TRIMESTRE=1.875, PENAL_FORZOSA_TRIMESTRE=1.625) sin tramos por años cotizados. Publicar una tabla oficial correcta junto a un motor que calcula con una fórmula distinta habría generado una contradicción visible en una página YMYL de alto tráfico, en vez de reforzar EEAT.
+- Hipótesis: (sin cambios respecto al backlog original — no se pudo evaluar, el criterio de éxito no llegó a ejecutarse).
+- Criterio de éxito: No cumplido — no se generaron cambios que verificar.
+- Métrica y plazo: No aplica.
+- Riesgo identificado: Se suma a los ya reportados por seo-018/seo-019 sobre EDAD_LEGAL_PLENA (66a8m vs 66a10m vigente) y UMBRAL_COTIZACION_EDAD_REDUCIDA (38.5 vs 38a3m vigente). Las 3 tareas pendientes restantes del backlog (seo-021, ux-003, ux-004) dependen todas del contenido nuevo que seo-019/seo-020 debían añadir a /simulador y quedan bloqueadas por la misma causa raíz. Recomendación al CEO: dedicar una tarea previa a revisar y corregir con fuente experta/oficial las tres constantes de src/lib/pension-calculo.ts (EDAD_LEGAL_PLENA, UMBRAL_COTIZACION_EDAD_REDUCIDA, y el modelo PENAL_VOLUNTARIA_TRIMESTRE/PENAL_FORZOSA_TRIMESTRE — este último probablemente debe sustituirse por una tabla de tramos mensuales) antes de reintentar seo-019/seo-020.
+- Commit: (pendiente de este mismo commit)
+- Veredicto del CEO: pendiente
+
+---
