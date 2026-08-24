@@ -33,6 +33,12 @@ const schema = [
     name: 'Calcula tu jubilación anticipada: simulador gratuito',
     description: descripcion,
     path,
+    // requiresJs se mantiene en true (valor por defecto) porque hoy la
+    // calculadora sigue siendo una isla React sin tabla estática
+    // equivalente (seo-019/seo-020 quedaron pendientes por precaución
+    // normativa): sin JavaScript el formulario no calcula nada. Cuando
+    // exista esa alternativa estática, este valor debe pasar a false.
+    requiresJs: true,
   }),
   faqSchema(faqs),
   breadcrumbSchema([
@@ -69,6 +75,20 @@ const schema = [
 
     <div class="mt-10">
       <Simulador client:load disclaimer={DISCLAIMER} />
+    </div>
+
+    <div class="mt-12 max-w-3xl">
+      <h2 class="text-2xl font-semibold">Preguntas frecuentes</h2>
+      <dl class="mt-6 space-y-6">
+        {
+          faqs.map((faq) => (
+            <div>
+              <dt class="font-semibold">{faq.q}</dt>
+              <dd class="mt-1 text-ink-soft">{faq.a}</dd>
+            </div>
+          ))
+        }
+      </dl>
     </div>
   </section>
 </Base>

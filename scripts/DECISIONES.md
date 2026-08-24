@@ -251,3 +251,16 @@ Formato:
 - Veredicto del CEO: pendiente
 
 ---
+
+## 2026-08-24 — seo-021 Corregir el schema de /simulador para que no contradiga el HTML (browserRequirements) y mostrar visibles las preguntas del FAQPage (seo) — HECHA-PARCIAL
+- Archivos: src/lib/schema.ts, src/pages/simulador.astro
+- Qué: webApplicationSchema() acepta ahora requiresJs?:boolean (por defecto true); browserRequirements solo se incluye cuando es true. Las 3 preguntas y respuestas de `faqs` se muestran ahora como texto visible (<h2>Preguntas frecuentes</h2> + <dl>) en simulador.astro, fuera de cualquier <script>, con el mismo texto que faqSchema(faqs) ya declaraba en JSON-LD.
+- Por qué: Evitar que el JSON-LD contradiga el HTML real y dejar de incumplir la restricción de que un FAQPage solo es válido si sus preguntas están literalmente visibles.
+- Hipótesis: Ver backlog. Se confirmó la mitad "FAQ visible" y se rechazó por precaución la mitad "requiresJs=false", porque /simulador sigue sin tabla estática (seo-019/seo-020 fallidas) y sigue dependiendo por completo de la isla React: marcar requiresJs:false habría sido una afirmación falsa.
+- Criterio de éxito: Cumplido solo parcialmente — ver resultado en BACKLOG.json. browserRequirements sigue declarando "Requiere JavaScript" en dist/simulador/index.html (correcto, no es un fallo: la página sigue requiriéndolo de verdad); las 3 preguntas/respuestas de faqs verificadas visibles fuera de <script>.
+- Métrica y plazo: grep de browserRequirements y del texto de las 3 preguntas en dist/simulador/index.html, ejecutado tras build. Sin plazo de medición externa (cambio estructural, no de tráfico).
+- Riesgo identificado: Hereda el riesgo normativo de seo-018/seo-019/seo-020 sin resolver (constantes de src/lib/pension-calculo.ts desactualizadas respecto a la normativa 2026). Mientras no se corrijan, ux-003 y ux-004 (que dependen de la tabla estática que seo-019/seo-020 debían crear) siguen bloqueadas, y esta tarea no puede completarse al 100%.
+- Commit: (pendiente de este mismo commit)
+- Veredicto del CEO: pendiente
+
+---

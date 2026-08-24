@@ -248,12 +248,23 @@ export function faqSchema(faqs: { q: string; a: string }[]): JsonLd {
   };
 }
 
-/** Aplicación web (el simulador como herramienta gratuita). */
+/**
+ * Aplicación web (el simulador como herramienta gratuita).
+ *
+ * `requiresJs` controla si se declara `browserRequirements: 'Requiere
+ * JavaScript'`. Por defecto es `true` porque hoy la página no ofrece ninguna
+ * alternativa funcional sin JavaScript (la calculadora es una isla React sin
+ * fallback estático); cuando exista contenido estático equivalente sin JS,
+ * el llamador puede pasar `requiresJs: false` para que el schema deje de
+ * contradecir al HTML.
+ */
 export function webApplicationSchema(opts: {
   name: string;
   description: string;
   path: string;
+  requiresJs?: boolean;
 }): JsonLd {
+  const requiresJs = opts.requiresJs ?? true;
   return {
     '@context': 'https://schema.org',
     '@type': 'WebApplication',
@@ -262,7 +273,7 @@ export function webApplicationSchema(opts: {
     url: absUrl(opts.path),
     applicationCategory: 'FinanceApplication',
     operatingSystem: 'All',
-    browserRequirements: 'Requiere JavaScript',
+    ...(requiresJs ? { browserRequirements: 'Requiere JavaScript' } : {}),
     inLanguage: SITE.lang,
     isPartOf: { '@id': WEBSITE_ID },
     publisher: { '@id': ORG_ID },

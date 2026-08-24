@@ -1,23 +1,21 @@
-# Informe de mejora continua — 2026-08-22
+# Informe de mejora continua — 2026-08-24
 
 ## Resumen
-No se ha publicado ningún cambio hoy: la única tarea despachada (seo-020) se detuvo por precaución normativa antes de tocar ningún archivo, y confirma que el motor de cálculo del simulador usa una fórmula de penalización obsoleta que bloquea las 4 tareas pendientes del backlog.
+Se ha corregido parcialmente el schema de /simulador (seo-021): las preguntas del FAQPage ya son visibles en el HTML, pero no se ha podido declarar requiresJs=false porque la página sigue sin una tabla estática que funcione sin JavaScript.
 
 ## Cambios aplicados
-Ninguno. La tarea seo-020 no llegó a modificar código.
+
+### [seo] seo-021 — Corregir el schema de /simulador para que no contradiga el HTML (browserRequirements) y mostrar visibles las preguntas del FAQPage
+**Qué:** `webApplicationSchema()` en `src/lib/schema.ts` acepta ahora un parámetro opcional `requiresJs?: boolean` (por defecto `true`); solo incluye `browserRequirements` cuando es `true`. En `src/pages/simulador.astro` se añadió un bloque `<h2>Preguntas frecuentes</h2>` con una `<dl>` que muestra en texto visible (fuera de cualquier `<script>`) las 3 preguntas y respuestas que `faqSchema(faqs)` ya declaraba solo en JSON-LD.
+**Por qué:** El JSON-LD contradecía el propio HTML (declaraba siempre "Requiere JavaScript" sin poder marcarlo de otro modo) y el FAQPage incumplía la restricción de la estrategia de que sus preguntas estén literalmente visibles en la página, no solo en datos estructurados.
+**Hipótesis:** Ver `scripts/BACKLOG.json` (seo-021). Confirmada solo la mitad "preguntas visibles"; la mitad "requiresJs=false" se rechazó a propósito: `/simulador` sigue dependiendo por completo de la isla React sin ninguna tabla estática (seo-019 y seo-020, sus prerrequisitos, quedaron ambas "fallida" por riesgo normativo), así que declarar que la página no requiere JavaScript sería falso.
+**Cómo lo mediremos:** `npm run build` (80 páginas, sin errores). `grep` de `browserRequirements` en `dist/simulador/index.html` sigue devolviendo `"Requiere JavaScript"` (correcto, sin cambio). Verificación con un script que elimina los bloques `<script>` del HTML y confirma que las 3 preguntas y sus 3 respuestas de `faqs` aparecen como texto visible. `git status --short` confirma que solo se tocaron los 2 archivos sugeridos (`src/lib/schema.ts`, `src/pages/simulador.astro`).
+**Riesgo identificado:** Hereda sin resolver el riesgo normativo ya reportado por seo-018/seo-019/seo-020: las constantes de `src/lib/pension-calculo.ts` (`EDAD_LEGAL_PLENA`, `UMBRAL_COTIZACION_EDAD_REDUCIDA`, `PENAL_VOLUNTARIA_TRIMESTRE`/`PENAL_FORZOSA_TRIMESTRE`) no coinciden con la normativa vigente en 2026. Mientras no se corrijan con fuente oficial, ni esta tarea puede cerrarse al 100% ni pueden avanzar ux-003 y ux-004.
+**Archivos:** `src/lib/schema.ts`, `src/pages/simulador.astro`
 
 ## Incidencias
-
-### [seo] seo-020 — Añadir a /simulador las fuentes normativas, coeficientes reductores y enlace al simulador oficial de la Seguridad Social
-**Qué:** Se detuvo antes de escribir en `src/pages/simulador.astro`, sin tocar ningún archivo.
-**Por qué:** Al contrastar fuentes externas para documentar los coeficientes reductores vigentes, se confirmó que `src/lib/pension-calculo.ts` calcula la penalización como un **porcentaje fijo por trimestre** (`PENAL_VOLUNTARIA_TRIMESTRE=1.875`, `PENAL_FORZOSA_TRIMESTRE=1.625`), mientras que el sistema real vigente en 2026 (RDL 2/2023) es **mensual y escalonado en 4 tramos de años cotizados**, con reducción total entre 3,26% y 21%. Publicar una tabla oficial correcta junto a un motor que calcula distinto habría generado una contradicción visible en una página YMYL de alto tráfico.
-**Hipótesis:** No evaluada — el criterio de éxito no llegó a ejecutarse.
-**Cómo lo mediremos:** No aplica hoy.
-**Riesgo identificado:** Este hallazgo se suma a los ya reportados por seo-018/seo-019 (`EDAD_LEGAL_PLENA` 66a8m vs 66a10m vigente; `UMBRAL_COTIZACION_EDAD_REDUCIDA` 38.5 vs 38a3m vigente). Las 3 tareas pendientes restantes (seo-021, ux-003, ux-004) dependen todas del contenido que seo-019/seo-020 debían añadir a `/simulador` y quedan bloqueadas por la misma causa raíz.
-**Archivos:** ninguno.
-
-**Otras tareas del día:** seo-021, ux-003 y ux-004 comparten `src/pages/simulador.astro` con seo-020 y además dependen explícitamente de su resultado (tabla de escenarios y de coeficientes que seo-019/seo-020 debían generar), así que no se han despachado hoy — quedan pendientes.
+ux-003 y ux-004 no se han despachado hoy: ambas comparten `src/pages/simulador.astro` con seo-021 (regla de la routine: no tocar el mismo archivo dos veces el mismo día) y además dependen de la tabla estática de escenarios que seo-019/seo-020 debían crear, que sigue sin existir por el mismo bloqueo normativo. Quedan pendientes para el próximo ciclo de ejecución.
 
 ## Estado del backlog
-3 pendientes (todas bloqueadas por la misma causa raíz normativa) · 19 hechas · 3 fallidas
-Próxima replanificación: cuando queden 0 pendientes en el backlog, o antes si el CEO decide priorizar una tarea de corrección normativa en `src/lib/pension-calculo.ts`.
+2 pendientes (ux-003, ux-004 — bloqueadas por la misma causa raíz normativa) · 20 hechas · 3 fallidas
+Próxima replanificación: cuando queden 0 pendientes en el backlog, o antes si el CEO decide priorizar una tarea de corrección normativa en `src/lib/pension-calculo.ts` (recomendación ya trasladada en seo-019/seo-020/seo-021).
