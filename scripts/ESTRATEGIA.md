@@ -4,47 +4,119 @@
 > resto del documento** y debe atenderse en la próxima replanificación. Cuando un
 > encargo esté cumplido, el estratega lo mueve al diagnóstico con su veredicto.
 
-## E-1. Definir y crear el producto (bloqueaba el ciclo de conversión)
+## E-1. El producto: informe de decisión, no guía informativa
 
-Hasta hoy la conversión estaba fuera de alcance porque **no había nada que vender**.
-Ya no es cierto que no haya demanda: **el 2026-08-24 entraron los dos primeros leads
-reales** por el formulario de `/asesoramiento`. El propietario encarga explícitamente
-al estratega:
+El propietario ha decidido el **qué**. El estratega decide el **cómo** y el
+product-owner lo trocea, pero **no puede sustituir esta definición por otra**.
 
-**Dar forma al producto: decidir qué es, cómo se presta, a qué precio y con qué
-proceso, y llevarlo hasta poder venderlo.** No es un encargo de copy ni de CRO: es
-definir la oferta.
+### Qué NO se vende
 
-Lo que el estratega debe entregar en la próxima replanificación, dentro de
-`ESTRATEGIA.md` y traducido a tareas del backlog:
+**La guía de 29 € queda descartada como producto principal.** El razonamiento es del
+propietario y los datos lo respaldan: nadie paga por información que está gratis en
+internet y que cualquier IA resume en diez segundos. Además, las consultas reales del
+export de Search Console **no son informativas, son personales**: "tengo 52 años y no
+tengo 15 años cotizados" (192 impresiones, posición 5,5), "me puedo jubilar con 60 años
+y 25 cotizados", "jubilarse a los 55 con 30 años cotizados" (posición 3,7). Nadie
+escribe eso buscando una guía. Buscan **su número**.
 
-1. **Qué se vende exactamente.** Las opciones que ya están sobre la mesa, sin
-   inventar ninguna: (a) el informe/guía de 29 € que hoy está oculto
-   (`_guia-jubilacion-anticipada.astro` fuera del routing y `CTAGuia` comentado);
-   (b) una consulta individual de pago; (c) un informe personalizado a partir de los
-   datos del simulador. Elegir una como principal y justificarlo.
-2. **Quién presta el servicio y con qué credenciales.** Es un sitio YMYL: si detrás
-   hay una persona que asesora, hay que decir quién es. Ver la restricción E-2.
-3. **Precio, alcance y qué NO incluye**, por escrito y visible antes de pagar.
-4. **El proceso completo de entrega**, incluyendo qué pasa entre que alguien paga y
-   recibe lo suyo, y en cuánto tiempo.
-5. **Cómo se cobra.** Hoy no hay pasarela. Si la propuesta la necesita, tiene que
-   entrar en el backlog como tarea, no darse por supuesta.
-6. **Qué se hace con los leads que ya están entrando** mientras el producto no exista.
+**Tampoco se vende asesoramiento humano por encargo.** Restricción del propietario:
+el negocio debe ser **lo más autónomo posible**. Cualquier propuesta cuyo coste marginal
+por venta sea el tiempo de una persona queda descartada como producto principal.
 
-Restricciones que **no** se levantan para este encargo: prohibido fabricar señales de
-confianza (testimonios, contadores, credenciales); `ASESORAMIENTO.socialProofCount`
-sigue reflejando el dato real o se oculta; y sigue prohibido un CTA de pago que acabe
-en un `mailto:`.
+### Qué se vende
 
-## E-2. Credenciales verificables: congeladas por ahora
+**Un informe personalizado de fecha óptima de jubilación, generado automáticamente.**
+
+No vende información: vende una **decisión** y el coste exacto de equivocarse en ella.
+El activo que lo hace posible ya existe y es `src/lib/pension-calculo.ts`, alineado
+desde el 2026-08-24 con los cuadros de los arts. 207.2 y 208.2 LGSS, la DT 7.ª y el
+RD 241/2026.
+
+**Por qué una IA genérica no lo sustituye, con la prueba delante:** este mismo sitio,
+redactado por un agente de IA a partir de "fuentes oficiales", publicó durante meses el
+coeficiente fijo por trimestre (1,875 %) en 28 artículos. Está derogado desde 2022. Todo
+internet lo repite, así que cualquier modelo entrenado sobre internet lo repite también.
+El foso no es la prosa: es **el motor verificado contra el BOE y la auditoría que lo
+mantiene verificado** (`scripts/auditar-normativa.mjs`).
+
+**Y por qué el usuario no llega solo a ese número:** la escala de coeficientes es
+discontinua, y los saltos no se ven sin calcular tu caso exacto. Tres ejemplos reales
+sobre una base reguladora de 1.800 €/mes y edad legal 65:
+
+- **El último mes de anticipo.** Con 41 años cotizados, jubilarse 24 meses antes son
+  1.458 €/mes; 23 meses antes, 1.503 €. Esperar **un mes** vale 45 €/mes de por vida:
+  **12.600 € en 20 años.**
+- **El cambio de tramo.** Con 41 años y 4 meses cotizados el coeficiente a 24 meses es
+  del 19 %; con 41 años y 6 meses, del 17 %. **Dos meses más cotizados = 36 €/mes para
+  siempre, 10.080 € en 20 años.**
+- **El umbral de la edad legal.** Con 38 años y 2 meses cotizados la edad ordinaria es
+  66 años y 10 meses; con 38 años y 3 meses, 65. **Un mes de cotización adelanta 22
+  meses el cobro sin penalización.**
+
+Nadie encuentra eso en una guía ni se lo dice un chatbot: hay que calcularlo sobre su
+carrera concreta. Ese es el producto.
+
+### Alcance del entregable (lo que el comprador recibe)
+
+1. Su edad ordinaria exacta y la fecha en que la cumple (DT 7.ª LGSS).
+2. **La tabla de sus fechas posibles**, mes a mes (24 en voluntaria, 48 en involuntaria):
+   pensión resultante, pérdida mensual y pérdida acumulada a 20 años en cada una.
+3. **Sus acantilados**, señalados: en qué meses concretos esperar un poco más produce un
+   salto desproporcionado, y cuánto vale cada uno en euros.
+4. **Punto de equilibrio** de esperar frente a adelantar: cuántos meses de cobro se
+   tarda en recuperar lo que se deja de cobrar por esperar. Es aritmética sobre sus
+   propias cifras, no una recomendación de inversión.
+5. **Verificación de requisitos**: 35/33 años cotizados, la regla del art. 208.1.c)
+   (la pensión resultante debe superar la mínima que le correspondería a los 65), el
+   tope de 3.359,60 €/mes y la carencia del art. 205.1.b).
+6. **Cada cifra con su fuente oficial** enlazada, y el DISCLAIMER visible: es un cálculo
+   orientativo, no el cálculo oficial de la Seguridad Social.
+
+### Restricciones de diseño (no negociables)
+
+- **Coste marginal por venta = 0.** Ninguna persona interviene en la entrega de un
+  informe concreto. Si una propuesta necesita revisión humana por pedido, está mal.
+- **Se vende un cálculo, no asesoramiento.** El posicionamiento, el copy y las
+  condiciones deben sostener esa distinción de forma consistente, y el propietario debe
+  hacerla revisar por un profesional **una vez** (la metodología), no por informe.
+- Todo dato del informe sale de `src/lib/pension-calculo.ts`. **Prohibido que la
+  plantilla del informe reescriba cifras a mano**: si el motor cambia, el informe cambia.
+- Sigue prohibido fabricar señales de confianza, y sigue prohibido un CTA de pago que
+  acabe en un `mailto:`.
+
+### Lo que el estratega y el product-owner deben resolver
+
+1. **Precio.** Referencia del propietario: 29 € era poco para lo que cuesta y mucho para
+   lo que daba. Un informe de decisión soporta más. Justificar la cifra elegida contra
+   lo que el comprador se juega (los acantilados de arriba son de cinco cifras).
+2. **Pasarela de pago y entrega automática.** Hoy no existe ninguna de las dos. Son
+   tareas del backlog, no supuestos.
+3. **Captura de datos.** El simulador ya pide edad, años cotizados y base reguladora y
+   ya captura email: el embudo está medio construido. Definir qué datos adicionales hace
+   falta pedir (fecha de nacimiento y meses cotizados exactos, situación familiar,
+   modalidad accesible) sin convertir el formulario en un muro.
+4. **Motivo de recompra.** Las cifras se revalorizan cada enero y el calendario
+   transitorio cambia en 2027. Un informe caduca. Decidir si eso es una reemisión
+   gratuita, una alerta por email o una suscripción.
+5. **Qué se hace con los 2 leads ya recibidos** mientras el informe no esté listo.
+
+### Realidad de volumen (para que el precio no se decida en el aire)
+
+Con 190 clics/mes orgánicos, una conversión del 2 % son ~4 ventas/mes. El producto no
+se justifica por lo que factura hoy, sino porque **su coste marginal es cero y escala
+con el tráfico sin añadir trabajo**. Por eso la Línea 3 (`/simulador`, hoy en posición
+48 para un cluster de ~150 impresiones/mes) deja de ser solo SEO: es el embudo del
+producto.
+
+## E-2. Credenciales verificables: congeladas, y el producto no debe depender de ellas
 
 `seo-006` quedó REFUTADA por falta de referencias externas comprobables del revisor.
 Decisión del propietario: **no se toca nada de las credenciales de momento.** No se
 añaden `sameAs`, ni perfiles, ni credenciales, ni se inventan. Cualquier tarea que lo
-proponga se rechaza hasta nuevo aviso. El estratega debe tenerlo en cuenta al diseñar
-el producto (E-1): si la oferta necesita respaldar quién asesora, eso es una decisión
-del propietario, no una tarea del backlog.
+proponga se rechaza hasta nuevo aviso. El propietario conseguirá a la persona, pero **el producto de E-1 está diseñado a
+propósito para no depender de ella en la entrega**: una revisión de la metodología, una
+vez, no una intervención por informe vendido. Cualquier propuesta que reintroduzca a una
+persona en el coste marginal incumple a la vez E-1 y esta restricción.
 
 ## E-3. Ya hay datos de rendimiento: se acabó decidir a ciegas
 

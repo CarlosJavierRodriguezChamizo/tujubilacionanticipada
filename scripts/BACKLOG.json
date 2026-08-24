@@ -16,7 +16,7 @@
       "activa": true,
       "fecha_encargo": "2026-08-24",
       "foco": "producto",
-      "motivo": "Encargo directo del propietario: dar forma al producto y llevarlo hasta poder venderlo. Ver \"Encargos del propietario\" (E-1) al inicio de scripts/ESTRATEGIA.md. Es prioritario sobre cualquier tarea de SEO o UX pendiente y no debe esperar a que el backlog se vacíe.",
+      "motivo": "Encargo directo del propietario: dar forma al producto y llevarlo hasta poder venderse. El QUÉ ya está decidido por el propietario en \"E-1. El producto: informe de decisión, no guía informativa\" (inicio de scripts/ESTRATEGIA.md): un informe personalizado de fecha óptima de jubilación, generado automáticamente desde src/lib/pension-calculo.ts, con coste marginal cero por venta. La guía de 29 € queda descartada. Tu trabajo es el CÓMO: precio justificado, pasarela, entrega automática, captura de datos y motivo de recompra. No reabras el QUÉ.",
       "instruccion": "En la próxima ejecución de la routine de mejora continua, invoca al subagente estratega-ceo ANTES de despachar ninguna tarea, aunque queden tareas pendientes. Cuando el estratega haya entregado la definición del producto y el product-owner la haya traducido a tareas del backlog, pon \"activa\": false."
     }
   },
