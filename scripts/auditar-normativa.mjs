@@ -14,8 +14,11 @@
  *    porcentaje fijo por trimestre (1,875 % / 1,625 %) está derogado.
  *  - Límite máximo de pensión 2026 → art. 3 RD 241/2026: 3.359,60 €/mes.
  *
- * Uso:  node scripts/auditar-normativa.mjs [--json]
- * Sale con código 1 si encuentra alguna incidencia.
+ * Uso:  node scripts/auditar-normativa.mjs [--json] [--solo-graves]
+ *
+ * Sale con código 1 si encuentra incidencias. Con `--solo-graves` (el modo que
+ * corre en CI) solo bloquea por gravedad alta o media: las de gravedad baja son
+ * avisos para revisión humana, no errores, y no deben detener un despliegue.
  */
 import { readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
@@ -143,4 +146,16 @@ if (process.argv.includes('--json')) {
   );
 }
 
-process.exit(hallazgos.length > 0 ? 1 : 0);
+const soloGraves = process.argv.includes('--solo-graves');
+const bloqueantes = soloGraves
+  ? hallazgos.filter((h) => h.gravedad === 'alta' || h.gravedad === 'media')
+  : hallazgos;
+
+if (soloGraves && bloqueantes.length === 0 && hallazgos.length > 0) {
+  console.log(
+    `\nSin incidencias graves. Quedan ${hallazgos.length} de gravedad baja, ` +
+      'para revisión humana; no bloquean el despliegue.',
+  );
+}
+
+process.exit(bloqueantes.length > 0 ? 1 : 0);

@@ -1,0 +1,23 @@
+# FUENTE OFICIAL — extracto literal, no editar a mano
+#
+# Origen : https://www.boe.es/buscar/act.php?id=BOE-A-2015-11724
+#          (texto consolidado de la Ley General de la Seguridad Social)
+# Descarga: 2026-08-24
+# SHA-256 del HTML descargado: 58471d62af78da3dc1b711b400a19db8d8245be95427f31c21abccb7e012bb49
+#
+# Lo consume scripts/verificar-motor.mjs, que compara celda a celda las tablas de
+# aquí con las constantes de src/lib/pension-calculo.ts. Si alguien cambia una cifra
+# del motor sin que la haya cambiado la ley, la verificación falla y el deploy se
+# detiene. Para actualizarlo cuando cambie la norma: vuelve a descargar el texto
+# consolidado del BOE y regenera el extracto. Nunca lo edites a mano.
+#
+Disposición transitoria novena. Aplicación de los porcentajes a atribuir a los años cotizados para calcular la pensión de jubilación. 
+ Los porcentajes a que se refiere el artículo 210.1.b) serán sustituidos por los siguientes: 
+ Durante los años 2013 a 2019. 
+ Por cada mes adicional de cotización entre los meses 1 y 163, el 0,21 por ciento y por cada uno de los 83 meses siguientes, el 0,19 por ciento. 
+ Durante los años 2020 a 2022. 
+ Por cada mes adicional de cotización entre los meses 1 y 106, el 0,21 por ciento y por cada uno de los 146 meses siguientes, el 0,19 por ciento. 
+ Durante los años 2023 a 2026. 
+ Por cada mes adicional de cotización entre los meses 1 y 49, el 0,21 por ciento y por cada uno de los 209 meses siguientes, el 0,19 por ciento. 
+ A partir del año 2027. 
+ Por cada mes adicional de cotización entre los meses 1 y 248, el 0,19 por ciento y por cada uno de los 16 meses siguientes, el 0,18 por ciento.

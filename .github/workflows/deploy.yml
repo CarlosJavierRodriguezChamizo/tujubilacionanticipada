@@ -48,6 +48,19 @@ jobs:
       - name: Validar frontmatter EEAT
         run: node scripts/validate-frontmatter.mjs
 
+      # El informe de pago se calcula con src/lib/pension-calculo.ts: una cifra
+      # mal ahí es un error que se cobra. Este paso compara las 288 celdas de los
+      # cuadros de los arts. 207.2 y 208.2, el calendario de la DT 7.ª y la escala
+      # de la DT 9.ª contra los extractos literales del BOE de scripts/fuentes/.
+      # Si el motor se desvía de la ley, el deploy se detiene aquí.
+      - name: Verificar el motor de cálculo contra el BOE
+        run: node scripts/verificar-motor.mjs
+
+      # Ningún artículo puede publicar cifras normativas derogadas (coeficiente
+      # fijo por trimestre, edad ordinaria de 2025, tope máximo de 2025).
+      - name: Auditar la normativa del contenido publicado
+        run: node scripts/auditar-normativa.mjs --solo-graves
+
       - name: Build Astro
         run: npm run build
 

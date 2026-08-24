@@ -84,11 +84,79 @@ carrera concreta. Ese es el producto.
 - Sigue prohibido fabricar señales de confianza, y sigue prohibido un CTA de pago que
   acabe en un `mailto:`.
 
+### Fiabilidad del cálculo: es el producto, no un detalle técnico
+
+Si el informe se cobra, **no puede tener un solo dato mal**. No basta con que el motor
+esté bien hoy: tiene que ser imposible que se desvíe mañana sin que alguien se entere.
+El mecanismo ya está montado y es condición de publicación:
+
+- `scripts/fuentes/` guarda los **extractos literales del BOE** (arts. 207, 208 y 210,
+  DT 7.ª y DT 9.ª), con su URL, su fecha de descarga y el SHA-256 del HTML de origen.
+- `scripts/verificar-motor.mjs` **parsea esas tablas del texto oficial** y las compara
+  celda a celda con `src/lib/pension-calculo.ts`: las 24×4 filas del cuadro de la
+  voluntaria, las 48×4 de la involuntaria, el calendario de edades de la DT 7.ª, los
+  cortes de la escala de la DT 9.ª, los requisitos de acceso y los importes de 2026.
+  **326 comprobaciones**, más invariantes legales (a más años cotizados, menos
+  reducción; la escala suma exactamente 100 %; ninguna cifra derogada en el módulo).
+- Corre en CI **antes del build**: si el motor se desvía de la ley, no se despliega.
+- Verificado por mutación: alterar una sola celda, volver a la edad de 2025 o borrar una
+  fila hacen fallar el paso. Un verificador que nunca falla no verifica nada.
+
+**Regla para el estratega y el product-owner:** cualquier cifra nueva que entre en el
+informe (complementos, mínimos, cotizaciones, regímenes especiales) entra **por el mismo
+camino**: extracto oficial en `scripts/fuentes/`, constante en el motor y comprobación en
+`verificar-motor.mjs`. Ninguna cifra del informe puede existir solo en una plantilla.
+
+### Maquetación: forma parte de lo que se paga
+
+Un informe de pago mal presentado no se percibe como caro, se percibe como falso. El
+entregable debe estar a la altura del precio:
+
+- Documento paginado y descargable (PDF), con portada, índice, numeración y fecha de
+  emisión, no una página web impresa.
+- La tabla de fechas es el corazón del documento: debe leerse de un vistazo, con los
+  acantilados destacados visualmente y las cifras alineadas.
+- Legible para el público real del sitio, de 50 a 65 años: cuerpo de texto grande,
+  contraste AA, nada de tipografías finas ni gráficos densos.
+- Cada cifra normativa con su fuente citada al pie de su propia sección.
+- Debe verse igual de bien impreso en blanco y negro: mucho de este público lo imprimirá.
+
+### Datos de los clientes: qué se puede hacer con ellos y qué no
+
+El propietario plantea comercializar con bancos los datos recogidos, para productos de
+inversión que complementen la pensión. **La versión "vender la base de datos" queda
+descartada**, por tres razones, en este orden:
+
+1. **No es lícita tal cual.** Los datos se recogen con una finalidad —calcular una
+   estimación de pensión— y cederlos a terceros para su prospección comercial es una
+   finalidad distinta e incompatible. Haría falta un consentimiento **específico,
+   separado, informado (nombrando a los destinatarios) y libre**, que no puede ser
+   condición para recibir el informe. Un consentimiento empaquetado con la compra es
+   nulo, y aquí el perfil es especialmente sensible en lo económico: edad, carrera de
+   cotización y base reguladora de una persona de 50 a 65 años.
+2. **Puede ser actividad regulada.** Intermediar o presentar clientes a entidades
+   financieras a cambio de remuneración no es libre en España. Antes de cualquier
+   acuerdo, el propietario debe verificarlo con un profesional.
+3. **Destruye el único foso del producto.** El informe se vende porque no tiene agenda:
+   "aquí está tu número, verificado contra el BOE". Si el comprador sospecha que su caso
+   se ha vendido a un banco, el producto deja de valer lo que se paga por él. Se estaría
+   canjeando el activo que sostiene el negocio por un ingreso menor.
+
+**Lo que sí se puede hacer, y probablemente convierte mejor:** ofrecer al comprador,
+**después** de entregarle el informe y con una casilla **separada y desmarcada**, que se
+le ponga en contacto con una entidad concreta para estudiar cómo complementar su
+pensión. Es el momento de máxima intención —acaba de ver en euros su propio agujero— y
+el usuario elige. Eso es captación consentida, no cesión de una base de datos: la
+diferencia entre las dos cosas es exactamente lo que separa un ingreso recurrente de una
+sanción. El estratega debe dimensionar esta vía como **ingreso secundario**, nunca como
+el principal, y nunca condicionando la entrega del informe.
+
 ### Lo que el estratega y el product-owner deben resolver
 
 1. **Precio.** Referencia del propietario: 29 € era poco para lo que cuesta y mucho para
-   lo que daba. Un informe de decisión soporta más. Justificar la cifra elegida contra
-   lo que el comprador se juega (los acantilados de arriba son de cinco cifras).
+   lo que daba. Un informe de decisión soporta más, y ahora además va respaldado por una
+   verificación contra el BOE que se puede enseñar. Justificar la cifra elegida contra lo
+   que el comprador se juega (los acantilados de arriba son de cinco cifras).
 2. **Pasarela de pago y entrega automática.** Hoy no existe ninguna de las dos. Son
    tareas del backlog, no supuestos.
 3. **Captura de datos.** El simulador ya pide edad, años cotizados y base reguladora y
@@ -99,6 +167,9 @@ carrera concreta. Ese es el producto.
    transitorio cambia en 2027. Un informe caduca. Decidir si eso es una reemisión
    gratuita, una alerta por email o una suscripción.
 5. **Qué se hace con los 2 leads ya recibidos** mientras el informe no esté listo.
+6. **La vía de captación consentida hacia entidades financieras**: qué se ofrece, con qué
+   texto, en qué momento y con qué destinatarios nombrados. Como ingreso secundario y
+   siempre posterior a la entrega del informe.
 
 ### Realidad de volumen (para que el precio no se decida en el aire)
 

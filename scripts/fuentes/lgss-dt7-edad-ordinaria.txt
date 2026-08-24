@@ -1,0 +1,93 @@
+# FUENTE OFICIAL — extracto literal, no editar a mano
+#
+# Origen : https://www.boe.es/buscar/act.php?id=BOE-A-2015-11724
+#          (texto consolidado de la Ley General de la Seguridad Social)
+# Descarga: 2026-08-24
+# SHA-256 del HTML descargado: 58471d62af78da3dc1b711b400a19db8d8245be95427f31c21abccb7e012bb49
+#
+# Lo consume scripts/verificar-motor.mjs, que compara celda a celda las tablas de
+# aquí con las constantes de src/lib/pension-calculo.ts. Si alguien cambia una cifra
+# del motor sin que la haya cambiado la ley, la verificación falla y el deploy se
+# detiene. Para actualizarlo cuando cambie la norma: vuelve a descargar el texto
+# consolidado del BOE y regenera el extracto. Nunca lo edites a mano.
+#
+Disposición transitoria séptima. Aplicación paulatina de la edad de jubilación y de los años de cotización. 
+ Las edades de jubilación y el período de cotización a que se refiere el artículo 205.1.a), así como las referencias a la edad que se contienen en los artículos 152.1, 207.1.a) y 2, 208.1.a) y 2, 214.1.a) y 311.1 se aplicarán de forma gradual, en los términos que resultan del siguiente cuadro: 
+ Año 
+ Períodos cotizados 
+ Edad exigida 
+ 2013 
+ 35 años y 3 meses o más. 
+ 65 años. 
+ Menos de 35 años y 3 meses. 
+ 65 años y 1 mes. 
+ 2014 
+ 35 años y 6 meses o más. 
+ 65 años. 
+ Menos de 35 años y 6 meses. 
+ 65 años y 2 meses. 
+ 2015 
+ 35 años y 9 meses o más. 
+ 65 años. 
+ Menos de 35 años y 9 meses. 
+ 65 años y 3 meses. 
+ 2016 
+ 36 o más años. 
+ 65 años. 
+ Menos de 36 años. 
+ 65 años y 4 meses. 
+ 2017 
+ 36 años y 3 meses o más. 
+ 65 años. 
+ Menos de 36 años y 3 meses. 
+ 65 años y 5 meses. 
+ 2018 
+ 36 años y 6 meses o más. 
+ 65 años. 
+ Menos de 36 años y 6 meses. 
+ 65 años y 6 meses. 
+ 2019 
+ 36 años y 9 meses o más. 
+ 65 años. 
+ Menos de 36 años y 9 meses. 
+ 65 años y 8 meses. 
+ 2020 
+ 37 o más años. 
+ 65 años. 
+ Menos de 37 años. 
+ 65 años y 10 meses. 
+ 2021 
+ 37 años y 3 meses o más. 
+ 65 años. 
+ Menos de 37 años y 3 meses. 
+ 66 años. 
+ 2022 
+ 37 años y 6 meses o más. 
+ 65 años. 
+ Menos de 37 años y 6 meses. 
+ 66 años y 2 meses. 
+ 2023 
+ 37 años y 9 meses o más. 
+ 65 años. 
+ Menos de 37 años y 9 meses. 
+ 66 años y 4 meses. 
+ 2024 
+ 38 o más años. 
+ 65 años. 
+ Menos de 38 años. 
+ 66 años y 6 meses. 
+ 2025 
+ 38 años y 3 meses o más. 
+ 65 años. 
+ Menos de 38 años y 3 meses. 
+ 66 años y 8 meses. 
+ 2026 
+ 38 años y 3 meses o más. 
+ 65 años. 
+ Menos de 38 años y 3 meses. 
+ 66 años y 10 meses. 
+ A partir del año 2027 
+ 38 años y 6 meses o más. 
+ 65 años. 
+ Menos de 38 años y 6 meses. 
+ 67 años.
