@@ -1,0 +1,816 @@
+{
+  "config": {
+    "descripcion": "Cola de actualizaciones de artículos ya publicados. La routine diaria toma la de menor prioridad con estado \"pendiente\".",
+    "max_actualizaciones_por_dia": 1,
+    "generado_por": "scripts/auditar-normativa.mjs cruzado con el export de Search Console (1 jul – 24 ago 2026)",
+    "fuentes_obligatorias": [
+      "https://www.boe.es/buscar/act.php?id=BOE-A-2015-11724",
+      "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2026-6977",
+      "https://www.seg-social.es"
+    ],
+    "regla_de_oro": "Ninguna cifra normativa nueva sin enlace a boe.es o seg-social.es en la misma sección. Si al corregir aparece una duda normativa, se para y se reporta al propietario.",
+    "cuando_se_vacie": "Regenerar con `node scripts/auditar-normativa.mjs --json`, cruzando el resultado con el export más reciente de scripts/datos/ para priorizar por clics e impresiones reales. Si el auditor no encuentra incidencias de gravedad alta ni media, la cola se queda vacía y el Paso 4 bis de la routine simplemente se salta, anotándolo en el log.",
+    "estado_2026_08_24": "Las 28 entradas iniciales se corrigieron a mano el mismo día por encargo del propietario, en vez de aplicarse a razón de una por día. El auditor queda en 0 incidencias de gravedad alta y media."
+  },
+  "ultima_generacion": "2026-08-24",
+  "actualizaciones": [
+    {
+      "slug": "coeficientes-reductores-jubilacion-anticipada",
+      "estado": "hecha",
+      "motivo": "correccion-normativa",
+      "gravedad_max": "baja",
+      "metricas_gsc_1jul_24ago": {
+        "clics": 73,
+        "impresiones": 3041,
+        "posicion_media": 9.4
+      },
+      "incidencias": [
+        {
+          "regla": "mencion-a-trimestres",
+          "gravedad": "baja",
+          "ocurrencias": 4,
+          "problema": "Menciona el cálculo por trimestres.",
+          "correccion": "Correcto solo si el texto lo presenta como el sistema ANTERIOR, derogado desde el 1-1-2022. Si lo presenta como vigente, es un error grave: revisar la frase completa."
+        }
+      ],
+      "fecha_ejecucion": "2026-08-24",
+      "resultado": "Revisado a mano contra el BOE el 2026-08-24: la tabla mensual ya era correcta. Corregido que el cálculo mensual rige desde el 1-1-2022 (Ley 21/2021), no desde 2024, y el extremo inferior de la escala involuntaria (0,63 %-0,50 % con 1 mes, no 4,75 %). Las menciones restantes a \"trimestre\" son explicativas del sistema derogado y son correctas.",
+      "prioridad": 0
+    },
+    {
+      "slug": "tabla-penalizacion-jubilacion-anticipada",
+      "estado": "hecha",
+      "motivo": "correccion-normativa",
+      "gravedad_max": "baja",
+      "metricas_gsc_1jul_24ago": {
+        "clics": 48,
+        "impresiones": 1951,
+        "posicion_media": 10.9
+      },
+      "incidencias": [
+        {
+          "regla": "mencion-a-trimestres",
+          "gravedad": "baja",
+          "ocurrencias": 5,
+          "problema": "Menciona el cálculo por trimestres.",
+          "correccion": "Correcto solo si el texto lo presenta como el sistema ANTERIOR, derogado desde el 1-1-2022. Si lo presenta como vigente, es un error grave: revisar la frase completa."
+        }
+      ],
+      "fecha_ejecucion": "2026-08-24",
+      "resultado": "Revisado a mano contra el BOE el 2026-08-24: la tabla mensual ya era correcta. Corregido que el cálculo mensual rige desde el 1-1-2022 (Ley 21/2021), no desde 2024, y el extremo inferior de la escala involuntaria (0,63 %-0,50 % con 1 mes, no 4,75 %). Las menciones restantes a \"trimestre\" son explicativas del sistema derogado y son correctas.",
+      "prioridad": 0
+    },
+    {
+      "slug": "jubilacion-anticipada-transportistas",
+      "estado": "hecha",
+      "motivo": "correccion-normativa",
+      "gravedad_max": "alta",
+      "metricas_gsc_1jul_24ago": {
+        "clics": 45,
+        "impresiones": 2998,
+        "posicion_media": 8.1
+      },
+      "incidencias": [
+        {
+          "regla": "coeficiente-por-trimestre",
+          "gravedad": "alta",
+          "ocurrencias": 1,
+          "problema": "Usa los porcentajes del modelo derogado de coeficiente fijo por trimestre.",
+          "correccion": "Sustituir por la tabla mensual por tramos de cotización de los arts. 207.2 y 208.2 LGSS (voluntaria: 21 %-13 % con 24 meses, 3,26 %-2,81 % con 1 mes; involuntaria: 30 %-24 % con 48 meses, 0,63 %-0,50 % con 1 mes)."
+        },
+        {
+          "regla": "mencion-a-trimestres",
+          "gravedad": "baja",
+          "ocurrencias": 1,
+          "problema": "Menciona el cálculo por trimestres.",
+          "correccion": "Correcto solo si el texto lo presenta como el sistema ANTERIOR, derogado desde el 1-1-2022. Si lo presenta como vigente, es un error grave: revisar la frase completa."
+        }
+      ],
+      "prioridad": 0,
+      "fecha_ejecucion": "2026-08-24",
+      "resultado": "Corregido a mano el 2026-08-24 contra el BOE, dentro de la corrección acelerada que pidió el propietario. Sustituido el coeficiente fijo por trimestre por las tablas mensuales de los arts. 207.2/208.2 LGSS y/o actualizada la edad ordinaria de 2026 (66 años y 10 meses, umbral de 38 años y 3 meses, DT 7.ª LGSS), recalculando los ejemplos numéricos y los gráficos afectados. Verificado con scripts/auditar-normativa.mjs."
+    },
+    {
+      "slug": "jubilarse-55-anos-30-cotizados",
+      "estado": "hecha",
+      "motivo": "correccion-normativa",
+      "gravedad_max": "alta",
+      "metricas_gsc_1jul_24ago": {
+        "clics": 17,
+        "impresiones": 453,
+        "posicion_media": 4.1
+      },
+      "incidencias": [
+        {
+          "regla": "coeficiente-por-trimestre",
+          "gravedad": "alta",
+          "ocurrencias": 4,
+          "problema": "Usa los porcentajes del modelo derogado de coeficiente fijo por trimestre.",
+          "correccion": "Sustituir por la tabla mensual por tramos de cotización de los arts. 207.2 y 208.2 LGSS (voluntaria: 21 %-13 % con 24 meses, 3,26 %-2,81 % con 1 mes; involuntaria: 30 %-24 % con 48 meses, 0,63 %-0,50 % con 1 mes)."
+        },
+        {
+          "regla": "mencion-a-trimestres",
+          "gravedad": "baja",
+          "ocurrencias": 2,
+          "problema": "Menciona el cálculo por trimestres.",
+          "correccion": "Correcto solo si el texto lo presenta como el sistema ANTERIOR, derogado desde el 1-1-2022. Si lo presenta como vigente, es un error grave: revisar la frase completa."
+        }
+      ],
+      "prioridad": 0,
+      "fecha_ejecucion": "2026-08-24",
+      "resultado": "Corregido a mano el 2026-08-24 contra el BOE, dentro de la corrección acelerada que pidió el propietario. Sustituido el coeficiente fijo por trimestre por las tablas mensuales de los arts. 207.2/208.2 LGSS y/o actualizada la edad ordinaria de 2026 (66 años y 10 meses, umbral de 38 años y 3 meses, DT 7.ª LGSS), recalculando los ejemplos numéricos y los gráficos afectados. Verificado con scripts/auditar-normativa.mjs."
+    },
+    {
+      "slug": "jubilarse-63-anos",
+      "estado": "hecha",
+      "motivo": "correccion-normativa",
+      "gravedad_max": "alta",
+      "metricas_gsc_1jul_24ago": {
+        "clics": 10,
+        "impresiones": 1384,
+        "posicion_media": null
+      },
+      "incidencias": [
+        {
+          "regla": "edad-ordinaria-2025",
+          "gravedad": "alta",
+          "ocurrencias": 5,
+          "problema": "Presenta la edad ordinaria de 2025 (66 años y 8 meses).",
+          "correccion": "En 2026 son 66 años y 10 meses (DT 7.ª LGSS). Solo es correcto si el texto la etiqueta explícitamente como el valor de 2025 en una tabla histórica."
+        },
+        {
+          "regla": "umbral-edad-reducida",
+          "gravedad": "media",
+          "ocurrencias": 4,
+          "problema": "Usa 38 años y 6 meses como umbral para jubilarse a los 65 en 2026.",
+          "correccion": "En 2026 el umbral es 38 años y 3 meses; los 38 años y 6 meses rigen a partir de 2027 (DT 7.ª LGSS). Ojo: 38 años y 6 meses SÍ es correcto como primer tramo de las tablas de coeficientes de los arts. 207.2 y 208.2."
+        }
+      ],
+      "prioridad": 0,
+      "fecha_ejecucion": "2026-08-24",
+      "resultado": "Corregido a mano el 2026-08-24 contra el BOE, dentro de la corrección acelerada que pidió el propietario. Sustituido el coeficiente fijo por trimestre por las tablas mensuales de los arts. 207.2/208.2 LGSS y/o actualizada la edad ordinaria de 2026 (66 años y 10 meses, umbral de 38 años y 3 meses, DT 7.ª LGSS), recalculando los ejemplos numéricos y los gráficos afectados. Verificado con scripts/auditar-normativa.mjs."
+    },
+    {
+      "slug": "jubilacion-anticipada-funcionarios",
+      "estado": "hecha",
+      "motivo": "correccion-normativa",
+      "gravedad_max": "alta",
+      "metricas_gsc_1jul_24ago": {
+        "clics": 7,
+        "impresiones": 304,
+        "posicion_media": null
+      },
+      "incidencias": [
+        {
+          "regla": "coeficiente-por-trimestre",
+          "gravedad": "alta",
+          "ocurrencias": 1,
+          "problema": "Usa los porcentajes del modelo derogado de coeficiente fijo por trimestre.",
+          "correccion": "Sustituir por la tabla mensual por tramos de cotización de los arts. 207.2 y 208.2 LGSS (voluntaria: 21 %-13 % con 24 meses, 3,26 %-2,81 % con 1 mes; involuntaria: 30 %-24 % con 48 meses, 0,63 %-0,50 % con 1 mes)."
+        },
+        {
+          "regla": "mencion-a-trimestres",
+          "gravedad": "baja",
+          "ocurrencias": 2,
+          "problema": "Menciona el cálculo por trimestres.",
+          "correccion": "Correcto solo si el texto lo presenta como el sistema ANTERIOR, derogado desde el 1-1-2022. Si lo presenta como vigente, es un error grave: revisar la frase completa."
+        },
+        {
+          "regla": "edad-ordinaria-2025",
+          "gravedad": "alta",
+          "ocurrencias": 2,
+          "problema": "Presenta la edad ordinaria de 2025 (66 años y 8 meses).",
+          "correccion": "En 2026 son 66 años y 10 meses (DT 7.ª LGSS). Solo es correcto si el texto la etiqueta explícitamente como el valor de 2025 en una tabla histórica."
+        }
+      ],
+      "prioridad": 0,
+      "fecha_ejecucion": "2026-08-24",
+      "resultado": "Corregido a mano el 2026-08-24 contra el BOE, dentro de la corrección acelerada que pidió el propietario. Sustituido el coeficiente fijo por trimestre por las tablas mensuales de los arts. 207.2/208.2 LGSS y/o actualizada la edad ordinaria de 2026 (66 años y 10 meses, umbral de 38 años y 3 meses, DT 7.ª LGSS), recalculando los ejemplos numéricos y los gráficos afectados. Verificado con scripts/auditar-normativa.mjs."
+    },
+    {
+      "slug": "jubilacion-anticipada-discapacidad",
+      "estado": "hecha",
+      "motivo": "correccion-normativa",
+      "gravedad_max": "alta",
+      "metricas_gsc_1jul_24ago": {
+        "clics": 4,
+        "impresiones": 684,
+        "posicion_media": 9.8
+      },
+      "incidencias": [
+        {
+          "regla": "edad-ordinaria-2025",
+          "gravedad": "alta",
+          "ocurrencias": 1,
+          "problema": "Presenta la edad ordinaria de 2025 (66 años y 8 meses).",
+          "correccion": "En 2026 son 66 años y 10 meses (DT 7.ª LGSS). Solo es correcto si el texto la etiqueta explícitamente como el valor de 2025 en una tabla histórica."
+        }
+      ],
+      "prioridad": 0,
+      "fecha_ejecucion": "2026-08-24",
+      "resultado": "Corregido a mano el 2026-08-24 contra el BOE, dentro de la corrección acelerada que pidió el propietario. Sustituido el coeficiente fijo por trimestre por las tablas mensuales de los arts. 207.2/208.2 LGSS y/o actualizada la edad ordinaria de 2026 (66 años y 10 meses, umbral de 38 años y 3 meses, DT 7.ª LGSS), recalculando los ejemplos numéricos y los gráficos afectados. Verificado con scripts/auditar-normativa.mjs."
+    },
+    {
+      "slug": "jubilacion-anticipada-profesiones-riesgo",
+      "estado": "hecha",
+      "motivo": "correccion-normativa",
+      "gravedad_max": "alta",
+      "metricas_gsc_1jul_24ago": {
+        "clics": 4,
+        "impresiones": 379,
+        "posicion_media": 9.4
+      },
+      "incidencias": [
+        {
+          "regla": "mencion-a-trimestres",
+          "gravedad": "baja",
+          "ocurrencias": 1,
+          "problema": "Menciona el cálculo por trimestres.",
+          "correccion": "Correcto solo si el texto lo presenta como el sistema ANTERIOR, derogado desde el 1-1-2022. Si lo presenta como vigente, es un error grave: revisar la frase completa."
+        },
+        {
+          "regla": "edad-ordinaria-2025",
+          "gravedad": "alta",
+          "ocurrencias": 1,
+          "problema": "Presenta la edad ordinaria de 2025 (66 años y 8 meses).",
+          "correccion": "En 2026 son 66 años y 10 meses (DT 7.ª LGSS). Solo es correcto si el texto la etiqueta explícitamente como el valor de 2025 en una tabla histórica."
+        }
+      ],
+      "prioridad": 0,
+      "fecha_ejecucion": "2026-08-24",
+      "resultado": "Corregido a mano el 2026-08-24 contra el BOE, dentro de la corrección acelerada que pidió el propietario. Sustituido el coeficiente fijo por trimestre por las tablas mensuales de los arts. 207.2/208.2 LGSS y/o actualizada la edad ordinaria de 2026 (66 años y 10 meses, umbral de 38 años y 3 meses, DT 7.ª LGSS), recalculando los ejemplos numéricos y los gráficos afectados. Verificado con scripts/auditar-normativa.mjs."
+    },
+    {
+      "slug": "jubilacion-anticipada-mineros",
+      "estado": "hecha",
+      "motivo": "correccion-normativa",
+      "gravedad_max": "alta",
+      "metricas_gsc_1jul_24ago": {
+        "clics": 3,
+        "impresiones": 96,
+        "posicion_media": null
+      },
+      "incidencias": [
+        {
+          "regla": "mencion-a-trimestres",
+          "gravedad": "baja",
+          "ocurrencias": 2,
+          "problema": "Menciona el cálculo por trimestres.",
+          "correccion": "Correcto solo si el texto lo presenta como el sistema ANTERIOR, derogado desde el 1-1-2022. Si lo presenta como vigente, es un error grave: revisar la frase completa."
+        },
+        {
+          "regla": "edad-ordinaria-2025",
+          "gravedad": "alta",
+          "ocurrencias": 3,
+          "problema": "Presenta la edad ordinaria de 2025 (66 años y 8 meses).",
+          "correccion": "En 2026 son 66 años y 10 meses (DT 7.ª LGSS). Solo es correcto si el texto la etiqueta explícitamente como el valor de 2025 en una tabla histórica."
+        }
+      ],
+      "prioridad": 0,
+      "fecha_ejecucion": "2026-08-24",
+      "resultado": "Corregido a mano el 2026-08-24 contra el BOE, dentro de la corrección acelerada que pidió el propietario. Sustituido el coeficiente fijo por trimestre por las tablas mensuales de los arts. 207.2/208.2 LGSS y/o actualizada la edad ordinaria de 2026 (66 años y 10 meses, umbral de 38 años y 3 meses, DT 7.ª LGSS), recalculando los ejemplos numéricos y los gráficos afectados. Verificado con scripts/auditar-normativa.mjs."
+    },
+    {
+      "slug": "jubilacion-anticipada-involuntaria",
+      "estado": "hecha",
+      "motivo": "correccion-normativa",
+      "gravedad_max": "alta",
+      "metricas_gsc_1jul_24ago": {
+        "clics": 2,
+        "impresiones": 460,
+        "posicion_media": null
+      },
+      "incidencias": [
+        {
+          "regla": "mencion-a-trimestres",
+          "gravedad": "baja",
+          "ocurrencias": 1,
+          "problema": "Menciona el cálculo por trimestres.",
+          "correccion": "Correcto solo si el texto lo presenta como el sistema ANTERIOR, derogado desde el 1-1-2022. Si lo presenta como vigente, es un error grave: revisar la frase completa."
+        },
+        {
+          "regla": "edad-ordinaria-2025",
+          "gravedad": "alta",
+          "ocurrencias": 1,
+          "problema": "Presenta la edad ordinaria de 2025 (66 años y 8 meses).",
+          "correccion": "En 2026 son 66 años y 10 meses (DT 7.ª LGSS). Solo es correcto si el texto la etiqueta explícitamente como el valor de 2025 en una tabla histórica."
+        }
+      ],
+      "prioridad": 0,
+      "fecha_ejecucion": "2026-08-24",
+      "resultado": "Corregido a mano el 2026-08-24 contra el BOE, dentro de la corrección acelerada que pidió el propietario. Sustituido el coeficiente fijo por trimestre por las tablas mensuales de los arts. 207.2/208.2 LGSS y/o actualizada la edad ordinaria de 2026 (66 años y 10 meses, umbral de 38 años y 3 meses, DT 7.ª LGSS), recalculando los ejemplos numéricos y los gráficos afectados. Verificado con scripts/auditar-normativa.mjs."
+    },
+    {
+      "slug": "pension-minima-15-anos-cotizados",
+      "estado": "hecha",
+      "motivo": "correccion-normativa",
+      "gravedad_max": "alta",
+      "metricas_gsc_1jul_24ago": {
+        "clics": 2,
+        "impresiones": 238,
+        "posicion_media": null
+      },
+      "incidencias": [
+        {
+          "regla": "edad-ordinaria-2025",
+          "gravedad": "alta",
+          "ocurrencias": 5,
+          "problema": "Presenta la edad ordinaria de 2025 (66 años y 8 meses).",
+          "correccion": "En 2026 son 66 años y 10 meses (DT 7.ª LGSS). Solo es correcto si el texto la etiqueta explícitamente como el valor de 2025 en una tabla histórica."
+        }
+      ],
+      "prioridad": 0,
+      "fecha_ejecucion": "2026-08-24",
+      "resultado": "Corregido a mano el 2026-08-24 contra el BOE, dentro de la corrección acelerada que pidió el propietario. Sustituido el coeficiente fijo por trimestre por las tablas mensuales de los arts. 207.2/208.2 LGSS y/o actualizada la edad ordinaria de 2026 (66 años y 10 meses, umbral de 38 años y 3 meses, DT 7.ª LGSS), recalculando los ejemplos numéricos y los gráficos afectados. Verificado con scripts/auditar-normativa.mjs."
+    },
+    {
+      "slug": "enfermedades-jubilacion-anticipada-2026",
+      "estado": "hecha",
+      "motivo": "correccion-normativa",
+      "gravedad_max": "alta",
+      "metricas_gsc_1jul_24ago": {
+        "clics": 2,
+        "impresiones": 79,
+        "posicion_media": 7.7
+      },
+      "incidencias": [
+        {
+          "regla": "edad-ordinaria-2025",
+          "gravedad": "alta",
+          "ocurrencias": 1,
+          "problema": "Presenta la edad ordinaria de 2025 (66 años y 8 meses).",
+          "correccion": "En 2026 son 66 años y 10 meses (DT 7.ª LGSS). Solo es correcto si el texto la etiqueta explícitamente como el valor de 2025 en una tabla histórica."
+        }
+      ],
+      "prioridad": 0,
+      "fecha_ejecucion": "2026-08-24",
+      "resultado": "Corregido a mano el 2026-08-24 contra el BOE, dentro de la corrección acelerada que pidió el propietario. Sustituido el coeficiente fijo por trimestre por las tablas mensuales de los arts. 207.2/208.2 LGSS y/o actualizada la edad ordinaria de 2026 (66 años y 10 meses, umbral de 38 años y 3 meses, DT 7.ª LGSS), recalculando los ejemplos numéricos y los gráficos afectados. Verificado con scripts/auditar-normativa.mjs."
+    },
+    {
+      "slug": "jubilacion-anticipada-novedades-2026",
+      "estado": "hecha",
+      "motivo": "correccion-normativa",
+      "gravedad_max": "alta",
+      "metricas_gsc_1jul_24ago": {
+        "clics": 1,
+        "impresiones": 36,
+        "posicion_media": 15.7
+      },
+      "incidencias": [
+        {
+          "regla": "edad-ordinaria-2025",
+          "gravedad": "alta",
+          "ocurrencias": 1,
+          "problema": "Presenta la edad ordinaria de 2025 (66 años y 8 meses).",
+          "correccion": "En 2026 son 66 años y 10 meses (DT 7.ª LGSS). Solo es correcto si el texto la etiqueta explícitamente como el valor de 2025 en una tabla histórica."
+        },
+        {
+          "regla": "cambio-fechado-en-2024",
+          "gravedad": "baja",
+          "ocurrencias": 1,
+          "problema": "Fecha en 2024 el paso al cálculo mensual.",
+          "correccion": "El cálculo mensual rige desde el 1-1-2022 (Ley 21/2021). El RDL 2/2023 cambió otras cosas (base reguladora, cotización), no la periodicidad del coeficiente."
+        }
+      ],
+      "prioridad": 0,
+      "fecha_ejecucion": "2026-08-24",
+      "resultado": "Corregido a mano el 2026-08-24 contra el BOE, dentro de la corrección acelerada que pidió el propietario. Sustituido el coeficiente fijo por trimestre por las tablas mensuales de los arts. 207.2/208.2 LGSS y/o actualizada la edad ordinaria de 2026 (66 años y 10 meses, umbral de 38 años y 3 meses, DT 7.ª LGSS), recalculando los ejemplos numéricos y los gráficos afectados. Verificado con scripts/auditar-normativa.mjs."
+    },
+    {
+      "slug": "que-es-la-jubilacion-anticipada",
+      "estado": "hecha",
+      "motivo": "correccion-normativa",
+      "gravedad_max": "alta",
+      "metricas_gsc_1jul_24ago": {
+        "clics": 0,
+        "impresiones": 344,
+        "posicion_media": 38.5
+      },
+      "incidencias": [
+        {
+          "regla": "coeficiente-por-trimestre",
+          "gravedad": "alta",
+          "ocurrencias": 18,
+          "problema": "Usa los porcentajes del modelo derogado de coeficiente fijo por trimestre.",
+          "correccion": "Sustituir por la tabla mensual por tramos de cotización de los arts. 207.2 y 208.2 LGSS (voluntaria: 21 %-13 % con 24 meses, 3,26 %-2,81 % con 1 mes; involuntaria: 30 %-24 % con 48 meses, 0,63 %-0,50 % con 1 mes)."
+        },
+        {
+          "regla": "mencion-a-trimestres",
+          "gravedad": "baja",
+          "ocurrencias": 7,
+          "problema": "Menciona el cálculo por trimestres.",
+          "correccion": "Correcto solo si el texto lo presenta como el sistema ANTERIOR, derogado desde el 1-1-2022. Si lo presenta como vigente, es un error grave: revisar la frase completa."
+        },
+        {
+          "regla": "edad-ordinaria-2025",
+          "gravedad": "alta",
+          "ocurrencias": 2,
+          "problema": "Presenta la edad ordinaria de 2025 (66 años y 8 meses).",
+          "correccion": "En 2026 son 66 años y 10 meses (DT 7.ª LGSS). Solo es correcto si el texto la etiqueta explícitamente como el valor de 2025 en una tabla histórica."
+        },
+        {
+          "regla": "umbral-edad-reducida",
+          "gravedad": "media",
+          "ocurrencias": 1,
+          "problema": "Usa 38 años y 6 meses como umbral para jubilarse a los 65 en 2026.",
+          "correccion": "En 2026 el umbral es 38 años y 3 meses; los 38 años y 6 meses rigen a partir de 2027 (DT 7.ª LGSS). Ojo: 38 años y 6 meses SÍ es correcto como primer tramo de las tablas de coeficientes de los arts. 207.2 y 208.2."
+        }
+      ],
+      "prioridad": 0,
+      "fecha_ejecucion": "2026-08-24",
+      "resultado": "Corregido a mano el 2026-08-24 contra el BOE, dentro de la corrección acelerada que pidió el propietario. Sustituido el coeficiente fijo por trimestre por las tablas mensuales de los arts. 207.2/208.2 LGSS y/o actualizada la edad ordinaria de 2026 (66 años y 10 meses, umbral de 38 años y 3 meses, DT 7.ª LGSS), recalculando los ejemplos numéricos y los gráficos afectados. Verificado con scripts/auditar-normativa.mjs."
+    },
+    {
+      "slug": "pension-contributiva-vs-no-contributiva",
+      "estado": "hecha",
+      "motivo": "correccion-normativa",
+      "gravedad_max": "alta",
+      "metricas_gsc_1jul_24ago": {
+        "clics": 0,
+        "impresiones": 130,
+        "posicion_media": 10.9
+      },
+      "incidencias": [
+        {
+          "regla": "edad-ordinaria-2025",
+          "gravedad": "alta",
+          "ocurrencias": 2,
+          "problema": "Presenta la edad ordinaria de 2025 (66 años y 8 meses).",
+          "correccion": "En 2026 son 66 años y 10 meses (DT 7.ª LGSS). Solo es correcto si el texto la etiqueta explícitamente como el valor de 2025 en una tabla histórica."
+        },
+        {
+          "regla": "umbral-edad-reducida",
+          "gravedad": "media",
+          "ocurrencias": 1,
+          "problema": "Usa 38 años y 6 meses como umbral para jubilarse a los 65 en 2026.",
+          "correccion": "En 2026 el umbral es 38 años y 3 meses; los 38 años y 6 meses rigen a partir de 2027 (DT 7.ª LGSS). Ojo: 38 años y 6 meses SÍ es correcto como primer tramo de las tablas de coeficientes de los arts. 207.2 y 208.2."
+        }
+      ],
+      "prioridad": 0,
+      "fecha_ejecucion": "2026-08-24",
+      "resultado": "Corregido a mano el 2026-08-24 contra el BOE, dentro de la corrección acelerada que pidió el propietario. Sustituido el coeficiente fijo por trimestre por las tablas mensuales de los arts. 207.2/208.2 LGSS y/o actualizada la edad ordinaria de 2026 (66 años y 10 meses, umbral de 38 años y 3 meses, DT 7.ª LGSS), recalculando los ejemplos numéricos y los gráficos afectados. Verificado con scripts/auditar-normativa.mjs."
+    },
+    {
+      "slug": "jubilacion-anticipada-voluntaria-requisitos-penalizaciones",
+      "estado": "hecha",
+      "motivo": "correccion-normativa",
+      "gravedad_max": "alta",
+      "metricas_gsc_1jul_24ago": {
+        "clics": 0,
+        "impresiones": 105,
+        "posicion_media": 38.0
+      },
+      "incidencias": [
+        {
+          "regla": "coeficiente-por-trimestre",
+          "gravedad": "alta",
+          "ocurrencias": 4,
+          "problema": "Usa los porcentajes del modelo derogado de coeficiente fijo por trimestre.",
+          "correccion": "Sustituir por la tabla mensual por tramos de cotización de los arts. 207.2 y 208.2 LGSS (voluntaria: 21 %-13 % con 24 meses, 3,26 %-2,81 % con 1 mes; involuntaria: 30 %-24 % con 48 meses, 0,63 %-0,50 % con 1 mes)."
+        },
+        {
+          "regla": "mencion-a-trimestres",
+          "gravedad": "baja",
+          "ocurrencias": 4,
+          "problema": "Menciona el cálculo por trimestres.",
+          "correccion": "Correcto solo si el texto lo presenta como el sistema ANTERIOR, derogado desde el 1-1-2022. Si lo presenta como vigente, es un error grave: revisar la frase completa."
+        },
+        {
+          "regla": "edad-ordinaria-2025",
+          "gravedad": "alta",
+          "ocurrencias": 1,
+          "problema": "Presenta la edad ordinaria de 2025 (66 años y 8 meses).",
+          "correccion": "En 2026 son 66 años y 10 meses (DT 7.ª LGSS). Solo es correcto si el texto la etiqueta explícitamente como el valor de 2025 en una tabla histórica."
+        },
+        {
+          "regla": "umbral-edad-reducida",
+          "gravedad": "media",
+          "ocurrencias": 1,
+          "problema": "Usa 38 años y 6 meses como umbral para jubilarse a los 65 en 2026.",
+          "correccion": "En 2026 el umbral es 38 años y 3 meses; los 38 años y 6 meses rigen a partir de 2027 (DT 7.ª LGSS). Ojo: 38 años y 6 meses SÍ es correcto como primer tramo de las tablas de coeficientes de los arts. 207.2 y 208.2."
+        }
+      ],
+      "prioridad": 0,
+      "fecha_ejecucion": "2026-08-24",
+      "resultado": "Corregido a mano el 2026-08-24 contra el BOE, dentro de la corrección acelerada que pidió el propietario. Sustituido el coeficiente fijo por trimestre por las tablas mensuales de los arts. 207.2/208.2 LGSS y/o actualizada la edad ordinaria de 2026 (66 años y 10 meses, umbral de 38 años y 3 meses, DT 7.ª LGSS), recalculando los ejemplos numéricos y los gráficos afectados. Verificado con scripts/auditar-normativa.mjs."
+    },
+    {
+      "slug": "gap-economico-jubilacion-anticipada",
+      "estado": "hecha",
+      "motivo": "correccion-normativa",
+      "gravedad_max": "alta",
+      "metricas_gsc_1jul_24ago": {
+        "clics": 0,
+        "impresiones": 59,
+        "posicion_media": 26.3
+      },
+      "incidencias": [
+        {
+          "regla": "coeficiente-por-trimestre",
+          "gravedad": "alta",
+          "ocurrencias": 2,
+          "problema": "Usa los porcentajes del modelo derogado de coeficiente fijo por trimestre.",
+          "correccion": "Sustituir por la tabla mensual por tramos de cotización de los arts. 207.2 y 208.2 LGSS (voluntaria: 21 %-13 % con 24 meses, 3,26 %-2,81 % con 1 mes; involuntaria: 30 %-24 % con 48 meses, 0,63 %-0,50 % con 1 mes)."
+        },
+        {
+          "regla": "mencion-a-trimestres",
+          "gravedad": "baja",
+          "ocurrencias": 1,
+          "problema": "Menciona el cálculo por trimestres.",
+          "correccion": "Correcto solo si el texto lo presenta como el sistema ANTERIOR, derogado desde el 1-1-2022. Si lo presenta como vigente, es un error grave: revisar la frase completa."
+        }
+      ],
+      "prioridad": 0,
+      "fecha_ejecucion": "2026-08-24",
+      "resultado": "Corregido a mano el 2026-08-24 contra el BOE, dentro de la corrección acelerada que pidió el propietario. Sustituido el coeficiente fijo por trimestre por las tablas mensuales de los arts. 207.2/208.2 LGSS y/o actualizada la edad ordinaria de 2026 (66 años y 10 meses, umbral de 38 años y 3 meses, DT 7.ª LGSS), recalculando los ejemplos numéricos y los gráficos afectados. Verificado con scripts/auditar-normativa.mjs."
+    },
+    {
+      "slug": "jubilacion-anticipada-autonomos",
+      "estado": "hecha",
+      "motivo": "correccion-normativa",
+      "gravedad_max": "alta",
+      "metricas_gsc_1jul_24ago": {
+        "clics": 0,
+        "impresiones": 54,
+        "posicion_media": 15.8
+      },
+      "incidencias": [
+        {
+          "regla": "coeficiente-por-trimestre",
+          "gravedad": "alta",
+          "ocurrencias": 2,
+          "problema": "Usa los porcentajes del modelo derogado de coeficiente fijo por trimestre.",
+          "correccion": "Sustituir por la tabla mensual por tramos de cotización de los arts. 207.2 y 208.2 LGSS (voluntaria: 21 %-13 % con 24 meses, 3,26 %-2,81 % con 1 mes; involuntaria: 30 %-24 % con 48 meses, 0,63 %-0,50 % con 1 mes)."
+        },
+        {
+          "regla": "mencion-a-trimestres",
+          "gravedad": "baja",
+          "ocurrencias": 3,
+          "problema": "Menciona el cálculo por trimestres.",
+          "correccion": "Correcto solo si el texto lo presenta como el sistema ANTERIOR, derogado desde el 1-1-2022. Si lo presenta como vigente, es un error grave: revisar la frase completa."
+        },
+        {
+          "regla": "edad-ordinaria-2025",
+          "gravedad": "alta",
+          "ocurrencias": 3,
+          "problema": "Presenta la edad ordinaria de 2025 (66 años y 8 meses).",
+          "correccion": "En 2026 son 66 años y 10 meses (DT 7.ª LGSS). Solo es correcto si el texto la etiqueta explícitamente como el valor de 2025 en una tabla histórica."
+        }
+      ],
+      "prioridad": 0,
+      "fecha_ejecucion": "2026-08-24",
+      "resultado": "Corregido a mano el 2026-08-24 contra el BOE, dentro de la corrección acelerada que pidió el propietario. Sustituido el coeficiente fijo por trimestre por las tablas mensuales de los arts. 207.2/208.2 LGSS y/o actualizada la edad ordinaria de 2026 (66 años y 10 meses, umbral de 38 años y 3 meses, DT 7.ª LGSS), recalculando los ejemplos numéricos y los gráficos afectados. Verificado con scripts/auditar-normativa.mjs."
+    },
+    {
+      "slug": "jubilacion-anticipada-cambios-2026",
+      "estado": "hecha",
+      "motivo": "correccion-normativa",
+      "gravedad_max": "alta",
+      "metricas_gsc_1jul_24ago": {
+        "clics": 0,
+        "impresiones": 35,
+        "posicion_media": 19.7
+      },
+      "incidencias": [
+        {
+          "regla": "mencion-a-trimestres",
+          "gravedad": "baja",
+          "ocurrencias": 3,
+          "problema": "Menciona el cálculo por trimestres.",
+          "correccion": "Correcto solo si el texto lo presenta como el sistema ANTERIOR, derogado desde el 1-1-2022. Si lo presenta como vigente, es un error grave: revisar la frase completa."
+        },
+        {
+          "regla": "edad-ordinaria-2025",
+          "gravedad": "alta",
+          "ocurrencias": 2,
+          "problema": "Presenta la edad ordinaria de 2025 (66 años y 8 meses).",
+          "correccion": "En 2026 son 66 años y 10 meses (DT 7.ª LGSS). Solo es correcto si el texto la etiqueta explícitamente como el valor de 2025 en una tabla histórica."
+        }
+      ],
+      "prioridad": 0,
+      "fecha_ejecucion": "2026-08-24",
+      "resultado": "Corregido a mano el 2026-08-24 contra el BOE, dentro de la corrección acelerada que pidió el propietario. Sustituido el coeficiente fijo por trimestre por las tablas mensuales de los arts. 207.2/208.2 LGSS y/o actualizada la edad ordinaria de 2026 (66 años y 10 meses, umbral de 38 años y 3 meses, DT 7.ª LGSS), recalculando los ejemplos numéricos y los gráficos afectados. Verificado con scripts/auditar-normativa.mjs."
+    },
+    {
+      "slug": "anos-cotizados-para-jubilarse",
+      "estado": "hecha",
+      "motivo": "correccion-normativa",
+      "gravedad_max": "alta",
+      "metricas_gsc_1jul_24ago": {
+        "clics": 0,
+        "impresiones": 9,
+        "posicion_media": null
+      },
+      "incidencias": [
+        {
+          "regla": "edad-ordinaria-2025",
+          "gravedad": "alta",
+          "ocurrencias": 1,
+          "problema": "Presenta la edad ordinaria de 2025 (66 años y 8 meses).",
+          "correccion": "En 2026 son 66 años y 10 meses (DT 7.ª LGSS). Solo es correcto si el texto la etiqueta explícitamente como el valor de 2025 en una tabla histórica."
+        }
+      ],
+      "prioridad": 0,
+      "fecha_ejecucion": "2026-08-24",
+      "resultado": "Corregido a mano el 2026-08-24 contra el BOE, dentro de la corrección acelerada que pidió el propietario. Sustituido el coeficiente fijo por trimestre por las tablas mensuales de los arts. 207.2/208.2 LGSS y/o actualizada la edad ordinaria de 2026 (66 años y 10 meses, umbral de 38 años y 3 meses, DT 7.ª LGSS), recalculando los ejemplos numéricos y los gráficos afectados. Verificado con scripts/auditar-normativa.mjs."
+    },
+    {
+      "slug": "jubilacion-anticipada-trabajadores-mar",
+      "estado": "hecha",
+      "motivo": "correccion-normativa",
+      "gravedad_max": "alta",
+      "metricas_gsc_1jul_24ago": {
+        "clics": 0,
+        "impresiones": 5,
+        "posicion_media": null
+      },
+      "incidencias": [
+        {
+          "regla": "mencion-a-trimestres",
+          "gravedad": "baja",
+          "ocurrencias": 1,
+          "problema": "Menciona el cálculo por trimestres.",
+          "correccion": "Correcto solo si el texto lo presenta como el sistema ANTERIOR, derogado desde el 1-1-2022. Si lo presenta como vigente, es un error grave: revisar la frase completa."
+        },
+        {
+          "regla": "edad-ordinaria-2025",
+          "gravedad": "alta",
+          "ocurrencias": 3,
+          "problema": "Presenta la edad ordinaria de 2025 (66 años y 8 meses).",
+          "correccion": "En 2026 son 66 años y 10 meses (DT 7.ª LGSS). Solo es correcto si el texto la etiqueta explícitamente como el valor de 2025 en una tabla histórica."
+        }
+      ],
+      "prioridad": 0,
+      "fecha_ejecucion": "2026-08-24",
+      "resultado": "Corregido a mano el 2026-08-24 contra el BOE, dentro de la corrección acelerada que pidió el propietario. Sustituido el coeficiente fijo por trimestre por las tablas mensuales de los arts. 207.2/208.2 LGSS y/o actualizada la edad ordinaria de 2026 (66 años y 10 meses, umbral de 38 años y 3 meses, DT 7.ª LGSS), recalculando los ejemplos numéricos y los gráficos afectados. Verificado con scripts/auditar-normativa.mjs."
+    },
+    {
+      "slug": "jubilacion-parcial",
+      "estado": "hecha",
+      "motivo": "correccion-normativa",
+      "gravedad_max": "media",
+      "metricas_gsc_1jul_24ago": {
+        "clics": 2,
+        "impresiones": 165,
+        "posicion_media": 9.0
+      },
+      "incidencias": [
+        {
+          "regla": "umbral-edad-reducida",
+          "gravedad": "media",
+          "ocurrencias": 1,
+          "problema": "Usa 38 años y 6 meses como umbral para jubilarse a los 65 en 2026.",
+          "correccion": "En 2026 el umbral es 38 años y 3 meses; los 38 años y 6 meses rigen a partir de 2027 (DT 7.ª LGSS). Ojo: 38 años y 6 meses SÍ es correcto como primer tramo de las tablas de coeficientes de los arts. 207.2 y 208.2."
+        }
+      ],
+      "prioridad": 0,
+      "fecha_ejecucion": "2026-08-24",
+      "resultado": "Corregido a mano el 2026-08-24 contra el BOE, dentro de la corrección acelerada que pidió el propietario. Sustituido el coeficiente fijo por trimestre por las tablas mensuales de los arts. 207.2/208.2 LGSS y/o actualizada la edad ordinaria de 2026 (66 años y 10 meses, umbral de 38 años y 3 meses, DT 7.ª LGSS), recalculando los ejemplos numéricos y los gráficos afectados. Verificado con scripts/auditar-normativa.mjs."
+    },
+    {
+      "slug": "jubilarse-65-anos-35-cotizados",
+      "estado": "hecha",
+      "motivo": "correccion-normativa",
+      "gravedad_max": "baja",
+      "metricas_gsc_1jul_24ago": {
+        "clics": 21,
+        "impresiones": 2086,
+        "posicion_media": 8.8
+      },
+      "incidencias": [
+        {
+          "regla": "mencion-a-trimestres",
+          "gravedad": "baja",
+          "ocurrencias": 1,
+          "problema": "Menciona el cálculo por trimestres.",
+          "correccion": "Correcto solo si el texto lo presenta como el sistema ANTERIOR, derogado desde el 1-1-2022. Si lo presenta como vigente, es un error grave: revisar la frase completa."
+        },
+        {
+          "regla": "cambio-fechado-en-2024",
+          "gravedad": "baja",
+          "ocurrencias": 1,
+          "problema": "Fecha en 2024 el paso al cálculo mensual.",
+          "correccion": "El cálculo mensual rige desde el 1-1-2022 (Ley 21/2021). El RDL 2/2023 cambió otras cosas (base reguladora, cotización), no la periodicidad del coeficiente."
+        }
+      ],
+      "prioridad": 0,
+      "fecha_ejecucion": "2026-08-24",
+      "resultado": "Corregido a mano el 2026-08-24 contra el BOE, dentro de la corrección acelerada que pidió el propietario. Sustituido el coeficiente fijo por trimestre por las tablas mensuales de los arts. 207.2/208.2 LGSS y/o actualizada la edad ordinaria de 2026 (66 años y 10 meses, umbral de 38 años y 3 meses, DT 7.ª LGSS), recalculando los ejemplos numéricos y los gráficos afectados. Verificado con scripts/auditar-normativa.mjs."
+    },
+    {
+      "slug": "jubilacion-anticipada-ere-despido",
+      "estado": "hecha",
+      "motivo": "correccion-normativa",
+      "gravedad_max": "baja",
+      "metricas_gsc_1jul_24ago": {
+        "clics": 18,
+        "impresiones": 447,
+        "posicion_media": null
+      },
+      "incidencias": [
+        {
+          "regla": "mencion-a-trimestres",
+          "gravedad": "baja",
+          "ocurrencias": 1,
+          "problema": "Menciona el cálculo por trimestres.",
+          "correccion": "Correcto solo si el texto lo presenta como el sistema ANTERIOR, derogado desde el 1-1-2022. Si lo presenta como vigente, es un error grave: revisar la frase completa."
+        }
+      ],
+      "prioridad": 0,
+      "fecha_ejecucion": "2026-08-24",
+      "resultado": "Corregido a mano el 2026-08-24 contra el BOE, dentro de la corrección acelerada que pidió el propietario. Sustituido el coeficiente fijo por trimestre por las tablas mensuales de los arts. 207.2/208.2 LGSS y/o actualizada la edad ordinaria de 2026 (66 años y 10 meses, umbral de 38 años y 3 meses, DT 7.ª LGSS), recalculando los ejemplos numéricos y los gráficos afectados. Verificado con scripts/auditar-normativa.mjs."
+    },
+    {
+      "slug": "penalizacion-jubilacion-anticipada-voluntaria",
+      "estado": "hecha",
+      "motivo": "correccion-normativa",
+      "gravedad_max": "baja",
+      "metricas_gsc_1jul_24ago": {
+        "clics": 3,
+        "impresiones": 401,
+        "posicion_media": null
+      },
+      "incidencias": [
+        {
+          "regla": "mencion-a-trimestres",
+          "gravedad": "baja",
+          "ocurrencias": 1,
+          "problema": "Menciona el cálculo por trimestres.",
+          "correccion": "Correcto solo si el texto lo presenta como el sistema ANTERIOR, derogado desde el 1-1-2022. Si lo presenta como vigente, es un error grave: revisar la frase completa."
+        }
+      ],
+      "prioridad": 0,
+      "fecha_ejecucion": "2026-08-24",
+      "resultado": "Corregido a mano el 2026-08-24 contra el BOE, dentro de la corrección acelerada que pidió el propietario. Sustituido el coeficiente fijo por trimestre por las tablas mensuales de los arts. 207.2/208.2 LGSS y/o actualizada la edad ordinaria de 2026 (66 años y 10 meses, umbral de 38 años y 3 meses, DT 7.ª LGSS), recalculando los ejemplos numéricos y los gráficos afectados. Verificado con scripts/auditar-normativa.mjs."
+    },
+    {
+      "slug": "como-solicitar-jubilacion-anticipada",
+      "estado": "hecha",
+      "motivo": "correccion-normativa",
+      "gravedad_max": "baja",
+      "metricas_gsc_1jul_24ago": {
+        "clics": 2,
+        "impresiones": 158,
+        "posicion_media": 10.3
+      },
+      "incidencias": [
+        {
+          "regla": "mencion-a-trimestres",
+          "gravedad": "baja",
+          "ocurrencias": 1,
+          "problema": "Menciona el cálculo por trimestres.",
+          "correccion": "Correcto solo si el texto lo presenta como el sistema ANTERIOR, derogado desde el 1-1-2022. Si lo presenta como vigente, es un error grave: revisar la frase completa."
+        }
+      ],
+      "prioridad": 0,
+      "fecha_ejecucion": "2026-08-24",
+      "resultado": "Corregido a mano el 2026-08-24 contra el BOE, dentro de la corrección acelerada que pidió el propietario. Sustituido el coeficiente fijo por trimestre por las tablas mensuales de los arts. 207.2/208.2 LGSS y/o actualizada la edad ordinaria de 2026 (66 años y 10 meses, umbral de 38 años y 3 meses, DT 7.ª LGSS), recalculando los ejemplos numéricos y los gráficos afectados. Verificado con scripts/auditar-normativa.mjs."
+    },
+    {
+      "slug": "integracion-lagunas-base-reguladora",
+      "estado": "hecha",
+      "motivo": "correccion-normativa",
+      "gravedad_max": "baja",
+      "metricas_gsc_1jul_24ago": {
+        "clics": 2,
+        "impresiones": 64,
+        "posicion_media": 9.2
+      },
+      "incidencias": [
+        {
+          "regla": "mencion-a-trimestres",
+          "gravedad": "baja",
+          "ocurrencias": 1,
+          "problema": "Menciona el cálculo por trimestres.",
+          "correccion": "Correcto solo si el texto lo presenta como el sistema ANTERIOR, derogado desde el 1-1-2022. Si lo presenta como vigente, es un error grave: revisar la frase completa."
+        }
+      ],
+      "prioridad": 0,
+      "fecha_ejecucion": "2026-08-24",
+      "resultado": "Corregido a mano el 2026-08-24 contra el BOE, dentro de la corrección acelerada que pidió el propietario. Sustituido el coeficiente fijo por trimestre por las tablas mensuales de los arts. 207.2/208.2 LGSS y/o actualizada la edad ordinaria de 2026 (66 años y 10 meses, umbral de 38 años y 3 meses, DT 7.ª LGSS), recalculando los ejemplos numéricos y los gráficos afectados. Verificado con scripts/auditar-normativa.mjs."
+    },
+    {
+      "slug": "reforma-pensiones-bono-cotizacion",
+      "estado": "hecha",
+      "motivo": "correccion-normativa",
+      "gravedad_max": "baja",
+      "metricas_gsc_1jul_24ago": {
+        "clics": 0,
+        "impresiones": 69,
+        "posicion_media": 7.9
+      },
+      "incidencias": [
+        {
+          "regla": "mencion-a-trimestres",
+          "gravedad": "baja",
+          "ocurrencias": 1,
+          "problema": "Menciona el cálculo por trimestres.",
+          "correccion": "Correcto solo si el texto lo presenta como el sistema ANTERIOR, derogado desde el 1-1-2022. Si lo presenta como vigente, es un error grave: revisar la frase completa."
+        }
+      ],
+      "prioridad": 0,
+      "fecha_ejecucion": "2026-08-24",
+      "resultado": "Corregido a mano el 2026-08-24 contra el BOE, dentro de la corrección acelerada que pidió el propietario. Sustituido el coeficiente fijo por trimestre por las tablas mensuales de los arts. 207.2/208.2 LGSS y/o actualizada la edad ordinaria de 2026 (66 años y 10 meses, umbral de 38 años y 3 meses, DT 7.ª LGSS), recalculando los ejemplos numéricos y los gráficos afectados. Verificado con scripts/auditar-normativa.mjs."
+    }
+  ]
+}

@@ -159,13 +159,15 @@ const schema = [
         <div>
           <p class="eyebrow">Por qué importa</p>
           <h2 class="mt-2 text-2xl font-semibold sm:text-3xl">
-            Cada trimestre que adelantas tiene un precio
+            Cada mes que adelantas tiene un precio
           </h2>
           <p class="mt-4 text-ink-soft">
-            En la jubilación anticipada voluntaria, la pensión se reduce un
-            <strong>1,875 % por trimestre</strong> — de forma permanente. Adelantarte
-            dos años puede suponer alrededor de un <strong>15 % menos</strong> cada mes,
-            durante el resto de tu vida. Saber calcularlo bien es, literalmente, dinero.
+            En la jubilación anticipada voluntaria la reducción es <strong>mensual</strong>
+            y depende de tus años cotizados (art. 208.2 de la
+            <a href="https://www.boe.es/buscar/act.php?id=BOE-A-2015-11724" class="underline" target="_blank" rel="noopener">LGSS</a>).
+            Adelantarte los 24 meses máximos cuesta entre un <strong>13 %</strong> y un
+            <strong>21 %</strong> menos cada mes, de forma permanente, según cuánto hayas
+            cotizado. Saber calcularlo bien es, literalmente, dinero.
           </p>
           <a
             href="#form"
@@ -179,11 +181,12 @@ const schema = [
         <BarChart
           title="Reducción permanente de la pensión al adelantar (voluntaria)"
           unit="%"
-          caption="Coeficiente del 1,875 % por trimestre anticipado. Cálculo orientativo."
+          caption="% de reducción del art. 208.2 LGSS para el tramo de menos de 38 años y 6 meses cotizados. La escala no es lineal: el último tramo se dispara."
           data={[
-            { label: '1 año', value: 7.5 },
-            { label: '1,5 años', value: 11.25 },
-            { label: '2 años', value: 15, highlight: true },
+            { label: '6 meses', value: 4 },
+            { label: '12 meses', value: 5.5 },
+            { label: '18 meses', value: 8.8 },
+            { label: '24 meses', value: 21, highlight: true },
           ]}
         />
       </div>
@@ -227,7 +230,19 @@ const schema = [
           id="form-wrap"
           class="rounded-2xl border border-paper-300 bg-paper-50 p-6 shadow-sm sm:p-8"
         >
-          <form id="contact-form" class="space-y-4" novalidate>
+          <!--
+            Funciona sin JavaScript: `method`/`action` nativos contra la misma
+            función serverless que usa el envío por fetch. Sin JS, el navegador
+            valida con los atributos `required`/`type` y el servidor responde
+            con un 303 a /asesoramiento/gracias. Con JS, el script de abajo
+            hace preventDefault y envía por fetch (sin recargar la página).
+          -->
+          <form
+            id="contact-form"
+            class="space-y-4"
+            method="post"
+            action="/api/contact"
+          >
             <div>
               <label for="nombre" class="block text-sm font-medium text-ink">Nombre</label>
               <input id="nombre" name="nombre" type="text" required autocomplete="name"

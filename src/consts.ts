@@ -130,6 +130,15 @@ export const DISCLAIMER =
  *
  * Recomendación: haz revisar estas páginas por un profesional antes de publicarlas.
  */
+/**
+ * Datos identificativos exigidos por el art. 10 de la LSSI-CE.
+ *
+ * Mientras un campo conserve su marcador entre corchetes, las páginas legales
+ * NO lo muestran: caen al texto genérico en vez de imprimir "[NIF/CIF]" en
+ * producción (ver `tieneDatosIdentificativos` en src/lib/legal.ts). En cuanto
+ * se rellenen los tres, el bloque de identificación aparece solo, sin tocar
+ * ninguna página.
+ */
 export const LEGAL = {
   /** Nombre y apellidos (autónomo) o razón social (empresa). */
   titular: '[TITULAR — nombre y apellidos o razón social]',
@@ -140,5 +149,5 @@ export const LEGAL = {
   /** Email de contacto legal/privacidad (impersonal del sitio). */
   email: SITE.email,
   /** Fecha de última actualización de los textos legales. */
-  actualizado: 'junio de 2026',
+  actualizado: 'agosto de 2026',
 } as const;

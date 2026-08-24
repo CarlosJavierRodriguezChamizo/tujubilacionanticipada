@@ -11,7 +11,14 @@
       "scripts/calendario.json",
       ".github/**"
     ],
-    "ejecutar_tareas_el_dia_de_replanificacion": true
+    "ejecutar_tareas_el_dia_de_replanificacion": true,
+    "replanificacion_forzada": {
+      "activa": true,
+      "fecha_encargo": "2026-08-24",
+      "foco": "producto",
+      "motivo": "Encargo directo del propietario: dar forma al producto y llevarlo hasta poder venderlo. Ver \"Encargos del propietario\" (E-1) al inicio de scripts/ESTRATEGIA.md. Es prioritario sobre cualquier tarea de SEO o UX pendiente y no debe esperar a que el backlog se vacíe.",
+      "instruccion": "En la próxima ejecución de la routine de mejora continua, invoca al subagente estratega-ceo ANTES de despachar ninguna tarea, aunque queden tareas pendientes. Cuando el estratega haya entregado la definición del producto y el product-owner la haya traducido a tareas del backlog, pon \"activa\": false."
+    }
   },
   "ultima_replanificacion": "2026-08-15",
   "tareas": [
@@ -261,7 +268,7 @@
       "titulo": "Emitir <link rel=canonical> hacia la URL consolidada en los artículos canibalizados",
       "area": "seo",
       "prioridad": 3,
-      "estado": "fallida",
+      "estado": "hecha",
       "hipotesis": "Si BlogPost.astro consulta getCanonicalSlug() (seo-013) para el post actual y, cuando existe destino, pasa la URL consolidada como un nuevo prop `canonicalPath` a través de Base.astro hasta BaseHead.astro (que hoy solo calcula el canonical a partir de su propio `path`), esperamos que la URL más reciente de cada par canibalizado emita <link rel=\"canonical\"> hacia la más antigua en vez de declararse canónica de sí misma, porque hoy cada URL del par tiene su propio canonical (verificado en /dist) y eso reparte entre las dos la señal de la misma consulta.",
       "criterio_exito": "Tras `npm run build`, dist/blog/jubilacion-anticipada-novedades-2026/index.html contiene <link rel=\"canonical\" href=\"https://tujubilacionanticipada.com/blog/jubilacion-anticipada-cambios-2026\">; dist/blog/jubilacion-anticipada-cambios-2026/index.html sigue apuntando a sí misma; ninguna de las dos URLs recibe noindex (la consolidación es solo canonical, nunca noindex); `npm run build` (incluye astro check) pasa.",
       "metrica": "grep de <link rel=\"canonical\" en ambos HTML de /dist; ejecución de scripts/auditar-money-set.mjs (seo-012) tras el build y comparación con la salida 'antes' pegada en DECISIONES.md.",
@@ -271,8 +278,8 @@
         "src/layouts/BlogPost.astro"
       ],
       "objetivo_estrategico": "Objetivo del ciclo (ESTRATEGIA.md): unicidad — 'ninguna de ellas comparte consulta objetivo con otra URL indexable del sitio'; restricción: 'la canibalización se resuelve con canonical, nunca con noindex'.",
-      "fecha_ejecucion": "2026-08-18",
-      "resultado": "FALLIDA. Implementación (prop canonicalPath en cascada BlogPost→Base→BaseHead) correcta y verificada por diseño, pero `npm run build` falla en astro build: src/lib/canonical-map.ts (seo-013) calcula REPO_ROOT con dirname(fileURLToPath(import.meta.url)) asumiendo que el módulo vive siempre en src/lib/; al ser importado por primera vez desde una página real (BlogPost.astro), Vite empaqueta el módulo dentro de dist/pages/blog/_slug_.astro.mjs, import.meta.url pasa a apuntar ahí, y REPO_ROOT resuelve a dist/ en vez de a la raíz del repo -> ENOENT buscando dist/scripts/calendario.json. Bug preexistente de seo-013, latente porque nadie había consumido el módulo hasta ahora. No se puede corregir dentro del límite de 3 archivos de esta tarea (la corrección vive en canonical-map.ts, un 4º archivo fuera de alcance). Los 3 archivos se revirtieron con git checkout; repo idéntico al commit 7828663, build en verde sin los cambios. Requiere una tarea previa dedicada a corregir la resolución de REPO_ROOT en src/lib/canonical-map.ts (p.ej. usar process.cwd()) antes de reintentar seo-014."
+      "fecha_ejecucion": "2026-08-24",
+      "resultado": "Reintentada y completada tras corregir la causa raíz. src/lib/canonical-map.ts ya no deriva REPO_ROOT de import.meta.url (que apuntaba a dist/ al empaquetarse desde una página): parte de process.cwd() y sube hasta encontrar scripts/calendario.json. Con eso, BlogPost.astro consulta getCanonicalSlug() y pasa canonicalPath en cascada a Base.astro y BaseHead.astro. Verificado sobre /dist: novedades-2026 emite canonical hacia cambios-2026, cambios-2026 sigue autorreferente, ninguna recibe noindex, novedades-2026 no aparece en sitemap-0.xml y los artículos no consolidados siguen autorreferenciándose. Build en verde (83 páginas)."
     },
     {
       "id": "seo-015",
@@ -344,7 +351,7 @@
       "titulo": "Renderizar en /simulador una tabla estática de escenarios precalculados",
       "area": "seo",
       "prioridad": 8,
-      "estado": "fallida",
+      "estado": "pendiente",
       "hipotesis": "Si src/pages/simulador.astro usa src/lib/pension-calculo.ts (seo-018) para renderizar en build una tabla HTML con >=40 combinaciones de escenario (edad x años cotizados x tramo de base reguladora), visible y legible con JavaScript desactivado, dejando la isla React <Simulador client:load> como mejora progresiva sobre esa misma tabla, esperamos que <main> pase de 71 palabras únicas a un documento sustancialmente más largo y que un usuario sin JS pueda leer una estimación para su caso, porque hoy toda la página depende de una isla React que no ejecuta nada sin JavaScript.",
       "criterio_exito": "Tras `npm run build`, dist/simulador/index.html contiene una tabla estática con >=40 filas de escenario generada en build (no por JS); simulando la eliminación de la isla React del HTML, la tabla sigue presente y legible; el DISCLAIMER (src/consts.ts) sigue visible fuera de la isla React; ejecutando scripts/auditar-money-set.mjs (seo-012) tras el build, /simulador reporta >=1.200 palabras únicas en <main> (antes: 71). Si al generar los escenarios se detecta un dato normativo incorrecto, la tarea se detiene y lo reporta al CEO.",
       "metrica": "Salida de scripts/auditar-money-set.mjs antes (71 palabras, seo-012) vs después de esta tarea, pegada en DECISIONES.md; conteo de filas de la tabla en dist/simulador/index.html >=40.",
@@ -352,15 +359,14 @@
         "src/pages/simulador.astro"
       ],
       "objetivo_estrategico": "Falsable de la Línea 3 (ESTRATEGIA.md): '<main> de /simulador >=1.200 palabras únicas (hoy 71); >=40 combinaciones de escenario presentes en el HTML estático; con la isla React eliminada del HTML, la página sigue conteniendo una tabla de estimación legible'.",
-      "fecha_ejecucion": "2026-08-19",
-      "resultado": "FALLIDA por precaución normativa, sin tocar ningún archivo. Antes de escribir en simulador.astro, se verificó el riesgo ya señalado por seo-018 contra fuentes externas: EDAD_LEGAL_PLENA (66a8m) y UMBRAL_COTIZACION_EDAD_REDUCIDA (38.5) en src/lib/pension-calculo.ts corresponden a la normativa de 2025, no a la vigente en 2026 (66a10m / 38a3m, contrastado en varias fuentes coincidentes). Publicar una tabla estática indexable de >=40 filas con la fecha de jubilación estimada mal calculada en un sitio YMYL se consideró un riesgo inaceptable. Tarea detenida, sin build ejecutado (no había cambios que verificar). Recomendación: corregir las dos constantes en pension-calculo.ts (con revisión experta) antes de reintentar seo-019."
+      "resultado": "FALLIDA por precaución normativa, sin tocar ningún archivo. Antes de escribir en simulador.astro, se verificó el riesgo ya señalado por seo-018 contra fuentes externas: EDAD_LEGAL_PLENA (66a8m) y UMBRAL_COTIZACION_EDAD_REDUCIDA (38.5) en src/lib/pension-calculo.ts corresponden a la normativa de 2025, no a la vigente en 2026 (66a10m / 38a3m, contrastado en varias fuentes coincidentes). Publicar una tabla estática indexable de >=40 filas con la fecha de jubilación estimada mal calculada en un sitio YMYL se consideró un riesgo inaceptable. Tarea detenida, sin build ejecutado (no había cambios que verificar). Recomendación: corregir las dos constantes en pension-calculo.ts (con revisión experta) antes de reintentar seo-019. || REACTIVADA el 2026-08-24: la causa raíz está resuelta. src/lib/pension-calculo.ts implementa ya las tablas mensuales oficiales de los arts. 207.2 y 208.2 LGSS, la edad ordinaria de 2026 de la DT 7.ª (65 años con 38 años y 3 meses cotizados; 66 años y 10 meses con menos) y los importes del RD 241/2026 (máximo 3.359,60 €/mes). La tabla estática debe generarse consumiendo ese módulo, sin reescribir ninguna cifra a mano."
     },
     {
       "id": "seo-020",
       "titulo": "Añadir a /simulador las fuentes normativas, coeficientes reductores y enlace al simulador oficial de la Seguridad Social",
       "area": "seo",
       "prioridad": 9,
-      "estado": "fallida",
+      "estado": "pendiente",
       "hipotesis": "Si añadimos a /simulador, como HTML estático, la fórmula y el artículo de la LGSS que respalda cada cálculo (enlazado dofollow a boe.es o seg-social.es), una tabla de coeficientes reductores vigentes con su fuente oficial, las limitaciones explícitas de la estimación y un enlace visible al simulador oficial de la Seguridad Social, esperamos que /simulador compita como documento frente al simulador oficial y la banca en vez de ocultar que existen alternativas oficiales, porque hoy la página no cita ninguna fuente normativa ni enlaza al simulador oficial, y ESTRATEGIA.md exige explicarlo, no ocultarlo.",
       "criterio_exito": "dist/simulador/index.html contiene al menos un enlace dofollow (sin rel=nofollow, con target=_blank rel=noopener, replicando manualmente la convención de DOFOLLOW_HOSTS en src/lib/rehype-plugins.mjs porque esta página .astro no pasa por el pipeline de markdown) a seg-social.es o boe.es junto a cada coeficiente reductor citado; contiene un enlace visible al simulador oficial de la Seguridad Social; el DISCLAIMER sigue visible; ningún dato normativo se presenta como cálculo oficial. Si al documentar la fórmula se detecta un coeficiente incorrecto respecto a la normativa vigente, la tarea se detiene y lo reporta al CEO en vez de corregirlo por iniciativa propia.",
       "metrica": "grep de href=\"https://www.seg-social.es y href=\"https://www.boe.es en dist/simulador/index.html; ejecución de scripts/auditar-money-set.mjs (seo-012) tras el build para confirmar el avance de palabras únicas en <main> respecto al 'antes' de seo-019.",
@@ -368,8 +374,7 @@
         "src/pages/simulador.astro"
       ],
       "objetivo_estrategico": "Línea de trabajo 3 (ESTRATEGIA.md): 'Qué calcula exactamente y con qué fórmula, con el artículo de la LGSS que la respalda... Limitaciones explícitas... y enlace al simulador oficial de la Seguridad Social. No se compite ocultando que existe: se compite explicándolo'.",
-      "fecha_ejecucion": "2026-08-22",
-      "resultado": "FALLIDA por precaución normativa, sin tocar ningún archivo (mismo criterio de parada que seo-019). Al contrastar fuentes externas para documentar los coeficientes reductores vigentes con fuente oficial, se confirma que src/lib/pension-calculo.ts modela la penalización como un porcentaje FIJO por trimestre (PENAL_VOLUNTARIA_TRIMESTRE=1.875, PENAL_FORZOSA_TRIMESTRE=1.625), mientras que el sistema real vigente en 2026 (RDL 2/2023) es mensual y escalonado en 4 tramos de años cotizados (<38,5 / 38,5-41,5 / 41,5-44,5 / >=44,5 años), con reducción total entre 3,26% y 21% según meses de adelanto y tramo. Publicar una tabla oficial correcta junto a un motor que usa una fórmula distinta habría creado una contradicción visible en una página YMYL de alto tráfico. Se añade a los riesgos normativos ya reportados por seo-018/seo-019 (EDAD_LEGAL_PLENA 66a8m vs 66a10m vigente; UMBRAL_COTIZACION_EDAD_REDUCIDA 38.5 vs 38a3m vigente). Recomendación al CEO: las 4 tareas pendientes restantes (seo-020 recurrente, seo-021, ux-003, ux-004) dependen todas de contenido nuevo en /simulador y quedan bloqueadas hasta que una tarea dedicada revise y corrija con fuente oficial las tres constantes de src/lib/pension-calculo.ts (EDAD_LEGAL_PLENA, UMBRAL_COTIZACION_EDAD_REDUCIDA, y el modelo PENAL_VOLUNTARIA_TRIMESTRE/PENAL_FORZOSA_TRIMESTRE, que probablemente debe sustituirse por una tabla de tramos mensuales)."
+      "resultado": "FALLIDA por precaución normativa, sin tocar ningún archivo (mismo criterio de parada que seo-019). Al contrastar fuentes externas para documentar los coeficientes reductores vigentes con fuente oficial, se confirma que src/lib/pension-calculo.ts modela la penalización como un porcentaje FIJO por trimestre (PENAL_VOLUNTARIA_TRIMESTRE=1.875, PENAL_FORZOSA_TRIMESTRE=1.625), mientras que el sistema real vigente en 2026 (RDL 2/2023) es mensual y escalonado en 4 tramos de años cotizados (<38,5 / 38,5-41,5 / 41,5-44,5 / >=44,5 años), con reducción total entre 3,26% y 21% según meses de adelanto y tramo. Publicar una tabla oficial correcta junto a un motor que usa una fórmula distinta habría creado una contradicción visible en una página YMYL de alto tráfico. Se añade a los riesgos normativos ya reportados por seo-018/seo-019 (EDAD_LEGAL_PLENA 66a8m vs 66a10m vigente; UMBRAL_COTIZACION_EDAD_REDUCIDA 38.5 vs 38a3m vigente). Recomendación al CEO: las 4 tareas pendientes restantes (seo-020 recurrente, seo-021, ux-003, ux-004) dependen todas de contenido nuevo en /simulador y quedan bloqueadas hasta que una tarea dedicada revise y corrija con fuente oficial las tres constantes de src/lib/pension-calculo.ts (EDAD_LEGAL_PLENA, UMBRAL_COTIZACION_EDAD_REDUCIDA, y el modelo PENAL_VOLUNTARIA_TRIMESTRE/PENAL_FORZOSA_TRIMESTRE, que probablemente debe sustituirse por una tabla de tramos mensuales). || REACTIVADA el 2026-08-24: la causa raíz está resuelta. src/lib/pension-calculo.ts implementa ya las tablas mensuales oficiales de los arts. 207.2 y 208.2 LGSS, la edad ordinaria de 2026 de la DT 7.ª (65 años con 38 años y 3 meses cotizados; 66 años y 10 meses con menos) y los importes del RD 241/2026 (máximo 3.359,60 €/mes). La tabla estática debe generarse consumiendo ese módulo, sin reescribir ninguna cifra a mano."
     },
     {
       "id": "seo-021",
@@ -415,6 +420,20 @@
         "src/pages/simulador.astro"
       ],
       "objetivo_estrategico": "Restricción permanente (ESTRATEGIA.md): 'El sitio debe funcionar sin JavaScript... este ciclo se cierra la mitad del incumplimiento (línea 3)'."
+    },
+    {
+      "id": "seo-022",
+      "titulo": "Publicar en /simulador las tablas oficiales completas de coeficientes reductores (arts. 207.2 y 208.2 LGSS)",
+      "area": "seo",
+      "prioridad": 7,
+      "estado": "pendiente",
+      "hipotesis": "Si src/pages/simulador.astro renderiza en build, desde src/lib/pension-calculo.ts, las dos tablas legales completas (24 filas × 4 tramos de la voluntaria y 48 × 4 de la involuntaria) con su enlace dofollow al artículo de la LGSS en boe.es, esperamos que /simulador deje de ser un formulario vacío de 71 palabras y compita como documento por el cluster de cálculo, porque el export real de Search Console (scripts/datos/) muestra ~150 impresiones en posiciones 35-68 para \"calculo jubilacion anticipada\", \"calcular jubilación anticipada\" y \"simulador jubilación anticipada\", con /simulador en posición 48 y 3 clics.",
+      "criterio_exito": "Tras `npm run build`, dist/simulador/index.html contiene las 24 filas de la tabla del art. 208.2 y las 48 del art. 207.2, cada una con sus 4 tramos, generadas en build y no por JavaScript; los porcentajes coinciden exactamente con COEF_VOLUNTARIA y COEF_INVOLUNTARIA de src/lib/pension-calculo.ts (comparación programática, no visual); hay al menos un enlace dofollow a boe.es junto a cada tabla; el DISCLAIMER sigue visible; eliminando la isla React del HTML las tablas siguen presentes y legibles.",
+      "metrica": "node scripts/auditar-money-set.mjs tras el build: palabras únicas en <main> de /simulador (antes: 71). Conteo de filas <tr> en cada tabla de dist/simulador/index.html.",
+      "archivos_sugeridos": [
+        "src/pages/simulador.astro"
+      ],
+      "objetivo_estrategico": "Línea de trabajo 3 (ESTRATEGIA.md) y encargo E-4 del propietario: la causa raíz normativa que bloqueaba seo-019/seo-020 está resuelta desde el 2026-08-24."
     }
   ]
 }

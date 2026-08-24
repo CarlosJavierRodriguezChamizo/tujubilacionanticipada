@@ -13,6 +13,35 @@
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
+const GRACIAS_URL = '/asesoramiento/gracias';
+const ERROR_URL = '/asesoramiento/error';
+
+/**
+ * ¿La petición viene de un envío nativo de formulario (sin JavaScript)?
+ *
+ * El envío por fetch manda `Content-Type: application/json`; el navegador, al
+ * enviar un <form method="post">, manda `application/x-www-form-urlencoded` (o
+ * `multipart/form-data`) y espera un documento HTML. En ese caso hay que
+ * responder con una redirección 303 a una página real, no con JSON.
+ */
+function esEnvioNativo(req) {
+  const ct = (req.headers['content-type'] || '').toLowerCase();
+  if (ct.includes('application/json')) return false;
+  return (
+    ct.includes('application/x-www-form-urlencoded') ||
+    ct.includes('multipart/form-data')
+  );
+}
+
+/** Responde en el formato que corresponde al tipo de petición. */
+function responder(req, res, { status, ok, error, redirect }) {
+  if (esEnvioNativo(req)) {
+    res.setHeader('Location', redirect);
+    return res.status(303).end();
+  }
+  return res.status(status).json(ok ? { ok: true } : { ok: false, error });
+}
+
 function escapeHtml(str) {
   return String(str)
     .replace(/&/g, '&amp;')
@@ -24,7 +53,9 @@ function escapeHtml(str) {
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     res.setHeader('Allow', 'POST');
-    return res.status(405).json({ ok: false, error: 'Método no permitido' });
+    return responder(req, res, {
+      status: 405, ok: false, error: 'Método no permitido', redirect: ERROR_URL,
+    });
   }
 
   let body = req.body;
@@ -45,16 +76,24 @@ export default async function handler(req, res) {
   const honeypot = (body.empresa || '').toString().trim(); // trampa anti-spam
 
   // Si el honeypot viene relleno, es un bot: respondemos OK y descartamos.
-  if (honeypot) return res.status(200).json({ ok: true });
+  if (honeypot) {
+    return responder(req, res, { status: 200, ok: true, redirect: GRACIAS_URL });
+  }
 
   if (!nombre || !telefono || !email || !mensaje) {
-    return res.status(400).json({ ok: false, error: 'Faltan campos obligatorios.' });
+    return responder(req, res, {
+      status: 400, ok: false, error: 'Faltan campos obligatorios.', redirect: ERROR_URL,
+    });
   }
   if (!EMAIL_RE.test(email)) {
-    return res.status(400).json({ ok: false, error: 'El correo no es válido.' });
+    return responder(req, res, {
+      status: 400, ok: false, error: 'El correo no es válido.', redirect: ERROR_URL,
+    });
   }
   if (!consent) {
-    return res.status(400).json({ ok: false, error: 'Falta el consentimiento RGPD.' });
+    return responder(req, res, {
+      status: 400, ok: false, error: 'Falta el consentimiento RGPD.', redirect: ERROR_URL,
+    });
   }
 
   const apiKey = process.env.RESEND_API_KEY;
@@ -69,9 +108,10 @@ export default async function handler(req, res) {
       .join(', ');
     // El detalle solo va al log del servidor, nunca al cliente.
     console.error('Faltan variables de entorno:', missing);
-    return res
-      .status(500)
-      .json({ ok: false, error: 'Configuración del servidor incompleta.' });
+    return responder(req, res, {
+      status: 500, ok: false,
+      error: 'Configuración del servidor incompleta.', redirect: ERROR_URL,
+    });
   }
 
   const html = `
@@ -104,12 +144,16 @@ export default async function handler(req, res) {
     if (!r.ok) {
       const detail = await r.text();
       console.error('Error de Resend:', r.status, detail);
-      return res.status(502).json({ ok: false, error: 'No se pudo enviar el mensaje.' });
+      return responder(req, res, {
+        status: 502, ok: false, error: 'No se pudo enviar el mensaje.', redirect: ERROR_URL,
+      });
     }
 
-    return res.status(200).json({ ok: true });
+    return responder(req, res, { status: 200, ok: true, redirect: GRACIAS_URL });
   } catch (err) {
     console.error('Error enviando el email:', err);
-    return res.status(500).json({ ok: false, error: 'Error del servidor.' });
+    return responder(req, res, {
+      status: 500, ok: false, error: 'Error del servidor.', redirect: ERROR_URL,
+    });
   }
 }

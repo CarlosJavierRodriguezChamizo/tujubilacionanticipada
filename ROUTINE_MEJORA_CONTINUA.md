@@ -24,6 +24,25 @@ Lee `scripts/BACKLOG.json` y cuenta las tareas con `"estado": "pendiente"`.
 
 ## Paso 2 — Bifurcación
 
+### CASO 0 (tiene prioridad sobre todo lo demás): replanificación forzada por el propietario
+
+Lee `config.replanificacion_forzada` en `scripts/BACKLOG.json`. Si `activa` es `true`,
+**hoy es día de replanificación aunque queden tareas pendientes.** No despaches ninguna
+tarea antes de esto.
+
+1. Invoca al subagente `estratega-ceo` pasándole, literalmente, el campo `motivo` y el
+   campo `foco`, y estas rutas: `scripts/ESTRATEGIA.md` (empieza por la sección
+   "Encargos del propietario", que es el encargo real), `scripts/DECISIONES.md`,
+   `scripts/calendario.json` y `scripts/datos/` (export real de Search Console).
+   El encargo no es analizar: es **entregar el producto definido y listo para venderse**,
+   con las decisiones tomadas y justificadas, no con opciones abiertas.
+2. Cuando termine, invoca al subagente `product-owner` para que traduzca esa definición
+   a tareas concretas de `scripts/BACKLOG.json`, con las tareas del producto en las
+   prioridades más altas (números más bajos) por delante de las de SEO y UX pendientes.
+3. Pon `config.replanificacion_forzada.activa` a `false` y actualiza
+   `ultima_replanificacion` con la fecha de hoy.
+4. Continúa al Paso 3 y despacha las tareas del día sobre el backlog ya reordenado.
+
 ### CASO A: hay 0 tareas pendientes → día de replanificación
 
 1. Invoca al subagente `estratega-ceo` con este contexto explícito en el prompt

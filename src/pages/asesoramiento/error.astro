@@ -1,0 +1,37 @@
+---
+/**
+ * Página de error del formulario de asesoramiento (solo ruta sin JavaScript).
+ *
+ * `api/contact.js` redirige aquí con un 303 cuando el envío nativo del
+ * formulario no se puede procesar. Con JavaScript activo, el error se muestra
+ * en línea dentro del propio formulario y esta URL no llega a visitarse.
+ */
+import Base from '../../layouts/Base.astro';
+import { SITE } from '../../consts';
+
+const path = '/asesoramiento/error';
+---
+
+<Base
+  title="No hemos podido enviar tu solicitud"
+  description="Se ha producido un error al enviar la solicitud de asesoramiento."
+  path={path}
+  noindex={true}
+>
+  <section class="container-prose py-16 sm:py-24">
+    <div class="mx-auto max-w-2xl rounded-2xl border border-paper-300 bg-paper-50 p-8 text-center sm:p-10">
+      <h1 class="text-2xl font-semibold sm:text-3xl">No hemos podido enviar tu solicitud</h1>
+      <p class="mt-4 text-ink-soft">
+        Puede que faltara algún dato obligatorio o que el servicio de correo no
+        estuviera disponible en ese momento. Tus datos no se han guardado.
+      </p>
+      <p class="mt-4 text-ink-soft">
+        Vuelve a intentarlo o escríbenos directamente a
+        <a href={`mailto:${SITE.email}`} class="font-medium text-brand-700 underline">{SITE.email}</a>.
+      </p>
+      <div class="mt-8">
+        <a href="/asesoramiento#form" class="btn-accent no-underline">Volver al formulario</a>
+      </div>
+    </div>
+  </section>
+</Base>

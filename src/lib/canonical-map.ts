@@ -28,12 +28,29 @@
 
 import { existsSync, readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
-import { fileURLToPath } from 'node:url';
 
-const __dirname = dirname(fileURLToPath(import.meta.url));
+/**
+ * Raíz del repositorio.
+ *
+ * NO se puede derivar de `import.meta.url`: cuando una página `.astro` importa
+ * este módulo, Vite lo empaqueta dentro de `dist/pages/…`, `import.meta.url`
+ * apunta ahí y la raíz se resolvía a `dist/` (ENOENT buscando
+ * `dist/scripts/calendario.json`). Se parte de `process.cwd()` —el build de
+ * Astro se ejecuta siempre desde la raíz del repo— y se sube hasta encontrar
+ * `scripts/calendario.json`, por si se invocara desde un subdirectorio.
+ */
+function resolverRepoRoot(): string {
+  let dir = process.cwd();
+  for (let i = 0; i < 6; i++) {
+    if (existsSync(join(dir, 'scripts', 'calendario.json'))) return dir;
+    const padre = dirname(dir);
+    if (padre === dir) break;
+    dir = padre;
+  }
+  return process.cwd();
+}
 
-// src/lib -> src -> raíz del repo
-const REPO_ROOT = join(__dirname, '..', '..');
+const REPO_ROOT = resolverRepoRoot();
 const CALENDARIO_PATH = join(REPO_ROOT, 'scripts', 'calendario.json');
 const BLOG_DIR = join(REPO_ROOT, 'src', 'content', 'blog');
 

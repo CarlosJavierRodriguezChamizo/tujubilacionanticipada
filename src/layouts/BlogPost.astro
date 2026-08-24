@@ -5,6 +5,7 @@ import Base from './Base.astro';
 import { formatDate, toISO, readingTimeMinutes, resolveHeroImage, getPublishedPosts } from '../lib/posts';
 import { blogPostingSchema, breadcrumbSchema, REVIEWER_PROFILES } from '../lib/schema';
 import { getCategorySlug } from '../lib/categories';
+import { getCanonicalSlug } from '../lib/canonical-map';
 import ShareButtons from '../components/ShareButtons.astro';
 import RelatedArticles from '../components/RelatedArticles.astro';
 import AsesoramientoCard from '../components/AsesoramientoCard.astro';
@@ -35,6 +36,12 @@ const categoryHref =
     ? `/blog/categoria/${getCategorySlug(data.category)}`
     : undefined;
 
+// Consolidación de contenido canibalizado (seo-013/seo-014): si este artículo
+// declara la misma keyword exacta que otro publicado antes, el canonical apunta
+// a aquel en vez de a sí mismo. Nunca noindex: solo canonical.
+const canonicalDestino = getCanonicalSlug(post.slug);
+const canonicalPath = canonicalDestino ? `/blog/${canonicalDestino}` : undefined;
+
 const articleSchema = blogPostingSchema(post);
 const breadcrumb = breadcrumbSchema([
   { name: 'Inicio', path: '/' },
@@ -48,6 +55,7 @@ const breadcrumb = breadcrumbSchema([
   title={data.title}
   description={data.description}
   path={path}
+  canonicalPath={canonicalPath}
   image={data.ogImage ?? heroImage}
   ogType="article"
   schema={[articleSchema, breadcrumb]}

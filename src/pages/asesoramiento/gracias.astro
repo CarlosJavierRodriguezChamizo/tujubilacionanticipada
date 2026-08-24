@@ -1,0 +1,36 @@
+---
+/**
+ * Página de agradecimiento del formulario de asesoramiento.
+ *
+ * Existe para que el formulario funcione SIN JavaScript: `api/contact.js`
+ * responde con un 303 hacia aquí cuando la solicitud llega como envío nativo
+ * de formulario (no como fetch/JSON). Con JavaScript activo el usuario nunca
+ * llega a esta URL: el script muestra el bloque de gracias en la misma página.
+ */
+import Base from '../../layouts/Base.astro';
+
+const path = '/asesoramiento/gracias';
+---
+
+<Base
+  title="Solicitud enviada"
+  description="Hemos recibido tu solicitud de asesoramiento sobre jubilación anticipada."
+  path={path}
+  noindex={true}
+>
+  <section class="container-prose py-16 sm:py-24">
+    <div class="mx-auto max-w-2xl rounded-2xl border border-green-200 bg-green-50 p-8 text-center sm:p-10">
+      <p class="text-3xl" aria-hidden="true">✓</p>
+      <h1 class="mt-3 text-2xl font-semibold sm:text-3xl">Solicitud enviada</h1>
+      <p class="mt-4 text-ink-soft">
+        Hemos recibido tu consulta. Te contactamos lo antes posible, normalmente
+        en menos de 24 horas laborables, en el teléfono o el correo que nos has
+        indicado.
+      </p>
+      <div class="mt-8 flex flex-wrap justify-center gap-3">
+        <a href="/simulador" class="btn-accent no-underline">Mientras tanto, calcula tu estimación</a>
+        <a href="/blog" class="btn-ghost no-underline">Volver al blog</a>
+      </div>
+    </div>
+  </section>
+</Base>

@@ -44,6 +44,28 @@ Comprueba que existen TODOS estos campos y tienen valor real (no vacío, no plac
 - [ ] Sin afirmaciones absolutas sobre casos individuales ("tú cobrarás X")
 - [ ] Los cálculos numéricos son correctos según la normativa LGSS vigente
 
+### 3 bis. Exactitud normativa (bloqueante)
+
+Compara toda cifra normativa del artículo con el bloque "Parámetros normativos
+vigentes en 2026" de `scripts/PROMPT_REDACTOR.md`. **Rechaza el artículo** si:
+
+- [ ] Aplica un coeficiente reductor **fijo por trimestre** (1,875 %, 1,625 %, 1,500 %)
+      como si fuera el sistema vigente. Está derogado desde 2022: la tabla es mensual
+      y por tramos de cotización (arts. 207.2 y 208.2 LGSS).
+- [ ] Dice que la edad ordinaria de 2026 es **66 años y 8 meses** (esa es la de 2025;
+      la de 2026 es 66 años y 10 meses).
+- [ ] Usa **38 años y 6 meses** como periodo que da derecho a jubilarse a los 65 **en
+      2026** (son 38 años y 3 meses; los 38 años y 6 meses rigen desde 2027, y también
+      son el primer corte de los tramos de coeficientes: no confundir los dos usos).
+- [ ] Cita **3.267,60 €** como pensión máxima (es la de 2025; en 2026 son 3.359,60 €).
+- [ ] Incluye una cifra normativa sin enlace a `boe.es` o `seg-social.es` en la misma
+      sección.
+- [ ] Da un resultado numérico que contradice a `src/lib/pension-calculo.ts`.
+
+Si detectas una cifra normativa dudosa que no puedas resolver con una fuente oficial,
+**no la corrijas por tu cuenta**: para, deja el artículo sin publicar y anótalo en el
+log para revisión del propietario.
+
 ### 4. SEO básico
 - [ ] La keyword principal aparece en el primer párrafo
 - [ ] La keyword aparece en al menos un H2

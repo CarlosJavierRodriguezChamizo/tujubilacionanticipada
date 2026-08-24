@@ -1,3 +1,80 @@
+# Encargos del propietario — 2026-08-24
+
+> Esta sección la escribe el propietario, no el estratega. **Tiene prioridad sobre el
+> resto del documento** y debe atenderse en la próxima replanificación. Cuando un
+> encargo esté cumplido, el estratega lo mueve al diagnóstico con su veredicto.
+
+## E-1. Definir y crear el producto (bloqueaba el ciclo de conversión)
+
+Hasta hoy la conversión estaba fuera de alcance porque **no había nada que vender**.
+Ya no es cierto que no haya demanda: **el 2026-08-24 entraron los dos primeros leads
+reales** por el formulario de `/asesoramiento`. El propietario encarga explícitamente
+al estratega:
+
+**Dar forma al producto: decidir qué es, cómo se presta, a qué precio y con qué
+proceso, y llevarlo hasta poder venderlo.** No es un encargo de copy ni de CRO: es
+definir la oferta.
+
+Lo que el estratega debe entregar en la próxima replanificación, dentro de
+`ESTRATEGIA.md` y traducido a tareas del backlog:
+
+1. **Qué se vende exactamente.** Las opciones que ya están sobre la mesa, sin
+   inventar ninguna: (a) el informe/guía de 29 € que hoy está oculto
+   (`_guia-jubilacion-anticipada.astro` fuera del routing y `CTAGuia` comentado);
+   (b) una consulta individual de pago; (c) un informe personalizado a partir de los
+   datos del simulador. Elegir una como principal y justificarlo.
+2. **Quién presta el servicio y con qué credenciales.** Es un sitio YMYL: si detrás
+   hay una persona que asesora, hay que decir quién es. Ver la restricción E-2.
+3. **Precio, alcance y qué NO incluye**, por escrito y visible antes de pagar.
+4. **El proceso completo de entrega**, incluyendo qué pasa entre que alguien paga y
+   recibe lo suyo, y en cuánto tiempo.
+5. **Cómo se cobra.** Hoy no hay pasarela. Si la propuesta la necesita, tiene que
+   entrar en el backlog como tarea, no darse por supuesta.
+6. **Qué se hace con los leads que ya están entrando** mientras el producto no exista.
+
+Restricciones que **no** se levantan para este encargo: prohibido fabricar señales de
+confianza (testimonios, contadores, credenciales); `ASESORAMIENTO.socialProofCount`
+sigue reflejando el dato real o se oculta; y sigue prohibido un CTA de pago que acabe
+en un `mailto:`.
+
+## E-2. Credenciales verificables: congeladas por ahora
+
+`seo-006` quedó REFUTADA por falta de referencias externas comprobables del revisor.
+Decisión del propietario: **no se toca nada de las credenciales de momento.** No se
+añaden `sameAs`, ni perfiles, ni credenciales, ni se inventan. Cualquier tarea que lo
+proponga se rechaza hasta nuevo aviso. El estratega debe tenerlo en cuenta al diseñar
+el producto (E-1): si la oferta necesita respaldar quién asesora, eso es una decisión
+del propietario, no una tarea del backlog.
+
+## E-3. Ya hay datos de rendimiento: se acabó decidir a ciegas
+
+El bloqueo que el estratega reportó tres ciclos seguidos está resuelto. En
+`scripts/datos/` hay un export real de Search Console (1 jul – 24 ago 2026), por
+páginas y por consultas, y `scripts/auditar-money-set.mjs` ya lo cruza solo. **La
+próxima replanificación debe juzgarse con esos números, no con artefactos del build.**
+
+Lo que dicen los datos, para que no se pierda: 346 clics y 20.526 impresiones en
+España, posición media 11,2. Las tres URLs que sostienen el sitio son
+`coeficientes-reductores-jubilacion-anticipada` (73 clics, pos 9,4),
+`jubilacion-anticipada-transportistas` (45, pos 8,8) y
+`tabla-penalizacion-jubilacion-anticipada` (45, pos 9,5). **`/simulador` tiene 3 clics
+y 276 impresiones en posición 48**, y el cluster de consultas de cálculo
+("calculo jubilacion anticipada", "calcular jubilación anticipada", "simulador
+jubilación anticipada") acumula ~150 impresiones en posiciones 35-68: el diagnóstico
+de la Línea 3 queda **confirmado con datos**, no solo por medición del build. Y el
+patrón que sí funciona es el de caso concreto: "jubilarse a los 55 con 30 años
+cotizados" está en posición 3,7 y "tengo 52 años y no tengo 15 años cotizados" en 5,5.
+
+## E-4. La Línea 3 ya no está bloqueada
+
+La causa raíz que tumbó `seo-019` y `seo-020` está resuelta: `src/lib/pension-calculo.ts`
+implementa desde hoy las tablas mensuales oficiales de los arts. 207.2 y 208.2 LGSS, la
+edad ordinaria de 2026 de la DT 7.ª y los importes del RD 241/2026. **`seo-019`,
+`seo-020`, `ux-003` y `ux-004` pueden reintentarse.** La tabla estática de escenarios
+de `/simulador` debe generarse consumiendo ese módulo, nunca reescribiendo cifras a mano.
+
+---
+
 # Estrategia vigente — 2026-08-15
 
 ## Diagnóstico del ciclo anterior

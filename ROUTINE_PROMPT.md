@@ -110,6 +110,33 @@ que acabas de guardar en `src/content/blog/[slug].mdx`.
   "FALLO VERIFICACIÓN: [slug] — no superó los 3 intentos. Requiere revisión manual."
   Y termina aquí.
 
+## Paso 4 bis — Actualizar un artículo ya publicado (una por ejecución)
+
+Además del artículo nuevo, cada ejecución aplica **una** actualización de contenido
+existente. Va en el mismo commit.
+
+1. Lee `scripts/actualizaciones.json` y toma la entrada con `"estado": "pendiente"` de
+   menor `prioridad`. Si no hay ninguna, sáltate este paso y anótalo en el log.
+2. Abre `src/content/blog/<slug>.mdx` y corrige **solo** lo que describen sus
+   `incidencias`, usando el campo `correccion` de cada una y contrastándolo con las
+   `config.fuentes_obligatorias` y con el bloque "Parámetros normativos vigentes en 2026"
+   de `scripts/PROMPT_REDACTOR.md`.
+3. Reglas de la actualización:
+   - **No reescribas el artículo entero.** Corrige las cifras, los ejemplos numéricos
+     que dependan de ellas y las frases que las expliquen. Todo lo demás se queda.
+   - **No toques el `slug`, el `title` ni la `description`** del frontmatter: son la
+     identidad de una URL que ya está posicionada.
+   - Actualiza `updatedDate` en el frontmatter a la fecha de hoy.
+   - Toda cifra normativa nueva o corregida debe quedar enlazada a `boe.es` o a
+     `seg-social.es` en su misma sección.
+   - Si al corregir aparece una duda normativa que no puedas resolver con una fuente
+     oficial, **para**: deja la entrada como `"estado": "bloqueada"` con el motivo en
+     `resultado`, no publiques esa corrección y sigue con el resto del flujo.
+4. Verifica el resultado con `node scripts/auditar-normativa.mjs`. El artículo corregido
+   no debe volver a aparecer con incidencias de gravedad `alta`.
+5. Marca la entrada en `scripts/actualizaciones.json` con `"estado": "hecha"`,
+   `"fecha_ejecucion"` y un `"resultado"` de una o dos frases.
+
 ## Paso 5 — Marcar como publicado y push a la rama de auto-publicación
 
 Si el artículo ha sido aprobado.
@@ -133,6 +160,8 @@ git checkout -B claude/auto-publish
 git add src/content/blog/[slug].mdx
 git add public/blog/[slug].jpg 2>/dev/null || true   # imagen destacada si se generó
 git add scripts/calendario.json
+git add scripts/actualizaciones.json                 # cola de actualizaciones (Paso 4 bis)
+git add src/content/blog/[slug-actualizado].mdx 2>/dev/null || true
 git commit -m "content: artículo #[id] — [titulo]
 
 keyword: [keyword]
@@ -167,6 +196,7 @@ Si el endpoint responde error o no está configurado, anótalo en el log y conti
 
 Escribe un resumen de lo que has hecho:
 - Artículo procesado: #[id] — [titulo]
+- Artículo actualizado (Paso 4 bis): [slug] — [qué se corrigió], o "ninguno (cola vacía)"
 - Intentos de verificación necesarios: [N]/3
 - Resultado: PUBLICADO o FALLO
 - Fecha y hora de ejecución
@@ -177,6 +207,11 @@ Escribe un resumen de lo que has hecho:
 
 - Nunca publiques un artículo que no haya superado la verificación
 - Nunca inventes datos o fuentes — solo fuentes oficiales (seg-social.es, boe.es, etc.)
+- Nunca uses el coeficiente reductor fijo por trimestre (1,875 % / 1,625 %): está
+  derogado desde 2022. Las cifras vigentes están en el bloque "Parámetros normativos
+  vigentes en 2026" de `scripts/PROMPT_REDACTOR.md`
+- Si detectas que el sitio publica un dato normativo incorrecto que no puedes resolver
+  con una fuente oficial, para y anótalo en el log; no corrijas normativa por tu cuenta
 - Si hay algún error de git o de escritura de archivo, para y escríbelo en el log
 - Esta routine publica a través de la rama `claude/auto-publish` (el Action la promociona
   a `main`). Parte siempre de `main` actualizado (`git pull --ff-only origin main`) antes de

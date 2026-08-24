@@ -1,15 +1,14 @@
 import { useState } from 'react';
 import {
-  UMBRAL_COTIZACION_EDAD_REDUCIDA,
   EDAD_LEGAL_REDUCIDA,
-  EDAD_LEGAL_PLENA,
+  ANTICIPO_VOLUNTARIA_MESES,
+  ANTICIPO_FORZOSA_MESES,
   ANTICIPO_VOLUNTARIA_ANIOS,
   ANTICIPO_FORZOSA_ANIOS,
-  PENAL_VOLUNTARIA_TRIMESTRE,
-  PENAL_FORZOSA_TRIMESTRE,
   MIN_COTIZACION_PENSION,
   REQ_COTIZACION_VOLUNTARIA,
   REQ_COTIZACION_FORZOSA,
+  edadLegalJubilacion,
   calcularEscenario,
 } from '../lib/pension-calculo';
 
@@ -79,13 +78,12 @@ export default function Simulador({ disclaimer, guiaHref = '/guia-jubilacion-ant
     const aniosCotizadosActuales = Number(form.cotizados);
     const baseReguladora = Number(form.base);
 
-    // Edad legal: 65 si llegará a 38,5 años cotizados; si no, 66 y 8 meses.
+    // Edad ordinaria en 2026 (DT 7.ª LGSS): 65 años con 38 años y 3 meses
+    // cotizados o más; 66 años y 10 meses con menos. El periodo cotizado se
+    // proyecta como si siguiera cotizando hasta esa edad (arts. 207.2 y 208.2).
     const cotizadosA65 =
       aniosCotizadosActuales + Math.max(0, EDAD_LEGAL_REDUCIDA - edadActual);
-    const edadLegal =
-      cotizadosA65 >= UMBRAL_COTIZACION_EDAD_REDUCIDA
-        ? EDAD_LEGAL_REDUCIDA
-        : EDAD_LEGAL_PLENA;
+    const edadLegal = edadLegalJubilacion(cotizadosA65);
 
     const base = {
       edadActual,
@@ -96,24 +94,24 @@ export default function Simulador({ disclaimer, guiaHref = '/guia-jubilacion-ant
     const ordinaria = calcularEscenario({
       ...base,
       edadJubilacion: edadLegal,
-      aniosAnticipo: 0,
-      penalPorTrimestre: 0,
+      mesesAnticipo: 0,
+      modalidad: 'ordinaria',
       requisitoCotizacion: null,
     });
 
     const voluntaria = calcularEscenario({
       ...base,
       edadJubilacion: edadLegal - ANTICIPO_VOLUNTARIA_ANIOS,
-      aniosAnticipo: ANTICIPO_VOLUNTARIA_ANIOS,
-      penalPorTrimestre: PENAL_VOLUNTARIA_TRIMESTRE,
+      mesesAnticipo: ANTICIPO_VOLUNTARIA_MESES,
+      modalidad: 'voluntaria',
       requisitoCotizacion: REQ_COTIZACION_VOLUNTARIA,
     });
 
     const forzosa = calcularEscenario({
       ...base,
       edadJubilacion: edadLegal - ANTICIPO_FORZOSA_ANIOS,
-      aniosAnticipo: ANTICIPO_FORZOSA_ANIOS,
-      penalPorTrimestre: PENAL_FORZOSA_TRIMESTRE,
+      mesesAnticipo: ANTICIPO_FORZOSA_MESES,
+      modalidad: 'involuntaria',
       requisitoCotizacion: REQ_COTIZACION_FORZOSA,
     });
 

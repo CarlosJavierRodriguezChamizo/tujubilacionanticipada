@@ -27,6 +27,50 @@ Trabaja EXCLUSIVAMENTE con estas fuentes primarias oficiales:
 
 ---
 
+## Parámetros normativos vigentes en 2026 — OBLIGATORIO Y NO NEGOCIABLE
+
+Estas cifras están verificadas contra el BOE el 2026-08-24. **Ningún artículo puede
+contradecirlas.** Si necesitas una cifra que no esté aquí, búscala en `boe.es` o
+`seg-social.es` y enlázala; si no la encuentras, no la inventes: omite el dato y
+anótalo en el log.
+
+**Edad ordinaria de jubilación en 2026** (DT 7.ª de la [LGSS](https://www.boe.es/buscar/act.php?id=BOE-A-2015-11724)):
+- **65 años** con **38 años y 3 meses** cotizados o más.
+- **66 años y 10 meses** con menos de 38 años y 3 meses.
+- (66 años y 8 meses era la de **2025**; 67 años y 38 años y 6 meses rigen **desde 2027**.)
+
+**Coeficientes reductores por anticipar** — el sistema de porcentaje fijo por
+trimestre (1,875 % / 1,625 %) está **DEROGADO** desde el 1 de enero de 2022
+(Ley 21/2021). Desde entonces la reducción es **mensual** y depende del periodo
+cotizado, en cuatro tramos (menos de 38 años y 6 meses / 38 años y 6 meses a
+41 años y 6 meses / 41 años y 6 meses a 44 años y 6 meses / 44 años y 6 meses o más):
+- **Voluntaria** (art. 208.2 LGSS): máximo 24 meses de anticipo. Con 24 meses, la
+  reducción va del **21 %** al **13 %** según tramo; con 1 mes, del **3,26 %** al **2,81 %**.
+- **Involuntaria** (art. 207.2 LGSS): máximo 48 meses. Con 48 meses, del **30 %** al
+  **24 %**; con 1 mes, del **0,63 %** al **0,50 %**.
+- La escala **no es proporcional**: entre 23 y 24 meses de anticipo la reducción de la
+  voluntaria salta del 17,60 % al 21 % en el primer tramo.
+
+**Requisitos de acceso:** voluntaria, 35 años cotizados (art. 208.1.b); involuntaria,
+33 años cotizados más inscripción como demandante de empleo durante 6 meses (art. 207.1).
+
+**Porcentaje sobre la base reguladora** (art. 210.1 + DT 9.ª LGSS, tramo 2023-2026):
+50 % por los primeros 15 años; después, 0,21 % por cada uno de los 49 primeros meses
+adicionales y 0,19 % por cada uno de los 209 siguientes. El **100 %** se alcanza a los
+**36 años y 6 meses** cotizados.
+
+**Base reguladora desde el 1 de enero de 2026** (DT 40.ª LGSS): las **302 bases más
+altas de los últimos 304 meses**, divididas entre **352,33**.
+
+**Importes 2026** ([RD 241/2026](https://www.boe.es/diario_boe/txt.php?id=BOE-A-2026-6977)):
+- Límite máximo de pensión pública: **3.359,60 €/mes** (47.034,40 €/año).
+- Revalorización general: **2,7 %**.
+- Pensión mínima de jubilación a los 65: **17.592,40 €/año** con cónyuge a cargo,
+  **13.106,80 €/año** en unidad económica unipersonal.
+
+El motor del simulador (`src/lib/pension-calculo.ts`) implementa exactamente estas
+tablas. Si un artículo y el simulador dan cifras distintas, **el artículo está mal**.
+
 ## Revisora del contenido
 
 Cada artículo debe incluir al final una nota de revisión firmada por:

@@ -1,6 +1,7 @@
 ---
 import Base from '../layouts/Base.astro';
 import { SITE, LEGAL } from '../consts';
+import { tieneDatosIdentificativos } from '../lib/legal';
 ---
 
 <Base
@@ -21,11 +22,33 @@ import { SITE, LEGAL } from '../consts';
       </p>
 
       <h2>1. Datos identificativos del titular</h2>
-      <p>
-        El presente Sitio Web es titularidad del responsable del proyecto
-        <strong>{SITE.name}</strong>. Puedes ponerte en contacto con el titular a través
-        del correo electrónico <a href={`mailto:${LEGAL.email}`}>{LEGAL.email}</a>.
-      </p>
+      {
+        tieneDatosIdentificativos ? (
+          <>
+            <p>
+              En cumplimiento del artículo 10 de la LSSI-CE, se informa de los datos
+              identificativos del titular del Sitio Web:
+            </p>
+            <ul>
+              <li><strong>Titular:</strong> {LEGAL.titular}</li>
+              <li><strong>NIF:</strong> {LEGAL.nif}</li>
+              <li><strong>Domicilio a efectos de notificaciones:</strong> {LEGAL.domicilio}</li>
+              <li>
+                <strong>Correo electrónico de contacto:</strong>
+                <a href={`mailto:${LEGAL.email}`}>{LEGAL.email}</a>
+              </li>
+              <li><strong>Nombre del sitio:</strong> {SITE.name} ({SITE.domain})</li>
+            </ul>
+          </>
+        ) : (
+          <p>
+            El presente Sitio Web es titularidad del responsable del proyecto
+            <strong>{SITE.name}</strong>. Puedes ponerte en contacto con el titular a
+            través del correo electrónico
+            <a href={`mailto:${LEGAL.email}`}>{LEGAL.email}</a>.
+          </p>
+        )
+      }
 
       <h2>2. Objeto</h2>
       <p>

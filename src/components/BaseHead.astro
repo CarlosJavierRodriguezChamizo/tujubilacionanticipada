@@ -6,6 +6,12 @@ interface Props {
   description: string;
   /** Ruta de la página (ej. "/blog"). Se usa para el canonical. */
   path?: string;
+  /**
+   * Ruta canónica distinta de la propia página (consolidación de contenido
+   * canibalizado, ver src/lib/canonical-map.ts). Cuando llega, el
+   * <link rel="canonical"> apunta ahí en vez de a la propia URL.
+   */
+  canonicalPath?: string;
   /** Imagen OG absoluta o ruta en /public */
   image?: string;
   /** Tipo Open Graph */
@@ -18,13 +24,17 @@ const {
   title,
   description,
   path,
+  canonicalPath,
   image = SITE.defaultOgImage,
   ogType = 'website',
   noindex = false,
 } = Astro.props;
 
 // Canonical robusto: usa Astro.url contra el site configurado.
-const canonicalURL = new URL(path ?? Astro.url.pathname, Astro.site ?? SITE.url);
+const canonicalURL = new URL(
+  canonicalPath ?? path ?? Astro.url.pathname,
+  Astro.site ?? SITE.url,
+);
 const ogImageURL = new URL(image, Astro.site ?? SITE.url);
 
 // Título completo: evita duplicar la marca en la home.
