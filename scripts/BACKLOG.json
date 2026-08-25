@@ -13,14 +13,14 @@
     ],
     "ejecutar_tareas_el_dia_de_replanificacion": true,
     "replanificacion_forzada": {
-      "activa": true,
+      "activa": false,
       "fecha_encargo": "2026-08-24",
       "foco": "producto",
       "motivo": "Encargo directo del propietario: dar forma al producto y llevarlo hasta poder venderse. El QUÉ ya está decidido por el propietario en \"E-1. El producto: informe de decisión, no guía informativa\" (inicio de scripts/ESTRATEGIA.md): un informe personalizado de fecha óptima de jubilación, generado automáticamente desde src/lib/pension-calculo.ts, con coste marginal cero por venta. La guía de 29 € queda descartada. Tu trabajo es el CÓMO: precio justificado, pasarela, entrega automática, captura de datos y motivo de recompra. No reabras el QUÉ.",
       "instruccion": "En la próxima ejecución de la routine de mejora continua, invoca al subagente estratega-ceo ANTES de despachar ninguna tarea, aunque queden tareas pendientes. Cuando el estratega haya entregado la definición del producto y el product-owner la haya traducido a tareas del backlog, pon \"activa\": false."
     }
   },
-  "ultima_replanificacion": "2026-08-15",
+  "ultima_replanificacion": "2026-08-25",
   "tareas": [
     {
       "id": "seo-001",
@@ -434,6 +434,214 @@
         "src/pages/simulador.astro"
       ],
       "objetivo_estrategico": "Línea de trabajo 3 (ESTRATEGIA.md) y encargo E-4 del propietario: la causa raíz normativa que bloqueaba seo-019/seo-020 está resuelta desde el 2026-08-24."
+    },
+    {
+      "id": "cro-001",
+      "titulo": "Extender el motor de cálculo con cotizaHasta y conyugeACargo",
+      "area": "cro",
+      "prioridad": 1,
+      "estado": "pendiente",
+      "hipotesis": "Si EscenarioInput y calcularEscenario() en src/lib/pension-calculo.ts aceptan dos campos nuevos y opcionales -cotizaHasta (fecha límite de cotización real, para cuando sigueCotizando indica 'ya no cotizo' o 'hasta una fecha') y conyugeACargo (booleano)- y calcularEscenario() (a) deja de sumar años cotizados más allá de cotizaHasta en vez de asumir siempre cotización continua hasta la jubilación, y (b) usa PENSION_MINIMA_ANUAL_2026.conConyugeACargo/14 en vez de PENSION_MINIMA_MENSUAL_UNIPERSONAL para superaMinimaExigida cuando conyugeACargo es true, esperamos que el informe de pago no sobreestime la carrera de cotización de quien ya no cotiza ni aplique la mínima equivocada del art. 208.1.c), porque ESTRATEGIA.md señala literalmente estos dos huecos como algo que 'hay que cerrar antes de cobrar' y hoy calcularEscenario() asume cotización continua y solo conoce la mínima unipersonal.",
+      "criterio_exito": "Los dos campos son opcionales para que src/components/Simulador.jsx siga compilando sin tocarlo; con cotizaHasta anterior a la fecha de edadJubilacion, aniosCotizadosTotal deja de sumar aniosExtra más allá de esa fecha (verificable con un caso de control: alguien que deja de cotizar 3 años antes de jubilarse cotiza 3 años menos que en el mismo escenario sin cotizaHasta); con conyugeACargo=true, superaMinimaExigida se calcula contra PENSION_MINIMA_ANUAL_2026.conConyugeACargo/14 en vez de la unipersonal; ninguna de las comprobaciones existentes cambia de resultado: `node scripts/verificar-motor.mjs` sigue en 326/326 porque no se toca ninguna constante ni tabla ya verificada, solo se añade comportamiento nuevo sobre campos opcionales.",
+      "metrica": "Salida de `node scripts/verificar-motor.mjs` (debe seguir en 326/326); dos llamadas de control a calcularEscenario() con y sin los campos nuevos comparando aniosCotizadosTotal y superaMinimaExigida.",
+      "archivos_sugeridos": [
+        "src/lib/pension-calculo.ts"
+      ],
+      "objetivo_estrategico": "Ficha de producto §5 (ESTRATEGIA.md): 'Dos huecos del motor que esto destapa y hay que cerrar antes de cobrar: EscenarioInput necesita cotizaHasta (proyección real de la carrera) y conyugeACargo (mínima aplicable). Ambos cambian cifras del informe; ninguno introduce una cifra nueva sin fuente.'"
+    },
+    {
+      "id": "cro-002",
+      "titulo": "Crear /condiciones-contratacion y /desistimiento y añadir el precio del informe a consts.ts",
+      "area": "cro",
+      "prioridad": 2,
+      "estado": "pendiente",
+      "hipotesis": "Si creamos src/pages/condiciones-contratacion.astro y src/pages/desistimiento.astro siguiendo el mismo patrón de src/pages/aviso-legal.astro (Base con noindex, uso de LEGAL y tieneDatosIdentificativos de src/lib/legal.ts para no imprimir marcadores pendientes), documentando el precio de 49€ IVA incluido, qué incluye (12 meses de reemisión, aviso por cambio normativo) y qué excluye, el pago único vía Stripe, la política de renovación anual de 19€ sin cargo automático, y en /desistimiento la casilla de renuncia expresa al derecho de desistimiento del art. 103.m RDL 1/2007 y sus consecuencias, esperamos cerrar la condición 5 del objetivo del ciclo, porque ESTRATEGIA.md dice literalmente que 'sin esto no se activa el cobro: es la única condición que puede bloquear el objetivo entero' y hoy ninguna de las dos páginas existe.",
+      "criterio_exito": "Tras `npm run build`, existen dist/condiciones-contratacion/index.html y dist/desistimiento/index.html, ambas con noindex (mismo patrón que aviso-legal); ambas citan el precio '49 €' con 'IVA incluido' leído de una nueva constante INFORME_PRECIO en src/consts.ts (no un literal repetido en cada página); /desistimiento cita literalmente '103.m' o 'RDL 1/2007'; ninguna de las dos páginas contiene la frase 'en 5 minutos' ni ningún plazo que dependa de una persona; ambas se enlazan entre sí y el texto no condiciona la entrega del informe a ningún consentimiento de marketing.",
+      "metrica": "grep de 'noindex', 'INFORME_PRECIO' y '103.m' en dist/condiciones-contratacion/index.html y dist/desistimiento/index.html tras el build; si el build no es ejecutable en el entorno, inspección directa del código fuente de los tres archivos confirmando los mismos literales.",
+      "archivos_sugeridos": [
+        "src/pages/condiciones-contratacion.astro",
+        "src/pages/desistimiento.astro",
+        "src/consts.ts"
+      ],
+      "objetivo_estrategico": "Objetivo del ciclo, condición 5 (ESTRATEGIA.md): 'LEGAL.titular, nif y domicilio están rellenos... y existen las páginas de Condiciones de contratación y de desistimiento. Sin esto no se activa el cobro.'"
+    },
+    {
+      "id": "cro-003",
+      "titulo": "Redirigir /guia-jubilacion-anticipada a /informe y crear /informe/gracias y /informe/cancelado",
+      "area": "cro",
+      "prioridad": 3,
+      "estado": "pendiente",
+      "hipotesis": "Si añadimos `redirects: { '/guia-jubilacion-anticipada': '/informe' }` a astro.config.mjs (Astro resuelve la redirección en build, sin tocar el archivo con prefijo _ que ya excluye la ruta del routing) y creamos src/pages/informe/gracias.astro y src/pages/informe/cancelado.astro -páginas estáticas, noindex, sin JavaScript, con instrucciones de qué hacer si el correo no llega y un enlace de vuelta a /informe-, esperamos capturar el tráfico que Google conserva en una URL que hoy no lleva a ninguna parte y completar las páginas de destino post-checkout que exige el flujo de compra sin intervención humana, porque ESTRATEGIA.md constata que '/guia-jubilacion-anticipada tiene 11 impresiones en posición 50,6, pese a estar fuera del routing' y que 'apunta a un producto que ya no existe', y el diseño de entrega automática exige explícitamente estas dos páginas.",
+      "criterio_exito": "astro.config.mjs declara el redirect de /guia-jubilacion-anticipada hacia /informe (verificable por lectura del archivo o, si el build es ejecutable, por el 301 que genera Astro); existen dist/informe/gracias/index.html y dist/informe/cancelado/index.html (o su equivalente fuente en src/pages/informe/ si el build no puede ejecutarse) con noindex; ninguna de las dos depende de un <script> para mostrarse; el texto no promete ningún plazo que dependa de una persona (no debe aparecer 'en 5 minutos', porque esta tarea por sí sola no puede garantizarlo).",
+      "metrica": "grep de 'guia-jubilacion-anticipada' y '/informe' en astro.config.mjs; grep de noindex en dist/informe/gracias/index.html y dist/informe/cancelado/index.html tras build.",
+      "archivos_sugeridos": [
+        "astro.config.mjs",
+        "src/pages/informe/gracias.astro",
+        "src/pages/informe/cancelado.astro"
+      ],
+      "objetivo_estrategico": "Línea de trabajo 1 (ESTRATEGIA.md): '/guia-jubilacion-anticipada redirige de forma permanente a /informe -tiene impresiones reales y hoy no lleva a ninguna parte' y Ficha de producto §4.5: '/informe/gracias y /informe/cancelado -páginas estáticas, noindex, con el enlace de descarga y qué hacer si el correo no llega.'"
+    },
+    {
+      "id": "ux-005",
+      "titulo": "Crear el módulo núcleo del PDF del informe: portada, índice, edad ordinaria y exclusiones",
+      "area": "ux",
+      "prioridad": 4,
+      "estado": "pendiente",
+      "hipotesis": "Si creamos src/lib/informe-pdf.ts usando una librería de generación de PDF sin dependencias nativas (pdf-lib, añadida a package.json) que reciba directamente un EscenarioResultado de calcularEscenario() (src/lib/pension-calculo.ts) y produzca un buffer de PDF con portada (nombre o 'Informe de ejemplo', fecha de emisión), índice, numeración de página, la edad ordinaria exacta con su fecha (DT 7.ª), el disclaimer de src/consts.ts y las exclusiones literales del motor (cabecera de pension-calculo.ts), cuerpo >=11pt y contraste AA en escala de grises, esperamos sentar la base reutilizable que después completan ux-006 y ux-007 sin que ninguna cifra se escriba a mano en la plantilla, porque hoy no existe ningún generador de PDF en el repo y ESTRATEGIA.md exige que 'todo dato del informe sale de src/lib/pension-calculo.ts' y que el documento tenga 'portada, índice, numeración y fecha de emisión, no una página web impresa'.",
+      "criterio_exito": "package.json declara la dependencia 'pdf-lib'; src/lib/informe-pdf.ts exporta una función (p. ej. generarInformePDF(resultado, datos): Promise<Uint8Array>) sin ningún literal numérico normativo hardcodeado (grep de cifras del motor fuera de tamaños de fuente/márgenes debe devolver 0 coincidencias); el PDF generado con datos de ejemplo tiene >=4 páginas y numeración en todas; el texto del disclaimer coincide literalmente con DISCLAIMER de src/consts.ts; las exclusiones (convenios especiales, cotizaciones extranjero, coeficientes actividad penosa, complementos a mínimos, brecha de género) aparecen como texto. Verificable ejecutando el módulo con Node con datos de ejemplo, sin depender de `npm run build`.",
+      "metrica": "Ejecución directa del módulo con datos de ejemplo: nº de páginas del PDF resultante (>=4); grep de package.json para 'pdf-lib'; comparación textual del disclaimer embebido contra src/consts.ts.",
+      "archivos_sugeridos": [
+        "src/lib/informe-pdf.ts",
+        "package.json"
+      ],
+      "objetivo_estrategico": "Línea de trabajo 2 (ESTRATEGIA.md): 'Documento paginado y descargable (PDF), con portada, índice, numeración y fecha de emisión, no una página web impresa' y restricción añadida: 'Ninguna cifra del informe puede existir fuera del motor verificado.'"
+    },
+    {
+      "id": "cro-004",
+      "titulo": "Construir /informe: página de venta con formulario nativo de 7 campos obligatorios y 2 casillas",
+      "area": "cro",
+      "prioridad": 5,
+      "estado": "pendiente",
+      "hipotesis": "Si creamos src/pages/informe.astro con un <form method=\"post\" action=\"/api/informe-checkout\"> nativo (sin JavaScript del que dependa el envío, mismo patrón que /asesoramiento tras legal-001) con los 7 campos obligatorios exactos de la Ficha de producto §5 (fechaNacimiento, cotizadoAnios, cotizadoMeses, fechaCotizado, sigueCotizando, baseReguladora, modalidadPrevista, email), los 3 opcionales, las 2 casillas separadas y desmarcadas (tratamiento de datos; renuncia al desistimiento art. 103.m) y un honeypot, con el precio '49 € IVA incluido' visible antes de enviar, un ejemplo numérico de acantilado calculado con calcularEscenario() (no escrito a mano) y enlaces a /condiciones-contratacion, /desistimiento y al simulador oficial de la Seguridad Social, esperamos cumplir la condición 1 del objetivo del ciclo, porque hoy no existe ninguna página de venta y el objetivo exige literalmente que '/informe se navega y se envía con JavaScript desactivado (formulario method=\"post\" + respuesta 303)'.",
+      "criterio_exito": "Tras `npm run build`, dist/informe/index.html contiene un único <form method=\"post\" action=\"/api/informe-checkout\"> con los campos obligatorios (incluido email) como <input name=\"...\"> con esos nombres exactos; dos <input type=\"checkbox\"> sin atributo checked, con textos distinguibles; un campo honeypot oculto con nombre distinto de los reales; el precio '49 €' y 'IVA incluido' aparecen antes del botón de envío; el bloque de ejemplo usa calcularEscenario() en vez de literales copiados a mano de E-1; enlaces a /condiciones-contratacion, /desistimiento y a un dominio seg-social.es; el <form> no depende de ningún <script> para construirse ni enviarse.",
+      "metrica": "grep de 'method=\"post\"', 'action=\"/api/informe-checkout\"', los nombres de campo y los dos type=\"checkbox\" en dist/informe/index.html tras build; si el build no es ejecutable, inspección directa del .astro fuente confirmando los mismos literales.",
+      "archivos_sugeridos": [
+        "src/pages/informe.astro"
+      ],
+      "objetivo_estrategico": "Objetivo del ciclo, condición 1 (ESTRATEGIA.md): 'Existe /informe, se navega y se envía con JavaScript desactivado (formulario method=\"post\" + respuesta 303), y su envío crea una sesión de pago real.' y Ficha de producto §5 (7 campos obligatorios, 2 casillas)."
+    },
+    {
+      "id": "ux-006",
+      "titulo": "Añadir al PDF la tabla mes a mes (24/48 fechas) con los acantilados destacados",
+      "area": "ux",
+      "prioridad": 6,
+      "estado": "pendiente",
+      "hipotesis": "Si src/lib/informe-pdf.ts (ux-005) recorre, para cada mes de anticipo desde 1 hasta 24 (voluntaria) o 48 (involuntaria), calcularEscenario() con ese mesesAnticipo y renderiza una fila por mes con la pensión resultante, la pérdida mensual respecto a la edad ordinaria y la pérdida acumulada a 20 años, marcando visualmente -no solo con color, también con un símbolo o negrita, para que se vea en blanco y negro- los meses en los que cambia el tramo de coeficiente respecto al mes anterior, esperamos entregar 'el corazón del documento' que justifica el precio, porque ESTRATEGIA.md exige literalmente 'la tabla de fechas es el corazón del documento: debe leerse de un vistazo, con los acantilados destacados visualmente' y 'debe verse igual de bien impreso en blanco y negro', y hoy el módulo de ux-005 no incluye ninguna tabla.",
+      "criterio_exito": "El PDF de ejemplo generado con modalidad voluntaria tiene exactamente 24 filas de fecha y con modalidad involuntaria 48; cada fila muestra pensión, pérdida mensual y pérdida acumulada a 20 años ((pensión de la edad ordinaria - pensión del mes) x 240); los meses donde tramoCotizacion() o el coeficiente de COEF_VOLUNTARIA/COEF_INVOLUNTARIA cambia respecto al mes contiguo llevan una marca no cromática además de cualquier color; todas las cifras de la tabla proceden de llamar calcularEscenario(), ninguna está escrita en la plantilla; inspeccionando el PDF en escala de grises (o comprobando que la marca no dependa solo de un valor de color), los acantilados siguen identificables.",
+      "metrica": "Conteo de filas de la tabla en el PDF generado (24 u 48 según modalidad); comparación celda a celda de 5 filas muestreadas contra la salida directa de calcularEscenario() para los mismos mesesAnticipo.",
+      "archivos_sugeridos": [
+        "src/lib/informe-pdf.ts"
+      ],
+      "objetivo_estrategico": "Línea de trabajo 2 (ESTRATEGIA.md): 'La tabla de fechas es el corazón del documento... con los acantilados destacados visualmente y las cifras alineadas... Debe verse igual de bien impreso en blanco y negro.'"
+    },
+    {
+      "id": "cro-005",
+      "titulo": "Crear POST /api/informe-checkout: validación, pedido en Redis y sesión de Stripe Checkout",
+      "area": "cro",
+      "prioridad": 7,
+      "estado": "pendiente",
+      "hipotesis": "Si creamos api/informe-checkout.js siguiendo el mismo patrón de detección de envío nativo que api/contact.js (responder 303 a una URL cuando el Content-Type es form-urlencoded), validamos los campos obligatorios y las 2 casillas del formulario de /informe (cro-004), guardamos pedido:{id} en Redis (api/_redis.js) con TTL de 400 días, y -cuando existe STRIPE_SECRET_KEY- creamos una sesión de Stripe Checkout en modo payment con un precio fijo en céntimos (4900, nunca calculado en el servidor a partir de un dato del formulario), locale 'es' y métodos de pago que incluyen Bizum, respondiendo 303 hacia esa sesión, y -cuando NO existe STRIPE_SECRET_KEY- seguimos el modo simulación generando directamente un token y guardando informe:{token} sin pasar por Stripe, esperamos cumplir la condición 1 del objetivo ('su envío crea una sesión de pago real') sin bloquear el resto del ciclo por falta de credenciales, porque ESTRATEGIA.md exige explícitamente el modo simulación para que 'los agentes puedan construir y verificar el 90% del sistema sin credenciales del propietario' y hoy este endpoint no existe.",
+      "criterio_exito": "package.json declara la dependencia 'stripe' (si no estaba ya); con un payload de prueba completo enviado como application/x-www-form-urlencoded, el endpoint responde con status 303 y un header Location; con un campo obligatorio ausente, un email inválido, o la casilla de renuncia al desistimiento sin marcar, responde con error y no escribe ningún pedido en Redis; el precio nunca se lee de un campo del formulario (grep confirma que el importe de la sesión de Stripe es una constante en céntimos o un price id, no una variable derivada del body); con STRIPE_SECRET_KEY ausente, el módulo se puede importar y ejecutar sin lanzar una excepción (camino de simulación). Verificable con un mock de req/res, sin llamar a la API real de Stripe.",
+      "metrica": "Ejecución del handler con 3 payloads de prueba (completo válido, campo obligatorio ausente, checkbox de desistimiento sin marcar) comprobando el código de estado y si escribió o no en Redis; grep de 'payment', 'bizum' y '4900' en api/informe-checkout.js.",
+      "archivos_sugeridos": [
+        "api/informe-checkout.js",
+        "api/_redis.js",
+        "package.json"
+      ],
+      "objetivo_estrategico": "Ficha de producto §4.1 (ESTRATEGIA.md): 'POST /api/informe-checkout -valida los campos, guarda pedido:{id} en Redis (TTL 400 días), crea la sesión de Stripe con client_reference_id=id y customer_email, y responde 303 hacia la URL de Stripe.'"
+    },
+    {
+      "id": "ux-007",
+      "titulo": "Añadir al PDF el punto de equilibrio y la verificación de requisitos con sus fuentes",
+      "area": "ux",
+      "prioridad": 8,
+      "estado": "pendiente",
+      "hipotesis": "Si src/lib/informe-pdf.ts (ux-005/ux-006) añade una sección que calcula, a partir de las filas ya generadas de calcularEscenario(), cuántos meses de cobro hacen falta para recuperar la diferencia entre adelantar y esperar (aritmética sobre pensionFinal y reduccionEuros, sin ninguna recomendación de inversión), y otra sección que muestra cumpleRequisito, cumplePensionMinima, superaMinimaExigida y superaTope del EscenarioResultado del usuario con el artículo de la LGSS citado al pie de cada una (208.1.b/207.1.c, 208.1.c, 205.1.b, art. 3 RD 241/2026), esperamos completar el alcance del entregable que justifica el precio de 49€, porque ESTRATEGIA.md exige 'punto de equilibrio de esperar frente a adelantar: cuántos meses de cobro se tarda en recuperar lo que se deja de cobrar por esperar' y 'verificación de requisitos... cada cifra normativa con su fuente citada al pie de su propia sección', y hoy ninguna de las dos secciones existe.",
+      "criterio_exito": "El punto de equilibrio se calcula dividiendo la diferencia acumulada entre dos filas de la tabla por la diferencia mensual, sin ningún literal de meses escrito a mano (verificable comparando el resultado contra un cálculo manual de control con los mismos datos de ejemplo); la sección de requisitos muestra los 4 booleanos del EscenarioResultado del usuario, cada uno junto a su artículo citado (grep de '208.1.b', '207.1.c', '208.1.c', '205.1.b' y 'RD 241/2026' en el texto generado); ninguna frase de la sección se redacta como recomendación de inversión.",
+      "metrica": "Comparación del punto de equilibrio calculado por el módulo contra un cálculo manual de control para 2 combinaciones de datos de ejemplo; grep de las 4 referencias legales en el texto extraído del PDF de ejemplo.",
+      "archivos_sugeridos": [
+        "src/lib/informe-pdf.ts"
+      ],
+      "objetivo_estrategico": "Línea de trabajo 2 (ESTRATEGIA.md): 'Punto de equilibrio de esperar frente a adelantar... verificación de requisitos (35/33 años, art. 208.1.c, tope de 3.359,60€, carencia del art. 205.1.b); cada cifra normativa con su fuente al pie de su sección.'"
+    },
+    {
+      "id": "cro-006",
+      "titulo": "Crear POST /api/stripe-webhook: verificación de firma, idempotencia y envío del PDF por email",
+      "area": "cro",
+      "prioridad": 9,
+      "estado": "pendiente",
+      "hipotesis": "Si creamos api/stripe-webhook.ts (TypeScript, para importar directamente src/lib/pension-calculo.ts y src/lib/informe-pdf.ts sin duplicar cifras en una copia .js) que exporta explícitamente `export const config = { api: { bodyParser: false } }`, verifica la firma con stripe.webhooks.constructEvent() sobre el cuerpo crudo y el header stripe-signature, y en checkout.session.completed marca pedido:{id} como pagado de forma idempotente (comprueba antes de escribir si session.id ya se procesó), genera un token aleatorio de 32 bytes, guarda informe:{token}->pedidoId en Redis y envía el email con Resend (mismo patrón de fetch que api/contact.js) con el PDF adjunto y el enlace permanente -reintentando sin adjunto si la generación o el envío falla, para no quedarse nunca sin entregar-, esperamos cerrar la pieza que hace posible la condición 4 del objetivo ('recibe el PDF en su correo... sin tocar nada'), porque ESTRATEGIA.md advierte literalmente que si se olvida bodyParser:false 'la firma nunca valida: es el fallo clásico' y hoy este endpoint no existe.",
+      "criterio_exito": "El archivo declara literalmente `bodyParser: false` en su config exportada; usa stripe.webhooks.constructEvent con el cuerpo crudo (no JSON.parse(req.body)) y el header stripe-signature; ante una firma inválida responde 400 y no escribe nada en Redis ni envía email; procesar dos veces el mismo session.id no duplica el envío del email ni regenera el token (verificable con un mock de Redis que ya contiene el pedido marcado como pagado); si la generación o el envío del PDF adjunto falla, el email se envía igualmente con el enlace de descarga permanente (/api/informe?token=...), nunca se deja sin entregar.",
+      "metrica": "Ejecución del handler con un evento simulado (firma inválida, firma válida por primera vez, firma válida repetida) usando mocks de Stripe/Redis/Resend, sin llamar a las APIs reales; grep de 'bodyParser: false' y 'constructEvent' en api/stripe-webhook.ts.",
+      "archivos_sugeridos": [
+        "api/stripe-webhook.ts",
+        "api/_redis.js"
+      ],
+      "objetivo_estrategico": "Ficha de producto §4.2-3 (ESTRATEGIA.md): 'POST /api/stripe-webhook -verifica la firma con el cuerpo crudo (bodyParser:false)... y en checkout.session.completed marca el pedido como pagado de forma idempotente... Email inmediato con Resend: PDF adjunto + enlace permanente. Si el adjunto falla, el email sale igual con el enlace.'"
+    },
+    {
+      "id": "cro-007",
+      "titulo": "Crear GET /api/informe?token=: regeneración del PDF al vuelo con límite de descargas",
+      "area": "cro",
+      "prioridad": 10,
+      "estado": "pendiente",
+      "hipotesis": "Si creamos api/informe.ts (TypeScript, mismo motivo que cro-006: importa directamente src/lib/pension-calculo.ts y src/lib/informe-pdf.ts sin copia .js duplicada) que resuelve informe:{token}->pedidoId en Redis, lee los datos guardados del pedido, regenera el PDF llamando de nuevo a calcularEscenario() e informe-pdf.ts en cada petición (nunca sirve un PDF almacenado) y lleva la cuenta de descargas del token en Redis devolviendo un error legible al superar 12 en el mes en curso, esperamos que 'si el motor cambia, el informe descargado cambia' tal como exige la Ficha de producto, y cerrar la pieza central de entrega automática, porque hoy no existe ningún endpoint que sirva el PDF y sin él la condición 2 del objetivo del ciclo no se puede verificar de extremo a extremo.",
+      "criterio_exito": "Con un token válido en Redis, la respuesta tiene Content-Type application/pdf y el cuerpo es un PDF regenerado en esa misma ejecución (no leído de un archivo ni de un caché persistente entre peticiones); con un token inexistente responde 404; el contador de descargas del token en el mes en curso se incrementa en cada llamada exitosa y, al superar 12, la petición 13 responde con un error explicando el límite en vez del PDF; el PDF resultante para un pedido de ejemplo tiene >=4 páginas y sus cifras de la tabla mes a mes coinciden con una llamada de control a calcularEscenario() con los mismos datos guardados.",
+      "metrica": "Ejecución del handler con un token mockeado en Redis: 13 peticiones consecutivas, confirmando que las 12 primeras devuelven PDF y la 13.ª devuelve el error de límite; comparación celda a celda de 3 filas del PDF resultante contra calcularEscenario().",
+      "archivos_sugeridos": [
+        "api/informe.ts",
+        "api/_redis.js"
+      ],
+      "objetivo_estrategico": "Ficha de producto §4.4 (ESTRATEGIA.md): 'GET /api/informe?token=... -regenera el PDF al vuelo desde los datos del pedido y el motor. Consecuencia deliberada: si el motor cambia, el informe descargado cambia. Nunca se almacena un PDF congelado. Límite de 12 descargas/mes por token.'"
+    },
+    {
+      "id": "ux-008",
+      "titulo": "Publicar /informe/ejemplo.pdf con marca de agua MUESTRA — SIN VALIDEZ",
+      "area": "ux",
+      "prioridad": 11,
+      "estado": "pendiente",
+      "hipotesis": "Si añadimos src/pages/informe/ejemplo.pdf.ts (endpoint Astro que devuelve una Response binaria) que, con un conjunto fijo de datos de ejemplo definido en src/lib/informe-datos-ejemplo.ts, llama a las mismas funciones de src/lib/informe-pdf.ts (ux-005/006/007) que usará api/informe.ts (cro-007) para producir un PDF público con una marca de agua visible 'MUESTRA — SIN VALIDEZ' en cada página, esperamos ofrecer en la página de venta una prueba tangible de lo que se compra sin fabricar ninguna señal de confianza falsa, porque ESTRATEGIA.md exige literalmente 'Existe /informe/ejemplo.pdf público, generado por el mismo código, con datos de ejemplo y marca de agua' y hoy no existe ningún ejemplo descargable del informe.",
+      "criterio_exito": "/informe/ejemplo.pdf es accesible tras el build y se genera reutilizando las mismas funciones de src/lib/informe-pdf.ts que usa api/informe.ts (no una plantilla duplicada); cada página del PDF de ejemplo contiene el texto 'MUESTRA' y 'SIN VALIDEZ' de forma visible, no solo en metadatos; los datos del ejemplo están claramente marcados como ficticios en la portada; el modo simulación (ausencia de STRIPE_SECRET_KEY) que activa esta marca de agua en un pedido de prueba real produce el mismo resultado que este endpoint, confirmando que es un único camino de código.",
+      "metrica": "Descarga de /informe/ejemplo.pdf y grep del texto de la marca de agua en cada una de sus páginas; comparación de la función usada por el endpoint de ejemplo contra la usada por api/informe.ts (debe ser la misma importación, no una copia).",
+      "archivos_sugeridos": [
+        "src/pages/informe/ejemplo.pdf.ts",
+        "src/lib/informe-datos-ejemplo.ts"
+      ],
+      "objetivo_estrategico": "Línea de trabajo 2 (ESTRATEGIA.md), falsable: 'Existe /informe/ejemplo.pdf público, generado por el mismo código, con datos de ejemplo y marca de agua.'"
+    },
+    {
+      "id": "cro-008",
+      "titulo": "Crear scripts/verificar-flujo-informe.mjs: verificación end-to-end en modo simulación",
+      "area": "cro",
+      "prioridad": 12,
+      "estado": "pendiente",
+      "hipotesis": "Si creamos scripts/verificar-flujo-informe.mjs, que sin STRIPE_SECRET_KEY simula una petición completa a /api/informe-checkout con datos de ejemplo, sigue el camino de simulación hasta obtener un token, invoca la lógica de /api/informe?token=... y compara cada cifra de la tabla mes a mes del PDF resultante contra una llamada de control a calcularEscenario() con los mismos datos, saliendo con código 1 si alguna difiere, esperamos tener la comprobación automática que exige la condición 2 del objetivo del ciclo, porque ESTRATEGIA.md la nombra explícitamente como parte de 'se da por cumplido si, y solo si' y hoy no existe.",
+      "criterio_exito": "El script existe y se ejecuta con `node scripts/verificar-flujo-informe.mjs` sin ninguna clave de Stripe en el entorno; completa el camino formulario->pedido->token->PDF y sale con código 0 cuando todas las cifras coinciden; con un campo obligatorio ausente en los datos de prueba, el camino se corta con error y no crea pedido; sale con código 1 si alguna cifra del PDF no coincide con calcularEscenario() del mismo input. Depende de api/informe-checkout.js (cro-005), api/informe.ts (cro-007) y src/lib/informe-pdf.ts (ux-005/006/007); si alguno no existe todavía, el script debe indicarlo por consola en vez de fallar en silencio.",
+      "metrica": "Código de salida de `node scripts/verificar-flujo-informe.mjs` ejecutado sin STRIPE_SECRET_KEY; nº de páginas y de filas del PDF resultante que reporta el propio script.",
+      "archivos_sugeridos": [
+        "scripts/verificar-flujo-informe.mjs"
+      ],
+      "objetivo_estrategico": "Objetivo del ciclo, condición 2 (ESTRATEGIA.md): 'node scripts/verificar-flujo-informe.mjs recorre el camino completo en modo simulación (sin claves de Stripe) y produce un PDF de >=4 páginas cuyas cifras coinciden celda a celda con calcularEscenario()... Sale con código 1 si alguna cifra del PDF no procede del motor.'"
+    },
+    {
+      "id": "seo-023",
+      "titulo": "CTA contextual al informe en artículos con >=10 clics, inyectado desde el layout",
+      "area": "seo",
+      "prioridad": 13,
+      "estado": "pendiente",
+      "hipotesis": "Si reescribimos src/components/CTAGuia.astro (hoy comentado en todo el sitio y apuntando al producto descartado de 29€ en /guia-jubilacion-anticipada) para que enlace a /informe con el copy de la Ficha de producto ('el cálculo de la fecha exacta y lo que cuesta equivocarse de mes', sin prometer asesoramiento) y lo reactivamos solo en src/layouts/BlogPost.astro, condicionado a que el slug del artículo esté en la lista de URLs con >=10 clics de scripts/datos/gsc-paginas-2026-07-01_2026-08-24.csv (leída en build por un nuevo módulo de solo lectura), esperamos dar salida al producto desde las páginas que ya reciben el 46% de los clics del sitio sin tocar ni un byte de src/content/blog/**, porque ESTRATEGIA.md exige 'CTA contextual al informe en las URLs que el export de GSC demuestra que traen clics (>=10 clics en 55 días), renderizado desde el layout o desde el plugin de bloques, jamás editando src/content/blog/**' y hoy el componente existe pero está comentado y apunta al producto ya descartado.",
+      "criterio_exito": "Tras `npm run build`, al menos 8 URLs de artículo en dist/blog/*/index.html contienen un <a href=\"/informe\">; ninguna URL con <10 clics en el export lo recibe; `git diff --stat` tras el cambio no incluye ningún archivo bajo src/content/blog/; el copy no usa la palabra 'asesoramiento' ni promete un plazo que dependa de una persona; el componente ya no enlaza a /guia-jubilacion-anticipada ni menciona GUIA_PRECIO.",
+      "metrica": "`git diff --stat` (0 archivos de src/content/blog/**); conteo de <a href=\"/informe\"> en dist/blog/*/index.html (>=8); lista de slugs con >=10 clics extraída de scripts/datos/gsc-paginas-2026-07-01_2026-08-24.csv comparada con los slugs que reciben el CTA.",
+      "archivos_sugeridos": [
+        "src/components/CTAGuia.astro",
+        "src/layouts/BlogPost.astro",
+        "src/lib/gsc-top-urls.ts"
+      ],
+      "objetivo_estrategico": "Línea de trabajo 3 (ESTRATEGIA.md): 'CTA contextual al informe en las URLs que el export de GSC demuestra que traen clics (>=10 clics en 55 días), renderizado desde el layout o desde el plugin de bloques, jamás editando src/content/blog/**.'"
+    },
+    {
+      "id": "seo-024",
+      "titulo": "Añadir el enlace al informe al final del cálculo gratuito en /simulador",
+      "area": "seo",
+      "prioridad": 14,
+      "estado": "pendiente",
+      "hipotesis": "Si añadimos al final del resultado del simulador (dentro de src/components/Simulador.jsx, tras mostrar la estimación de la isla React) un bloque con el texto orientado por ESTRATEGIA.md -'esto te dice cuánto cobrarías; el informe te dice qué mes te conviene y cuánto pierdes si te equivocas'- y un enlace a /informe, esperamos convertir el momento de mayor intención del simulador (justo después de ver su propia cifra) en la puerta de entrada al producto de pago, porque ESTRATEGIA.md lo describe literalmente como parte del alcance de la Línea 3 ('al final del cálculo gratuito, la pregunta que vende el informe') y hoy /simulador no enlaza a ningún producto.",
+      "criterio_exito": "Tras `npm run build`, el resultado del simulador incluye, cuando se muestra una estimación, un <a href=\"/informe\"> visible con el texto orientado a la decisión (no a 'comprar ahora' con urgencia artificial); el enlace no sustituye ni oculta el DISCLAIMER ni el enlace al simulador oficial de la Seguridad Social ya existentes en src/pages/simulador.astro; no se añade ningún contador de compradores ni prueba social inventada; el cambio se limita a src/components/Simulador.jsx y no requiere tocar src/lib/pension-calculo.ts.",
+      "metrica": "Inspección del código fuente de Simulador.jsx confirmando el <a href=\"/informe\"> y el texto acordado; grep de 'informe' en dist/simulador/index.html o en el chunk de la isla React tras build.",
+      "archivos_sugeridos": [
+        "src/components/Simulador.jsx"
+      ],
+      "objetivo_estrategico": "Línea de trabajo 3 (ESTRATEGIA.md): '/simulador... al final del cálculo gratuito, la pregunta que vende el informe: esto te dice cuánto cobrarías; el informe te dice qué mes te conviene y cuánto pierdes si te equivocas.'"
     }
   ]
 }
