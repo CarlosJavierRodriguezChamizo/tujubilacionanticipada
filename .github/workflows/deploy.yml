@@ -61,6 +61,12 @@ jobs:
       - name: Auditar la normativa del contenido publicado
         run: node scripts/auditar-normativa.mjs --solo-graves
 
+      # Informativo: el sitio publica sin problema un artículo sin portada, pero
+      # que ocurra en silencio es lo que dejó al artículo #59 sin imagen. Aquí
+      # queda registrado en el log del despliegue.
+      - name: Revisar portadas de los artículos
+        run: node scripts/verificar-portadas.mjs
+
       - name: Build Astro
         run: npm run build
 

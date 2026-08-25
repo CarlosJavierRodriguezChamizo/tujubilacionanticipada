@@ -83,6 +83,18 @@ Pasos:
 2. Espera a que termine y obtén la URL del resultado.
 3. Descarga la imagen a `public/blog/[slug].jpg` (mismo slug del artículo).
 
+**Antes de nada, comprueba las portadas del calendario:**
+
+```bash
+node scripts/verificar-portadas.mjs
+```
+
+Si el artículo de hoy aparece como "pendiente sin portada", es que hay que generarla
+(sigue leyendo). Si aparece alguna **imagen sin artículo**, casi siempre significa que
+alguien cambió un `slug` en `scripts/calendario.json` sin renombrar su imagen: comprueba
+si es la del artículo de hoy y, en ese caso, renómbrala a `public/blog/[slug].jpg` en vez
+de generar una nueva.
+
 **Degradación elegante:** si el MCP de imágenes NO está disponible o la generación falla,
 **elimina** las líneas `heroImage` y `heroImageAlt` del frontmatter del artículo y continúa.
 El artículo se publicará sin imagen (el sitio lo soporta) en lugar de quedar con una imagen rota.
@@ -197,6 +209,7 @@ Si el endpoint responde error o no está configurado, anótalo en el log y conti
 Escribe un resumen de lo que has hecho:
 - Artículo procesado: #[id] — [titulo]
 - Artículo actualizado (Paso 4 bis): [slug] — [qué se corrigió], o "ninguno (cola vacía)"
+- Portada: pre-generada / generada con Magnific / **publicado SIN imagen** (di por qué)
 - Intentos de verificación necesarios: [N]/3
 - Resultado: PUBLICADO o FALLO
 - Fecha y hora de ejecución
