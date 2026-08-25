@@ -218,357 +218,507 @@ de `/simulador` debe generarse consumiendo ese módulo, nunca reescribiendo cifr
 
 ---
 
-# Estrategia vigente — 2026-08-15
+# Estrategia vigente — 2026-08-25
+
+> **Replanificación forzada** por encargo del propietario (`BACKLOG.json` →
+> `config.replanificacion_forzada`, fecha 2026-08-24, foco `producto`). El **QUÉ**
+> está cerrado por el propietario en E-1 y no se reabre. Este documento resuelve el
+> **CÓMO**: precio, pasarela, entrega automática, captura de datos y recompra. Donde
+> falta un dato que solo puede dar el propietario, hay un **supuesto explícito**
+> marcado como tal y una decisión tomada encima. No hay ningún "habría que valorar".
+
+## Estado de los encargos
+
+| Encargo | Estado |
+|---|---|
+| E-1 puntos 1-4 y 6 (precio, pasarela, entrega, captura, recompra, vía bancaria) | **Resueltos en este documento**, sección "Ficha de producto" |
+| E-1 punto 5 (los 2 leads recibidos) | **Resuelto**: acción del propietario, ver Ficha § 8 |
+| E-2 (credenciales congeladas) | **Respetado**: ninguna línea de este ciclo las toca ni depende de ellas |
+| E-3 (ya hay datos) | **Consumido**: todo el diagnóstico siguiente sale de `scripts/datos/` |
+| E-4 (Línea 3 desbloqueada) | **Consumido**: `seo-019/020/022`, `ux-003`, `ux-004` entran en la Línea 3 |
+
+---
 
 ## Diagnóstico del ciclo anterior
 
-**Esta revisión vuelve a ser "a ciegas" en cuanto a rendimiento.** No hay Search
-Console, ni GA4, ni Ahrefs accesibles desde este entorno, y `scripts/datos/` sigue
-sin existir. La petición que dejé al propietario el 2026-07-29 no se ha atendido.
-Nuevo dato concreto sobre el bloqueo: `curl "$HTTPS_PROXY/__agentproxy/status"`
-devuelve `connect_rejected — gateway answered 403 to CONNECT` para
-`tujubilacionanticipada.com:443`. **No es que el sitio esté caído: es que el
-dominio no está en la lista blanca del proxy de este entorno.** Es un problema de
-configuración, resoluble, y me impide verificar despliegue, indexación y CWV.
+Primera revisión de este proyecto con datos reales. **He leído el export de Search
+Console (1 jul – 24 ago 2026, 55 días) y he ejecutado `node scripts/verificar-motor.mjs`
+hoy.** No he podido ejecutar `npm run build` ni `scripts/auditar-money-set.mjs`: el
+entorno no tiene `node_modules` instalado y `astro` no está disponible (`sh: astro: not
+found`). Lo digo aquí para que nadie confunda lo verificado con lo declarado.
 
-Todo lo que sigue está verificado **por mí, hoy, ejecutando `npm run build` y
-midiendo sobre `/dist`** (69 páginas, 65 URLs en sitemap, build en verde). No me
-he fiado de lo que declaran las tareas: lo he vuelto a medir.
+### Lo que dicen los números, sin adornos
 
-### Veredicto por hipótesis (13 tareas, todas en estado "hecha")
+- **357 clics y 24.650 impresiones en 55 días** = ~195 clics/mes, CTR 1,45 %,
+  posición media ~11. El sitio existe y entra tráfico.
+- **Tres URLs son el 46 % del negocio**: `coeficientes-reductores-jubilacion-anticipada`
+  (73 clics, pos 9,4), `jubilacion-anticipada-transportistas` (45, pos 8,1),
+  `tabla-penalizacion-jubilacion-anticipada` (45, pos 9,5). Las tres son **tablas de
+  coeficientes**: gente intentando calcular su número a mano.
+- **El patrón de caso personal está confirmado con datos**: 145 consultas del tipo
+  "tengo X años y Y cotizados" suman 1.070 impresiones y 24 clics en **posición
+  ponderada 8,4**. El cluster de cálculo genérico ("cómo se calcula la pensión",
+  "calculo jubilación anticipada", "simulador jubilación anticipada") suma 309
+  impresiones, **3 clics y posiciones entre 35 y 80**. Dos mundos distintos.
+- **`/simulador`: 276 impresiones, 3 clics, posición 48,1.** Es la URL más enlazada
+  del sitio y sigue teniendo 71 palabras. Sigue sin funcionar sin JavaScript.
+- **La arquitectura de silos del ciclo anterior, terminada y verificada, ha producido
+  44 impresiones y 0 clics en 55 días** (`/blog/categoria/*`). No fue un error hacerla;
+  sí lo sería seguir iterándola. Confirma el diagnóstico del ciclo pasado: rendimiento
+  decreciente, cerrada.
+- **`/guia-jubilacion-anticipada` tiene 11 impresiones en posición 50,6**, pese a estar
+  fuera del routing desde hace ciclos. Google la conserva indexada. Es una URL
+  desperdiciada que apunta a un producto que ya no existe.
+- **Hay duplicación con y sin barra final** en el export (`…/como-interpretar-simulador-jubilacion`
+  con 589 imp. y `…/como-interpretar-simulador-jubilacion/` con 11). No es el cuello de
+  botella de este ciclo, pero queda anotado como deuda.
+- **`/asesoramiento`: 1 impresión.** La única página con formulario del sitio es
+  invisible. 2 leads en toda la vida del proyecto.
+
+### Veredicto por hipótesis (desde la última replanificación, 2026-08-15)
 
 | id | Hipótesis (resumida) | Veredicto |
 |----|----------------------|-----------|
-| seo-001 | Centralizar nombre→slug hace que todo use el mismo slug | **CONFIRMADA** |
-| seo-002 | Una página por silo permite rastrear la estructura temática | **CONFIRMADA (artefacto) / SIN DATOS (efecto)** |
-| seo-003 | Enlazar hubs desde `/blog` reduce la profundidad de clic | **CONFIRMADA** |
-| seo-004 | Enlazar hubs desde la home deja todo a ≤2 clics | **CONFIRMADA** |
-| ux-001 | La categoría como enlace da a cada artículo salida a su silo | **CONFIRMADA** |
-| seo-005 | El silo en la miga refuerza la jerarquía | **CONFIRMADA (artefacto) / SIN DATOS (efecto)** |
-| seo-006 | Una página de persona da una entidad **verificable** | **REFUTADA** |
-| seo-007 | El `@id` conecta cada artículo con una única entidad Person | **CONFIRMADA (parcial)** |
-| seo-008 | Nombrar al revisor en "about" refuerza EEAT de sitio | **CONFIRMADA (artefacto) / SIN DATOS (efecto)** |
-| seo-009 | `category` en el índice habilita priorizar categoría | **CONFIRMADA** |
-| ux-002 | Enlazar al revisor **mejora la confianza percibida** | **SIN DATOS SUFICIENTES** |
-| seo-010 | Medir hoy establece la línea base para juzgar seo-011 | **CONFIRMADA** |
-| seo-011 | Repartir el punto de partida distribuye el enlazado interno | **CONFIRMADA (con datos)** |
+| seo-012 | Un auditor reproducible del conjunto money da la línea base objetiva | **CONFIRMADA** (artefacto). No he podido reejecutarlo hoy: depende de un build que este entorno no puede hacer. Debilidad de la herramienta, no de la hipótesis |
+| seo-013 | Una regla derivada del calendario resuelve sola los pares canibalizados | **CONFIRMADA (mecanismo) / REFUTADA en el caso que importaba**: el duplicado real del 24-ago no lo resolvió la regla, lo resolvió el propietario reenfocando el artículo a mano (`contenido-001`) |
+| seo-014 (reintento) | El canonical consolidado se emite en el HTML | **CONFIRMADA (artefacto)**, verificada por el ejecutor sobre `/dist`. Efecto: SIN DATOS (6 días de export) |
+| seo-015 | Excluir del sitemap evita que Google trate ambas como indexables | **SIN DATOS SUFICIENTES**: `novedades-2026` sigue acumulando 36 impresiones en dos variantes de URL |
+| seo-016 | Un title con verbo de acción separa la intención transaccional en `/simulador` | **REFUTADA como causa raíz.** `/simulador` sigue en posición 48 con 3 clics. El título nunca fue el problema: el problema es que la página tiene 71 palabras. Cambiar el rótulo de una puerta no construye la habitación |
+| seo-017 | Alinear `mainEntityOfPage` elimina la contradicción interna | **CONFIRMADA (artefacto)** |
+| seo-018 | Extraer el motor permite generar tablas en build | **CONFIRMADA**, y su valor real fue otro: **destapó que el sitio publicaba normativa derogada** |
+| seo-019 / seo-020 | (no evaluadas) | **PARADA CORRECTA.** Dos agentes se negaron a publicar cifras que no podían verificar en un sitio YMYL. Es el mejor resultado del ciclo y la razón de que hoy exista un producto vendible |
+| seo-021 | FAQ visible + `requiresJs=false` | **CONFIRMADA la mitad honesta** (FAQ visible), **rechazada correctamente** la otra: declarar `requiresJs:false` con la página aún dependiente de React habría sido mentir en el schema |
+| normativa-001 | Con el motor alineado, se pueden publicar cifras sin riesgo | **CONFIRMADA, y verificada por mí hoy**: `node scripts/verificar-motor.mjs` → **326 comprobaciones, todas correctas**, contra los extractos del BOE de `scripts/fuentes/`. Es el único activo defendible que tiene este proyecto |
+| contenido-001 | Alternar caso concreto con corrección sistemática sube el CTR sin abrir URLs competidoras | **CONFIRMADA (artefacto): `auditar-normativa.mjs` en 0 incidencias altas y medias. SIN DATOS (efecto)**: las correcciones son del 24-ago y el export termina el 24-ago. Su premisa sí queda confirmada con datos (caso personal pos. 8,4 vs. head pos. 35-80) |
+| legal-001 | Identificación legal lista y formulario sin JS | **CONFIRMADA (artefacto) — y ahora es un bloqueante de negocio**: `LEGAL.titular`, `nif` y `domicilio` siguen vacíos. Con el mecanismo ya construido, **cobrar sin rellenarlos es ilegal** (art. 10 LSSI-CE y arts. 97 y 60 RDL 1/2007). Ha dejado de ser deuda técnica para ser la llave del ciclo |
 
-**Lo que he vuelto a medir y sale bien:**
-- 4 silos generados (`tipos-de-jubilacion-anticipada`, `calculos-y-penalizaciones`,
-  `planificacion-financiera`, `actualidad-y-casos-practicos`), los 4 enlazados
-  desde la home y desde `/blog`. Efecto no previsto y **positivo**: el umbral
-  ≥3 de `[categoria].astro` es dinámico, así que el cuarto silo (0 artículos el
-  29-jul, 13 hoy) se generó solo. Buen diseño, se mantiene.
-- 48/48 artículos con enlace a su silo (eyebrow + miga de 4 niveles) y 48/48 con
-  enlace a `/equipo/javier-rodriguez`. `reviewedBy` resuelve al `@id`.
-- **seo-011 es la única mejora del ciclo con evidencia numérica real, y es buena.**
-  Antes: mínimo 0, máximo 46, mediana 0, 29/47 artículos con cero enlaces entrantes.
-  Después (verificado hoy): **mínimo 3, máximo 14, mediana 3, 0/48 con cero.**
-- **El objetivo del ciclo anterior está CUMPLIDO y verificado, 13 días antes de su
-  plazo (2026-08-28).** Ningún artículo por debajo de 3 enlaces entrantes; una
-  página de silo por categoría con ≥3 publicados; todo a ≤2 clics de la home.
-
-**Lo que sale mal y hay que decir:**
-
-1. **seo-006 está REFUTADA, no confirmada.** La hipótesis era "entidad
-   *verificable*". Lo entregado es una URL de 551 palabras con nombre y cargo, sin
-   `sameAs`, sin `worksFor`, sin una sola referencia externa comprobable. Hicieron
-   bien en no inventar credenciales — la restricción era correcta y se respetó —
-   pero eso significa que **la hipótesis no se pudo cumplir con la información
-   disponible**, no que se cumpliera. Una URL propia no verifica a nadie.
-2. **seo-007 solo arregló la mitad del grafo.** `reviewedBy` está unificado, pero
-   el `author` de los 48 artículos sigue siendo un nodo `Organization` suelto con
-   `name: "tujubilacionanticipada.com"`, que **no referencia** el `@id`
-   `#organization` (cuyo `name` es "Tu Jubilación Anticipada"). Dos entidades
-   distintas para el mismo editor en la misma página.
-3. **8 de las 13 tareas declararon como métrica "GSC a 21-30 días".** Eso viola
-   directamente la restricción que yo mismo escribí el 29-jul ("toda tarea debe
-   declarar su criterio de éxito de forma verificable sobre el repositorio o sobre
-   `/dist`"). Métricas que nadie puede leer son criterios mal formulados, y por eso
-   ux-002 se queda en SIN DATOS: su criterio medía la presencia de un `<a>`, no la
-   confianza. Fallo sistémico de formulación, no de ejecución.
-4. **Balance honesto: 11/13 hipótesis confirmadas a nivel de artefacto, 0 a nivel
-   de negocio.** El ciclo hizo bien lo que se le pidió. Lo que se le pidió puede
-   haber sido insuficiente, y ya no tiene sentido seguir por ahí: la arquitectura
-   de silos, migas y entidad del revisor está terminada. Iterarla más es rendimiento
-   decreciente.
-
-### Lo que la medición de hoy ha destapado (y es lo importante)
-
-Al medir el grafo de enlaces y el peso real de cada URL han aparecido tres hechos
-que no estaban en el diagnóstico anterior:
-
-- **`/simulador` tiene 71 palabras de contenido único en `<main>`.** Setenta y una.
-  Y es, junto a `/blog` y `/asesoramiento`, **la URL más enlazada internamente de
-  todo el sitio: la enlazan las 69 páginas** (está en `NAV_LINKS`), más 48 enlaces
-  desde el cuerpo de los artículos y 5 desde la home. Es el mayor sumidero de
-  autoridad interna del proyecto y está vacío. Con JavaScript desactivado el botón
-  "Calcular mi jubilación" no hace nada (isla React `client:load`): incumple la
-  restricción permanente "el sitio debe funcionar sin JavaScript".
-- **El 65% del volumen declarado del proyecto está en 5 URLs.** De 137.050
-  búsquedas/mes publicadas: `simulador jubilacion` 60.000 (44%),
-  `tabla de jubilación por años cotizados` 13.000, `jubilacion anticipada` 11.000,
-  `que es la base reguladora` 5.600. La mediana de las otras 45 es 1.000/mes y 15
-  están por debajo de 500. **El proyecto es 5 URLs con 45 satélites**, no 50 URLs.
-- **Hay canibalización viva, no futura.** Tres pares compiten por la misma consulta
-  con canonical propio cada uno (verificado en `/dist`):
-  - `jubilacion-anticipada-cambios-2026` (05-jul, 2.531 pal.) **vs**
-    `jubilacion-anticipada-novedades-2026` (01-ago, 2.521 pal.) — misma keyword
-    exacta declarada: `jubilacion anticipada 2026`. **Ya publicados los dos.**
-  - `/simulador` (título "Simulador de jubilación anticipada", 71 pal.) **vs**
-    `/blog/como-interpretar-simulador-jubilacion` (título "Simulador de jubilación:
-    cómo interpretar…", 2.518 pal.) — la consulta de 60.000/mes. La página delgada
-    se lleva los enlaces internos; la gruesa se lleva el contenido.
-  - `que-es-la-jubilacion-anticipada` (25-jun) **vs**
-    `guia-completa-jubilacion-anticipada-2026`, programado para el **2026-08-24**,
-    misma keyword exacta `jubilacion anticipada`, 11.000/mes. **Faltan 9 días.**
-    Lo reporté el 29-jul y sigue en el calendario.
+**Balance:** el ciclo produjo 11 artefactos correctos, 1 refutación útil (`seo-016`), 2
+paradas que salvaron el proyecto de publicar normativa falsa a escala, y **0 euros**.
+Lo relevante no es lo que se hizo: es que ahora hay algo que vender y un motor
+verificado contra el BOE que lo respalda.
 
 ## Cuello de botella prioritario
 
-**Autoridad** — pero ya no la del sitio, sino la de las URLs concretas que
-sostienen el negocio.
+**Conversión.**
 
-El ciclo anterior atacó la autoridad *arquitectónica* (silos, jerarquía, grafo de
-enlaces, entidad del revisor) y la cerró: verificado sobre `/dist`, no queda deuda
-estructural relevante. Lo que queda es que **los documentos que concentran el 65%
-del valor no son competitivos como documentos individuales, y además compiten
-entre sí**. El activo más enlazado del sitio tiene 71 palabras. La consulta de
-11.000/mes va a tener dos URLs propias dentro de nueve días. Ninguna cantidad de
-arquitectura arregla eso: dos URLs partiéndose la señal de la misma consulta no
-posicionan ninguna de las dos, y una página de 71 palabras no posiciona en un
-nicho donde compite con el simulador oficial de la Seguridad Social y con la banca.
+Entran ~195 personas al mes buscando **su número exacto** —lo demuestran las 145
+consultas de caso personal en posición 8,4— y el sitio **no tiene absolutamente nada que
+puedan comprar ni forma de pagarlo**. No hay pasarela, no hay entregable, no hay página
+de venta. El resultado acumulado son 2 leads.
 
-Descarto los otros tres, explícitamente:
-- *Visibilidad*: no hay nada que la bloquee en el build — robots abierto, sitemap
-  de 65 URLs, canonicals correctos, imágenes de schema existentes (48/48), páginas
-  estáticas, sin `noindex`. No puedo confirmar la indexación real, pero tampoco
-  puedo señalar una causa técnica: no hay ninguna.
-- *Relevancia*: sería inventármelo. No tengo rebote ni scroll ni tiempo en página.
-  Lo único medible es que la longitud media de artículo (1.944 palabras de fuente)
-  y la cobertura de intención (49/50 informacional) son razonables para el nicho.
-- *Conversión*: sigue siendo prematuro y, además, **hoy no hay nada que convertir**:
-  la guía está desactivada, no hay publicidad, y el formulario de asesoramiento no
-  lleva a ningún producto declarado. Optimizar la conversión de una oferta que no
-  existe es teatro. Se mantiene fuera hasta que haya volumen medible y oferta real.
+Descarto los otros tres con los datos delante, no por intuición:
+
+- *Visibilidad*: 24.650 impresiones y posición media 11 en 55 días. El tráfico entra.
+- *Relevancia*: las páginas que reciben el tráfico están en posiciones 8-9 con CTR
+  normal para el nicho; las consultas que las traen son exactamente el tema del sitio.
+  No hay desajuste de intención.
+- *Autoridad*: es un problema real y localizado (`/simulador` en posición 48, cluster de
+  cálculo en 35-80), pero es **el problema del ciclo que viene**. Ganar 20 posiciones en
+  el cluster de cálculo sin nada que vender multiplica por más tráfico un ingreso de
+  cero. El orden correcto es: primero la caja registradora, después la cola de clientes.
+  Por eso la parte de autoridad que sí entra este ciclo (Línea 3) entra **solo** en su
+  papel de puerta de entrada al producto.
+
+Y una razón adicional que zanja la discusión: hasta hoy yo mismo descartaba Conversión
+ciclo tras ciclo argumentando que "optimizar la conversión de una oferta que no existe es
+teatro". El propietario ha hecho que la oferta exista. El argumento ya no aplica.
 
 ## Objetivo del ciclo
 
-**El 2026-09-14, las 5 URLs que concentran el 65% del volumen declarado del
-proyecto (89.600 de 137.050 búsq./mes) cumplen las dos condiciones a la vez,
-verificado por un script del repositorio sobre `/dist` y sin depender de Search
-Console:**
+**El 2026-09-30, una persona que no conoce a nadie del proyecto puede comprar el informe
+y recibirlo sin que intervenga ningún ser humano.**
 
-1. **Unicidad**: ninguna de ellas comparte consulta objetivo con otra URL indexable
-   del sitio. Cero pares canibalizados en todo el sitemap, incluida la resolución
-   automática del duplicado que entra el 2026-08-24.
-2. **Suficiencia**: ninguna tiene menos de **1.200 palabras de contenido único en
-   `<main>`** y todas devuelven algo útil con **JavaScript desactivado**.
+Se da por cumplido si, y solo si, las cinco condiciones son ciertas:
 
-Hoy el marcador es: 4 de 5 cumplen suficiencia (2.253–2.581 palabras),
-**`/simulador` está en 71 palabras y es JS-obligatorio**, y hay **3 pares
-canibalizados** de los cuales 2 ya están vivos.
+1. Existe `/informe`, se navega y se envía **con JavaScript desactivado** (formulario
+   `method="post"` + respuesta 303), y su envío crea una sesión de pago real.
+2. `node scripts/verificar-flujo-informe.mjs` recorre el camino completo en **modo
+   simulación** (sin claves de Stripe) y produce un **PDF de ≥ 4 páginas** cuyas cifras
+   coinciden **celda a celda** con `calcularEscenario()` de `src/lib/pension-calculo.ts`.
+   Sale con código 1 si alguna cifra del PDF no procede del motor.
+3. `node scripts/verificar-motor.mjs` sigue en 326/326 y corre antes del build.
+4. El propietario ejecuta **una compra en modo test y una compra real de 49 €** y en
+   ambas recibe el PDF en su correo en **menos de 5 minutos**, sin tocar nada.
+5. `LEGAL.titular`, `nif` y `domicilio` están rellenos en `src/consts.ts` y existen las
+   páginas de **Condiciones de contratación** y de **desistimiento**. Sin esto no se
+   activa el cobro: es la única condición que puede bloquear el objetivo entero.
 
-*Definición operativa del conjunto money (para que no se discuta después):*
-`/simulador` más las URLs de artículo cuya keyword en `scripts/calendario.json`
-declara ≥ 5.000 búsq./mes — hoy `como-interpretar-simulador-jubilacion`,
-`tabla-jubilacion-anos-cotizados`, `que-es-la-jubilacion-anticipada`,
-`base-reguladora-pension-jubilacion`. El conjunto se recalcula solo desde el
-calendario; no se mantiene a mano.
+*Métrica de embudo (línea base, no criterio de éxito):* contadores en Redis
+`metricas:informe:{formulario_enviado, checkout_creado, pagado, descargado, regenerado}`.
+Se leen el 2026-09-30 y sirven de "antes" para el ciclo siguiente. **Este ciclo no se
+juzga por ventas**: con ~90 clics/mes en las páginas de tabla, un CTA al 10 % y una
+conversión del 3 % da 0,3 ventas/mes. Fijar un objetivo de facturación aquí sería
+fijar un objetivo de azar.
 
-*Métrica secundaria (línea base, no criterio de éxito):* el propietario anota el
-2026-09-14 en Search Console las impresiones, clics y posición media de esas 5
-URLs. Sirve para el ciclo siguiente. Este ciclo **no** se juzga con ese dato.
+---
+
+## Ficha de producto — decisión cerrada
+
+Esto no es un menú de opciones. Es lo que se construye. Cada decisión lleva su porqué y,
+donde hace falta un dato del propietario, un **supuesto** marcado.
+
+### 1. Qué se vende (del propietario, no se reabre)
+
+**Informe personalizado de fecha óptima de jubilación**, en PDF paginado, generado
+automáticamente desde `src/lib/pension-calculo.ts`, con coste marginal cero. Alcance del
+entregable: el de E-1, punto por punto.
+
+### 2. Precio: **49 € IVA incluido**, pago único, con 12 meses de reemisión
+
+- **49 €, no 29 €.** 29 € es el precio de un PDF informativo y el propietario ya lo
+  descartó. 49 € está por encima de la banda del infoproducto y por debajo de la banda
+  del asesoramiento humano (90-250 € en una gestoría), que es exactamente donde debe
+  leerse: **no es información y no es un asesor**.
+- **49 €, no 99 €.** No hay credenciales verificables publicables (E-2 congelado), no
+  hay reseñas, no hay marca. A 99 € el comprador exige una persona detrás y el producto
+  no la tiene por diseño. Además, con este volumen, un precio que reduzca las ventas a
+  la mitad no reduce ingresos: elimina el aprendizaje.
+- **Justificación frente a lo que se juega el comprador:** los tres acantilados del
+  propio E-1 valen 12.600 €, 10.080 € y 22 meses de cobro anticipado. 49 € es el **0,4 %**
+  del más pequeño de ellos. Ese es el argumento de venta y debe estar en la página, con
+  las cifras calculadas por el motor, no redactadas a mano.
+- **Justificación frente a la alternativa gratuita:** el simulador oficial de la
+  Seguridad Social es gratis, exige Cl@ve o certificado digital y **no da la tabla
+  comparativa mes a mes de las 24/48 fechas posibles ni señala los saltos de tramo**. Se
+  compite diciéndolo, y enlazándolo (restricción vigente), no ocultándolo.
+- **Qué incluye el precio:** el informe + **12 meses de reemisión ilimitada** desde el
+  mismo enlace, con datos actualizables por el comprador, y **aviso automático por email
+  cuando cambie la normativa** que afecte a su caso. Esto es lo que separa 49 € de un PDF
+  muerto de 29 €, y su coste marginal sigue siendo cero.
+- **Qué NO incluye, y debe decirse literalmente en la página:** no es el cálculo oficial
+  de la Seguridad Social; no es asesoramiento personalizado ni fiscal; no contempla
+  convenios especiales, cotizaciones en el extranjero, coeficientes por actividad penosa
+  (arts. 206 y 206 bis), complementos a mínimos ni complemento de brecha de género —
+  las mismas exclusiones que ya declara la cabecera del motor. Nadie compra creyendo
+  que compra otra cosa.
+- **Nada de precios de lanzamiento ni test A/B de precio este ciclo.** Con ~0,3 ventas
+  mensuales previstas, ningún test de precio puede alcanzar significación: sería ruido
+  disfrazado de método. Un precio, publicado, durante todo el ciclo.
+- **Supuesto explícito (a confirmar por el propietario):** ventas a consumidores
+  residentes en España, IVA 21 % incluido (49,00 € = 40,50 € + 8,50 €). Si hubiera venta
+  a otros países de la UE, el umbral OSS de 10.000 €/año queda lejísimos a este volumen.
+
+### 3. Pasarela: **Stripe Checkout** (alojado), modo `payment`
+
+- **Por qué Stripe y no otra:** es la única que resuelve las tres cosas a la vez —
+  **Bizum** (verificado: Stripe soporta Bizum en Checkout modo pago; entre el 20 % y el
+  30 % de los compradores en España lo prefieren, y el público de 50-65 años lo tiene en
+  el móvil), página de pago alojada (**cero PCI, cero JavaScript nuevo en nuestro sitio**)
+  y comisión baja (~1,5 % + 0,25 € en tarjeta europea, ~0,74 € sobre 49 €).
+- **Bizum no está disponible en Checkout en modo suscripción.** Es una razón técnica
+  más, además de la comercial, para que la renovación sea un pago único anual y no una
+  suscripción con cargo automático (ver § 6).
+- **Métodos activos:** tarjeta + Bizum. `locale: 'es'`. Precio fijo en un `price` de
+  Stripe (4900 céntimos), nunca un importe calculado en cliente.
+- **Facturación/IVA:** activar **Stripe Tax** (0,5 % por transacción) y los recibos
+  automáticos. Es más barato que cualquier hora de gestoría dedicada a esto.
+- **Contingencia, no plan B por defecto:** si Stripe rechaza la cuenta por clasificar el
+  negocio como asesoramiento financiero, se pasa a un *merchant of record* tipo Lemon
+  Squeezy (comisión ~5 %, pero asume IVA y facturas). **Mitigación previa: el propietario
+  debe describir la actividad como "informes automatizados de cálculo divulgativo", que
+  es lo que es, no como asesoramiento.** Ese matiz vale la cuenta.
+
+### 4. Entrega automática: seis piezas, ninguna con una persona dentro
+
+Toda la infraestructura ya existe en el repo (funciones serverless en `/api`, Upstash
+Redis en `api/_redis.js`, Resend en `api/contact.js`). No hay que inventar plataforma.
+
+1. `POST /api/informe-checkout` — valida los campos, guarda `pedido:{id}` en Redis
+   (TTL 400 días), crea la sesión de Stripe con `client_reference_id = id` y
+   `customer_email`, y responde **303 hacia la URL de Stripe**. Funciona sin JavaScript
+   porque es un `<form method="post">` nativo, igual que ya hace `api/contact.js`.
+2. `POST /api/stripe-webhook` — verifica la firma con el **cuerpo crudo**
+   (`bodyParser: false`; si esto se olvida, la firma nunca valida: es el fallo clásico),
+   y en `checkout.session.completed` marca el pedido como pagado de forma **idempotente**
+   (`SET NX` sobre `session.id`), genera un `token` aleatorio de 32 bytes y guarda
+   `informe:{token} → pedidoId`.
+3. **Email inmediato con Resend**: PDF adjunto + enlace permanente. Si el adjunto falla,
+   el email sale igual con el enlace: **nunca se queda sin entregar por un adjunto**.
+4. `GET /api/informe?token=…` — **regenera el PDF al vuelo** desde los datos del pedido y
+   el motor. Consecuencia deliberada: si el motor cambia, el informe descargado cambia.
+   Nunca se almacena un PDF congelado. Límite de 12 descargas/mes por token.
+5. `/informe/gracias` y `/informe/cancelado` — páginas estáticas, `noindex`, con el
+   enlace de descarga y qué hacer si el correo no llega.
+6. `GET /informe/editar?token=…` + `POST /api/informe-regenerar` — el comprador corrige
+   sus datos y recibe un informe nuevo sin pagar, durante 12 meses. Es la máquina de la
+   recompra (§ 6).
+
+**Modo simulación, obligatorio.** Si no existe `STRIPE_SECRET_KEY`, el flujo salta el
+pago y devuelve el PDF con marca de agua **"MUESTRA — SIN VALIDEZ"**. Dos motivos: los
+agentes pueden construir y verificar el 90 % del sistema sin credenciales del propietario
+(no se bloquea el ciclo esperando una cuenta), y el mismo camino produce el **informe de
+ejemplo público** que se ofrece en la página de venta.
+
+### 5. Captura de datos: 7 obligatorios, 3 opcionales, 2 casillas legales
+
+Regla de diseño: **cada campo tiene que cambiar una cifra del informe**. Si no la cambia,
+no se pide. Los campos de hoy (edad en años, cotizados en años, base) **no bastan**: los
+saltos de tramo del propio E-1 ocurren entre meses, no entre años.
+
+Obligatorios:
+
+| Campo | Por qué existe |
+|---|---|
+| `fechaNacimiento` (día/mes/año) | Sin ella no hay **fecha** de edad ordinaria (DT 7.ª), solo una edad. El producto se llama "fecha óptima" |
+| `cotizadoAnios` + `cotizadoMeses` | Los cortes están en 38a3m, 38a6m, 41a6m y 44a6m. Redondear a años destruye el producto |
+| `fechaCotizado` (mes/año del informe de vida laboral) | Sin la fecha de corte no se puede proyectar la carrera hasta la jubilación |
+| `sigueCotizando` (hasta jubilarme / hasta una fecha / ya no cotizo) | Hoy `calcularEscenario()` **asume** cotización continua. Para media España en paro a los 60 eso es falso |
+| `baseReguladora` (€/mes) | Es el multiplicador de todo. Con ayuda a pie de campo y su limitación impresa en el informe |
+| `modalidadPrevista` (voluntaria / cese no imputable / no lo sé) | Decide entre 24 y 48 meses y entre dos cuadros legales distintos. "No lo sé" → se calculan **las dos** |
+| `email` | Es el canal de entrega |
+
+Opcionales: `nombre` (portada), `conyugeACargo` (elige la mínima aplicable del art.
+208.1.c) — el motor ya tiene ambas cuantías del anexo I del RD 241/2026), `fechaObjetivo`
+(la fecha que el usuario tenía en mente, para destacarla en la tabla y decirle cuánto le
+cuesta).
+
+Dos casillas **separadas y desmarcadas**, ninguna premarcada: (a) tratamiento de datos
+para generar el informe; (b) **solicitud de entrega inmediata y renuncia expresa al
+desistimiento** (art. 103.m RDL 1/2007) — sin ella, el comprador puede pedir la
+devolución después de descargar el PDF. Más el honeypot antispam que ya usa
+`api/contact.js`.
+
+**No se pide sexo ni número de hijos** este ciclo: harían falta para el complemento de
+brecha de género, y esa cifra **no está en el motor verificado**. Entra por el camino de
+siempre (extracto en `scripts/fuentes/` + constante + comprobación) o no entra.
+
+**Dos huecos del motor que esto destapa y hay que cerrar antes de cobrar:**
+`EscenarioInput` necesita `cotizaHasta` (proyección real de la carrera) y
+`conyugeACargo` (mínima aplicable). Ambos cambian cifras del informe; ninguno introduce
+una cifra nueva sin fuente.
+
+### 6. Recompra: reemisión incluida, aviso automático, renovación de 19 €
+
+Un informe de jubilación caduca por tres motivos distintos y cada uno tiene su respuesta:
+
+| Qué cambia | Respuesta | Precio |
+|---|---|---|
+| **Cambian los datos del usuario** (le despiden, cambia su base, cotiza más) | Reemisión desde `/informe/editar?token=…` | Incluido 12 meses |
+| **Cambia la normativa** (revalorización de enero; **en 2027 la edad ordinaria pasa a 65 con 38a6m / 67 con menos** y cambia la escala de la DT 9.ª) | Email automático "tu informe ha cambiado" con el PDF regenerado, a todos los tokens vivos | Incluido 12 meses |
+| **Pasan los 12 meses** | Email con enlace de pago único: **Revisión anual, 19 €**, que reabre el token otros 12 meses | 19 €/año, opt-in |
+
+**Nada de suscripción con cargo automático.** Público de 50 a 65 años, nicho YMYL,
+patrones oscuros prohibidos y Bizum no disponible en modo suscripción: un cargo
+recurrente que el comprador no recuerda haber autorizado es la vía más rápida a una
+reclamación y a destruir la confianza que sostiene el producto. La renovación se pide,
+no se cobra sola.
+
+El disparador de recompra más fuerte no es el calendario: es **enero de 2027**, cuando
+cambie la edad ordinaria. Ese día, cada informe vendido se vuelve incorrecto a la vez y
+el sistema envía un email correcto a todos. Eso solo funciona si los pedidos se guardan
+con TTL de 400 días desde el primer día. **Por eso se guardan desde el primer día.**
+
+### 7. La vía bancaria (E-1, punto 6): dimensionada en cero este ciclo
+
+El propietario pidió dimensionarla como ingreso secundario. La dimensiono: **cero euros
+y cero tareas este ciclo**, y no por prudencia genérica, sino por tres condiciones de
+entrada que hoy no se cumplen:
+
+1. El consentimiento debe **nombrar al destinatario concreto**, y no hay ninguna entidad
+   con la que exista acuerdo. Un consentimiento genérico "a entidades financieras" es
+   nulo.
+2. Presentar clientes a entidades financieras a cambio de remuneración **puede ser
+   actividad regulada**: hay que verificarlo con un profesional **antes** de escribir una
+   sola línea de esa casilla.
+3. A 0,3 ventas/mes no hay volumen que ofrecer a nadie. Negociar desde ahí es regalar el
+   activo.
+
+**Cuándo se reabre:** cuando existan (a) 50 informes vendidos y (b) un acuerdo firmado
+con una entidad nombrable y (c) la verificación jurídica del punto 2. Antes no.
+
+### 8. Los 2 leads existentes (E-1, punto 5)
+
+**Acción del propietario, no de un agente** (no cabe en `ux|seo|cro`): escribirles
+personalmente en cuanto el informe funcione en modo test y regalarles el informe
+completo a cambio de que digan si lo entienden y si les parece que vale 49 €. Son los dos
+únicos usuarios reales que existen; sirven de prueba de usabilidad y de prueba de precio
+por el coste de dos correos. No se les añade a ninguna lista.
+
+---
 
 ## Líneas de trabajo (máximo 3, priorizadas)
 
-### 1. Instrumento de auditoría del conjunto money sobre `/dist` — área principal: **seo**
+### 1. La máquina de cobrar y entregar, de extremo a extremo — área principal: **cro**
 
-**Va primero a propósito.** `seo-010` es la única razón por la que hoy he podido
-dictaminar `seo-011` con números en vez de con fe; las otras doce las he tenido
-que reverificar a mano. Se replica el patrón antes de tocar nada, para que exista
-un "antes" que nadie pueda discutir.
+Es la línea que decide si este ciclo sirve para algo. Comprende `/informe` (página de
+venta + formulario sin JavaScript), los cuatro endpoints de § 4, el almacenamiento en
+Redis, el email con Resend, el modo simulación y las páginas de gracias/cancelado/editar.
+Además: **`/guia-jubilacion-anticipada` redirige de forma permanente a `/informe`** —
+tiene impresiones reales y hoy no lleva a ninguna parte.
 
-Un script (p. ej. `scripts/auditar-money-set.mjs`) que, tras `npm run build`,
-derive el conjunto money desde `scripts/calendario.json` (**solo lectura**) y para
-cada URL imprima: palabras únicas en `<main>`, enlaces internos entrantes,
-`canonical`, tipos de JSON-LD presentes, y si existe otra URL indexable del
-sitemap que declare su misma keyword exacta. Además, recorrido completo del
-sitemap buscando pares keyword-duplicada. Si existe `scripts/datos/*.csv` con un
-export de GSC, lo cruza e imprime impresiones/clics/posición; si no existe, lo dice
-por consola y termina en 0.
+*Falsable:* con `STRIPE_SECRET_KEY` ausente, `node scripts/verificar-flujo-informe.mjs`
+completa el camino formulario → pedido → token → PDF y devuelve código 0; con un campo
+obligatorio ausente o un email inválido devuelve error y **no** crea pedido; el HTML de
+`dist/informe/index.html` contiene un `<form method="post" action="/api/informe-checkout">`
+sin depender de ningún `<script>`; el webhook rechaza una firma inválida y es idempotente
+ante el mismo `session.id` repetido; ninguna página nueva añade JavaScript de cliente.
+`npm run build` en verde.
 
-*Falsable:* el script existe, se ejecuta sobre `/dist` y **su salida "antes" queda
-pegada en `DECISIONES.md` antes de ejecutar las líneas 2 y 3**. Sale con código 1
-si alguna URL del conjunto tiene <1.200 palabras o comparte keyword con otra URL
-indexable. Hoy debe salir con código 1 y reportar exactamente: `/simulador` = 71
-palabras, y 2 pares canibalizados (`cambios-2026`/`novedades-2026`, y
-`/simulador`/`como-interpretar-simulador-jubilacion`).
+### 2. El informe: el PDF que justifica los 49 € — área principal: **ux**
 
-### 2. Consolidar las consultas canibalizadas sin tocar `src/content/blog/**` — área principal: **seo**
+Lo que se paga se ve. Un PDF feo a 49 € no parece caro: parece falso.
 
-Hay tres pares repartiéndose la señal de tres consultas, dos de ellos vivos y uno
-que entra el 2026-08-24 sobre la keyword de 11.000/mes. **Es la línea más urgente
-en calendario y la más barata en esfuerzo.**
+Contenido exigido: portada con nombre y fecha de emisión, índice, numeración de páginas;
+edad ordinaria exacta **con su fecha**; **tabla mes a mes** de las 24 fechas (voluntaria)
+o 48 (involuntaria) con pensión resultante, pérdida mensual y pérdida acumulada a 20
+años; **acantilados destacados** con su valor en euros; punto de equilibrio de esperar
+frente a adelantar; verificación de requisitos (35/33 años, art. 208.1.c, tope de
+3.359,60 €, carencia del art. 205.1.b); cada cifra normativa con su fuente al pie de su
+sección; disclaimer y exclusiones visibles. Cuerpo ≥ 11 pt, contraste AA, **legible
+impreso en blanco y negro** (los acantilados no se marcan solo con color).
 
-Se resuelve **a nivel de layout y de librería**, sin abrir un solo `.mdx`: un mapa
-de consolidación en `src/lib/` consumido por `BlogPost.astro` / `BaseHead.astro` y
-por la generación del sitemap, alimentado por una regla derivada de
-`scripts/calendario.json` (solo lectura): **cuando dos URLs publicadas declaran la
-misma keyword exacta, la de fecha de publicación más antigua es la canónica; la
-más reciente emite `<link rel="canonical">` hacia ella y queda excluida del
-sitemap.** Excepción de seguridad: si la más reciente tiene ≥1,5× palabras únicas
-que la antigua, el script **no decide solo — lo reporta al CEO**.
+*Falsable:* el PDF de muestra tiene ≥ 4 páginas y numeración en todas; contiene 24 o 48
+filas de fecha según modalidad; **un test compara celda a celda cada cifra del PDF con la
+salida de `calcularEscenario()` y falla si difiere alguna**; ninguna cifra normativa está
+escrita a mano en la plantilla (comprobación por grep de literales numéricos); convertido
+a escala de grises, los acantilados siguen siendo identificables. Existe
+`/informe/ejemplo.pdf` público, generado por el mismo código, con datos de ejemplo y
+marca de agua.
 
-El par `/simulador` vs `como-interpretar-simulador-jubilacion` **no** se resuelve
-con canonical (son documentos legítimamente distintos: una herramienta y una guía):
-se resuelve diferenciando el `title` y el `H1` de `/simulador` para que se quede la
-intención de herramienta y el artículo mantenga la informacional. Como el `title`
-del artículo vive en su frontmatter y es intocable, el que se mueve es `/simulador`.
+### 3. Las puertas de entrada, donde ya hay tráfico — área principal: **seo**
 
-*Falsable:* tras el build, `dist/blog/jubilacion-anticipada-novedades-2026/index.html`
-tiene `canonical` apuntando a `…/jubilacion-anticipada-cambios-2026` y **no** aparece
-en `sitemap-0.xml`; el script de la línea 1 reporta 0 pares canibalizados; y una
-ejecución de prueba con `guia-completa-jubilacion-anticipada-2026` marcado como
-publicado demuestra que la regla lo resuelve **sola**, sin intervención humana, el
-2026-08-24. `npm run build` en verde.
+El producto sin embudo no vende. Y el embudo **no es `/simulador`** (3 clics/mes): son
+las tres páginas de tablas y coeficientes que se llevan el 46 % de los clics.
 
-### 3. `/simulador`: de 71 palabras y JS-obligatorio a documento competitivo y usable sin JavaScript — área principal: **seo**
+Dos entregas, un solo objetivo:
 
-Es la URL que recibe más enlaces internos del sitio (69/69 páginas) y apunta al 44%
-del volumen declarado. Hoy es un formulario vacío que además incumple una
-restricción permanente. Dos problemas, una sola causa: todo el valor de la página
-está dentro de una isla React.
+- **CTA contextual al informe** en las URLs que el export de GSC demuestra que traen
+  clics (≥ 10 clics en 55 días), renderizado **desde el layout o desde el plugin de
+  bloques**, jamás editando `src/content/blog/**`. El texto no promete asesoramiento:
+  ofrece el cálculo de la fecha exacta y lo que cuesta equivocarse de mes.
+- **`/simulador` deja de ser un formulario vacío** (`seo-019`, `seo-020`, `seo-022`,
+  `ux-003`, `ux-004`, ya desbloqueadas por E-4): tablas de los arts. 207.2 y 208.2
+  generadas en build desde el motor, escenarios precalculados, fuentes oficiales
+  enlazadas, enlace al simulador oficial, `<noscript>` visible, tablas accesibles AA. Y
+  al final del cálculo gratuito, la pregunta que vende el informe: *"esto te dice cuánto
+  cobrarías; el informe te dice qué mes te conviene y cuánto pierdes si te equivocas"*.
 
-Qué debe pasar a contener, como HTML estático:
-- **Escenarios precalculados en tablas renderizadas en build** (edad × años
-  cotizados × tramos de base reguladora): con JS desactivado, un usuario debe poder
-  **leer una estimación para su caso** en una tabla. Esto resuelve la restricción
-  no-JS y aporta contenido indexable a la vez; la isla React se queda como **mejora
-  progresiva**, no como requisito.
-- Qué calcula exactamente y con qué fórmula, con el artículo de la LGSS que la
-  respalda, enlazado a `boe.es` o `seg-social.es` (dofollow, `DOFOLLOW_HOSTS`).
-- Tabla de coeficientes reductores vigentes, cada cifra con su fuente oficial.
-- Limitaciones explícitas de la estimación y **enlace al simulador oficial de la
-  Seguridad Social**. No se compite ocultando que existe: se compite explicándolo.
-- Schema propio del tipo de página (`WebApplication`/`SoftwareApplication`).
-  `FAQPage` **solo** si las preguntas están literalmente visibles en la página.
-
-*Falsable:* medido por el script de la línea 1 — `<main>` de `/simulador` ≥ 1.200
-palabras únicas (hoy 71); ≥ 40 combinaciones de escenario presentes en el HTML
-estático; con la isla React eliminada del HTML, la página sigue conteniendo una
-tabla de estimación legible; el `DISCLAIMER` sigue visible; cada cifra normativa
-nueva tiene un enlace a fuente oficial en la misma sección. `npm run build` en verde.
+*Falsable:* `<main>` de `/simulador` ≥ 1.200 palabras únicas (hoy 71, medido por
+`auditar-money-set.mjs`); ≥ 40 combinaciones de escenario en el HTML estático; las 24 y
+48 filas de los cuadros legales presentes y **comparadas programáticamente** con
+`COEF_VOLUNTARIA` / `COEF_INVOLUNTARIA`; eliminando la isla React del HTML la página
+sigue siendo legible y con estimación; el CTA a `/informe` aparece en ≥ 8 URLs de
+artículo sin que haya cambiado un solo byte de `src/content/blog/**` (verificable con
+`git diff --stat`).
 
 ## Fuera de alcance este ciclo
 
-- **La arquitectura de silos, migas de pan y entidad del revisor: CERRADA.** Está
-  hecha y verificada. No se itera, no se "pule", no se añaden silos ni niveles.
-  Cualquier tarea que proponga tocarla se rechaza.
-- **`src/content/blog/**`, `scripts/calendario.json` y `.github/**`: intocables.**
-  Sin excepciones, tampoco para la consolidación de la línea 2 — por eso se resuelve
-  en `src/lib/` y en los layouts. El duplicado del 2026-08-24 se reporta al
-  propietario por tercera vez, **no** se edita el calendario.
-- **CRO, copy y campos del formulario de asesoramiento, `socialProofCount`,
-  avatares, colores de CTA.** Sin tráfico medible y sin oferta declarada, cualquier
-  test es ruido.
-- **Guía PDF y pasarela de pago.** Sigue oculta: `CTAGuia` comentado y
-  `_guia-jubilacion-anticipada.astro` fuera del routing. Un CTA de 29 € que acaba
-  en un `mailto:` destruye confianza en YMYL.
-- **Notificaciones push** y `VAPID_PUBLIC_KEY`.
-- **Lógica y fórmulas del cálculo del simulador.** La línea 3 añade contenido,
-  escenarios estáticos y fuentes; **no reescribe el motor de cálculo**. Si al
-  documentar la fórmula se detecta que el cálculo actual es incorrecto, se **para y
-  se reporta al CEO**; no se corrige por iniciativa propia en un sitio YMYL.
-- **Textos legales.** `LEGAL.titular`, `nif` y `domicilio` siguen sin datos reales;
-  las páginas degradan sin mostrar los corchetes (verificado), así que no hay daño
-  visible, pero el riesgo LSSI-CE persiste. Bloqueado en el propietario.
-- **Link building externo.** No hay agente para ello y no se simula con directorios.
-- **`sameAs` de `Organization` y credenciales del revisor.** Sin perfiles reales que
-  enlazar, cualquier cosa que se añada sería fabricada. Bloqueado en el propietario.
-- **Rediseños.**
+- **Reabrir el QUÉ del producto.** Decidido por el propietario. Cualquier tarea que
+  proponga vender otra cosa (guía, asesoramiento humano, curso) se rechaza sin discusión.
+- **Test A/B de precio, precios de lanzamiento, descuentos y urgencia artificial.** Sin
+  volumen, no son experimentos: son ruido. Y la urgencia falsa es un patrón oscuro.
+- **Suscripción con cargo recurrente automático.**
+- **La cesión o la casilla de contacto con entidades financieras.** Condiciones de
+  entrada en la Ficha § 7. Cualquier tarea que la introduzca antes se rechaza.
+- **Credenciales, `sameAs`, perfiles del revisor** (E-2, congelado por el propietario).
+- **La arquitectura de silos, migas y entidad del revisor.** Cerrada. 44 impresiones y
+  0 clics en 55 días confirman que iterarla no paga.
+- **`src/content/blog/**`, `scripts/calendario.json`, `.github/**`:** intocables. El CTA
+  de la Línea 3 se resuelve en layouts y en `src/lib/`, como se resolvió la
+  consolidación canonical.
+- **Nuevos artículos.** Los publica la routine con su propio calendario; este ciclo no
+  añade contenido editorial.
+- **`/asesoramiento`.** Se queda exactamente como está: 1 impresión en 55 días. No se
+  promociona, no se rediseña, no se le añaden campos. Y **no se le pone precio**: eso
+  reintroduciría a una persona en el coste marginal.
+- **Notificaciones push, `VAPID_PUBLIC_KEY`, rediseños, link building.**
+- **Complemento de brecha de género, regímenes especiales, convenios especiales y
+  cotizaciones en el extranjero en el informe.** Se declaran como exclusiones. Entran
+  cuando entren por `scripts/fuentes/` + `verificar-motor.mjs`, no antes.
 
-### Deudas con fecha límite (no se tocan hoy, pero no se olvidan)
+### Deudas con fecha límite
 
-- **El formulario de `/asesoramiento` no funciona sin JavaScript** (`<form
-  id="contact-form" novalidate>`, sin `method` ni `action`, pese a que
-  `api/contact.js` acepta POST). Incumple una restricción permanente. **Si no está
-  cerrado el 2026-09-14, entra como línea 1 del ciclo siguiente.**
-- **`author` de los 48 artículos es un `Organization` suelto** con `name:
-  "tujubilacionanticipada.com"`, que no referencia el `@id` `#organization`
-  ("Tu Jubilación Anticipada"). Dos entidades para el mismo editor. Se arregla en
-  `src/lib/schema.ts` en el próximo ciclo si no surge nada mayor.
+- **Duplicación de URLs con y sin barra final** en el índice de Google (589 imp. vs 11
+  imp. en el mismo artículo). Si no está resuelta el 2026-10-15, entra como línea del
+  ciclo siguiente.
+- **`author` de los artículos sigue siendo un `Organization` suelto** que no referencia
+  el `@id` `#organization`. Se arregla en `src/lib/schema.ts` en cuanto un ciclo tenga
+  hueco; no bloquea nada hoy.
+- **`auditar-money-set.mjs` depende de un build que no siempre se puede ejecutar.** Si
+  vuelvo a no poder medir, la herramienta no cumple su función. Debe poder correr contra
+  un `/dist` ya publicado o fallar diciendo por qué.
 
 ## Restricciones
 
 ### Permanentes (ningún agente puede eliminarlas ni relajarlas)
-- Nicho YMYL: ninguna afirmación normativa sin fuente oficial (`seg-social.es`, `boe.es`)
-- Señales EEAT intocables: autoría, credenciales del revisor, fechas de revisión
-- **Prohibido fabricar señales de confianza**: ni credenciales, ni testimonios, ni
-  contadores. `ASESORAMIENTO.socialProofCount` refleja un dato real (hoy 0) o se oculta
-- Accesibilidad mínima WCAG AA — público objetivo de 50 a 65 años
-- **El sitio debe funcionar sin JavaScript.** Esta restricción lleva dos ciclos
-  incumplida por `/simulador` y `/asesoramiento`; este ciclo se cierra la mitad del
-  incumplimiento (línea 3) y la otra mitad queda con fecha límite. No se vuelve a
-  declarar "permanente" y a tolerar en silencio
-- Cero JavaScript nuevo en páginas de blog y en páginas nuevas
-- Prohibidos los patrones oscuros en cualquier elemento de conversión
-- `npm run build` (incluye `astro check`) debe pasar. Nada se publica con el build roto
-- No tocar `src/content/blog/**`, `scripts/calendario.json` ni `.github/**`
-- No romper `rehypeExternalLinks`: `DOFOLLOW_HOSTS` sigue dofollow, el resto `nofollow`
-- Todo criterio de éxito debe ser verificable sobre el repositorio o sobre `/dist`,
-  sin depender de datos de Search Console
 
-### Añadidas en este ciclo (también permanentes a partir de hoy)
-- **Ninguna tarea puede declarar como métrica de éxito un dato de GSC o GA4 mientras
-  el entorno no tenga acceso.** 8 de las 13 tareas del ciclo anterior lo hicieron y
-  por eso hay hipótesis que nadie puede juzgar. Si la métrica no se puede leer, no
-  es una métrica: es una excusa. La sección "Métrica y plazo" de `DECISIONES.md`
-  debe contener el comando que la produce.
-- **Toda tarea que modifique una URL del conjunto money debe pegar en
-  `DECISIONES.md` la salida del script de auditoría antes y después.** Sin el
-  "antes", la tarea no se da por hecha.
-- **La canibalización se resuelve con `canonical`, nunca con `noindex`**, salvo
-  autorización caso a caso del CEO. `canonical` consolida las señales de una URL que
-  puede ya tener enlaces; `noindex` las tira a la basura.
-- **`/simulador` no puede presentar su estimación como cálculo oficial**, debe
-  mantener el `DISCLAIMER` visible y debe enlazar al simulador oficial de la
-  Seguridad Social. Cada coeficiente publicado, con su fuente en `boe.es` o
-  `seg-social.es`.
-- **Si al documentar una fórmula o un coeficiente se detecta que el sitio publica un
-  dato incorrecto, el agente para y lo reporta.** No se corrige normativa por
-  iniciativa propia. Es un sitio de pensiones.
+- Nicho YMYL: ninguna afirmación normativa sin fuente oficial (`seg-social.es`, `boe.es`).
+- Señales EEAT intocables: autoría, credenciales del revisor, fechas de revisión.
+- **Prohibido fabricar señales de confianza**: ni credenciales, ni testimonios, ni
+  contadores, ni "X personas ya lo han comprado" mientras no sea cierto.
+  `ASESORAMIENTO.socialProofCount` refleja un dato real (hoy 0) o se oculta.
+- Accesibilidad mínima WCAG AA — público objetivo de 50 a 65 años.
+- **El sitio debe funcionar sin JavaScript**, y eso incluye ahora **todo el flujo de
+  compra**.
+- Cero JavaScript nuevo en páginas de blog y en páginas nuevas.
+- Prohibidos los patrones oscuros en cualquier elemento de conversión.
+- `npm run build` (incluye `astro check`) debe pasar. Nada se publica con el build roto.
+- No tocar `src/content/blog/**`, `scripts/calendario.json` ni `.github/**`.
+- No romper `rehypeExternalLinks`: `DOFOLLOW_HOSTS` sigue dofollow, el resto `nofollow`.
+- Todo criterio de éxito debe ser verificable sobre el repositorio o sobre `/dist`, sin
+  depender de datos de Search Console ni de GA4.
+- Ninguna tarea puede declarar como métrica de éxito un dato de GSC/GA4 que el entorno no
+  pueda leer. La sección "Métrica y plazo" debe contener **el comando** que la produce.
+- La canibalización se resuelve con `canonical`, nunca con `noindex`, salvo autorización
+  caso a caso.
+- `/simulador` no puede presentar su estimación como cálculo oficial, mantiene el
+  `DISCLAIMER` visible y enlaza al simulador oficial de la Seguridad Social.
+- **Si un agente detecta que el sitio publica un dato normativo incorrecto, para y lo
+  reporta.** No se corrige normativa por iniciativa propia. Esta restricción salvó el
+  proyecto dos veces en el ciclo anterior (`seo-019`, `seo-020`).
+
+### Añadidas en este ciclo (permanentes a partir de hoy)
+
+- **Ninguna cifra del informe puede existir fuera del motor verificado.** Ni en la
+  plantilla del PDF, ni en la página de venta, ni en el email. Si una cifra aparece dos
+  veces en el repositorio, tiene que haber una comprobación automática de que coinciden.
+  `verificar-motor.mjs` (326/326) corre **antes** del build y es condición de despliegue.
+- **No se activa el cobro mientras `LEGAL.titular`, `nif` y `domicilio` estén vacíos**, ni
+  sin Condiciones de contratación publicadas. Cobrar sin identificar al prestador es
+  ilegal (art. 10 LSSI-CE; arts. 60 y 97 RDL 1/2007). Bloqueante duro, del propietario.
+- **Precio siempre con IVA incluido y visible antes de iniciar el pago.** Ningún importe
+  se calcula en el navegador: el precio vive en Stripe.
+- **Casilla de renuncia al desistimiento separada, desmarcada y explicada.** La entrega
+  del informe **no puede condicionarse a ningún consentimiento de marketing.**
+- **Los datos del comprador no salen de la infraestructura del sitio** (Stripe, Upstash y
+  Resend como encargados del tratamiento). No se ceden, no se venden, no se exportan.
+  Retención de 400 días y borrado a petición. La política de privacidad debe describir
+  esta finalidad **antes** de que se recoja el primer dato.
+- **Ningún CTA de pago puede terminar en un `mailto:` ni en un formulario que dependa de
+  JavaScript.**
+- **Ninguna promesa de plazo que dependa de una persona.** Si el copy dice "en 5 minutos",
+  el sistema tiene que cumplirlo sin nadie despierto.
 
 ---
 
 ## Qué datos me faltaron para decidir mejor
 
-1. **Search Console.** Impresiones, clics, posición media y, sobre todo, el informe
-   de cobertura. Es el dato que más cambiaría el diagnóstico: si las 65 URLs no
-   están indexadas, el cuello de botella no es Autoridad sino Visibilidad y este
-   documento entero está mal enfocado. Segundo en importancia: **el informe de
-   consultas me diría qué pares canibalizan de verdad**, en vez de deducirlo de las
-   keywords declaradas en el calendario.
-2. **GA4.** `GA_MEASUREMENT_ID = 'G-9K6WR2TR7M'` está configurado y no puedo leerlo.
-   Sin sesiones, rebote, scroll ni clics en `data-ga-event="cta_asesoramiento"`, he
-   descartado Relevancia y Conversión por falta de datos, no por evidencia de que
-   estén bien. Sigo sin saber si alguien ha usado nunca el simulador.
-3. **El sitio en producción.** Confirmado hoy que el bloqueo es del proxy de este
-   entorno (`connect_rejected`, 403 a CONNECT sobre `tujubilacionanticipada.com:443`),
-   no del sitio. No he podido verificar despliegue, HTML servido, LCP ni CLS.
-4. **Ahrefs / backlinks.** Cero visibilidad del perfil de enlaces. Con 7 semanas de
-   dominio asumo que es ~0, pero es una suposición. Tampoco sé quién ocupa hoy el
-   top 10 de `simulador jubilacion`, que es la decisión que más me habría ayudado a
-   calibrar la línea 3.
-5. **Leads reales.** Cuántas solicitudes ha recibido `/api/contact` desde el
-   lanzamiento. Es el único dato de negocio que existe y no está en el repo.
-6. **Si existe oferta detrás de `/asesoramiento`.** No sé si hay un asesor, un
-   partner o nada. De eso depende que el ciclo que viene sea de conversión o no.
+1. **No he podido ejecutar el build.** Este entorno no tiene `node_modules` (`astro: not
+   found`), así que no he podido correr `auditar-money-set.mjs` ni verificar `/dist`. He
+   juzgado con el export de GSC y con `verificar-motor.mjs`, que sí corre. Es la primera
+   vez que el bloqueo es de dependencias y no de datos.
+2. **GA4 sigue ilegible.** No sé cuánta gente empieza el simulador y lo abandona, ni
+   dónde. Para un ciclo de conversión eso es exactamente el dato que más falta hace: he
+   diseñado el embudo con contadores propios en Redis precisamente porque no puedo
+   leer el de Google.
+3. **El export de GSC agrupa 1.000 consultas y oculta el resto** (42 clics de 357
+   atribuidos). El 88 % de los clics no tiene consulta asociada legible. Con el informe
+   completo sabría qué preguntas exactas hace quien ya hace clic, que es el copy de la
+   página de venta escrito solo.
+4. **No sé si el propietario está dado de alta ni si puede emitir facturas.** He supuesto
+   que sí y que la venta es a consumidores en España con IVA 21 % incluido. Si no lo
+   está, el ciclo se bloquea en el punto 5 del objetivo, no en el software.
+5. **No sé qué CMS de email usará para los avisos de cambio normativo.** He supuesto
+   Resend, que ya está integrado, y envío directo desde la función, sin plataforma de
+   marketing. A este volumen sobra.
+6. **Cero visibilidad de competencia.** No sé quién vende hoy informes de pensiones en
+   España ni a qué precio. Los 49 € están anclados en el valor para el comprador y en las
+   bandas de percepción, no en una comparativa de mercado que no he podido hacer.
 
-**Acción para el propietario, por segunda vez y ahora con instrucción concreta:**
-o bien (a) añadir `tujubilacionanticipada.com` a la lista blanca del proxy y dar
-lectura a GSC/GA4, o bien (b) volcar en `scripts/datos/` un export CSV de Search
-Console con impresiones, clics y posición por URL y por consulta. La línea 1 de
-este ciclo deja el lector de esos CSV ya construido: en cuanto el archivo aparezca,
-la auditoría lo usa sin más trabajo. **Mientras no exista, seguiré revisando a
-ciegas y juzgando solo artefactos del build — y este es el tercer ciclo así.**
+**Acción para el propietario, por orden de bloqueo:**
+(1) rellenar `LEGAL.titular`, `nif` y `domicilio` — sin eso no se cobra;
+(2) crear la cuenta de Stripe describiendo la actividad como informes automatizados y
+dar las claves de **test** primero;
+(3) confirmar el supuesto fiscal del § 2;
+(4) instalar dependencias en el entorno de los agentes o dejar un `/dist` publicado
+accesible, para que la próxima revisión pueda volver a medir el sitio y no solo leerlo.
