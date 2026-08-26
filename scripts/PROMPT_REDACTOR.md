@@ -142,6 +142,7 @@ Cada artículo debe incluir al final una nota de revisión firmada por:
 ```mdx
 ---
 title: "[TITULO]"
+seoTitle: "[TITULO PARA GOOGLE — MÁXIMO 60 CARACTERES, incluye la keyword al principio]"
 description: "[META DESCRIPTION — entre 130 y 160 caracteres, incluye la keyword]"
 pubDate: [FECHA_HOY]
 updatedDate: [FECHA_HOY]
@@ -171,6 +172,25 @@ draft: false
 - El nombre del archivo es `src/content/blog/[slug].mdx`, usando el `slug` del calendario.
 
 ---
+
+### `seoTitle`: obligatorio y máximo 60 caracteres
+
+`title` es el **H1** del artículo y puede ser largo y descriptivo. `seoTitle` es lo
+que sale en el resultado de Google y **no puede pasar de 60 caracteres**: por encima
+de ahí el SERP lo trunca y Google acaba reescribiéndolo por su cuenta. El build falla
+si algún `<title>` construido supera ese límite.
+
+Cómo escribirlo:
+
+- La **keyword principal, al principio**. Si cabe el año, mejor: "Pensión máxima de
+  jubilación 2026".
+- Normalmente es el `title` recortado por los dos puntos: de "Jubilación parcial:
+  trabajar a tiempo parcial y cobrar parte de la pensión" sale "Jubilación parcial y
+  contrato de relevo".
+- **No repitas la marca**: la añade el sitio solo, y únicamente si cabe en los 60.
+- **No dupliques el `seoTitle` de otro artículo** ni uses uno que compita con la
+  intención de otra URL. Ejemplo real: el artículo `como-interpretar-simulador-jubilacion`
+  NO puede titularse "Simulador de jubilación", porque esa intención es de `/simulador`.
 
 ## Tono y estilo
 

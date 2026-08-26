@@ -70,6 +70,12 @@ jobs:
       - name: Build Astro
         run: npm run build
 
+      # Un <title> de más de 60 caracteres se trunca en el SERP y Google acaba
+      # reescribiéndolo. Se mide sobre /dist porque el título final se compone
+      # en BaseHead.astro, no en el frontmatter.
+      - name: Verificar longitud de los <title>
+        run: node scripts/verificar-titulos.mjs
+
       - name: Deploy a Vercel
         id: deploy
         env:
@@ -120,6 +126,14 @@ jobs:
           done
           echo "El despliegue no devolvió 200 tras varios intentos (último: $STATUS)"
           exit 1
+
+      # Notifica las URLs a los buscadores que consumen IndexNow (Bing, Yandex,
+      # Naver, Seznam). Va después del smoke test: solo se anuncia lo que ya
+      # responde 200. Nunca tumba el despliegue, solo informa.
+      - name: Notificar a IndexNow
+        if: success()
+        continue-on-error: true
+        run: node scripts/indexnow.mjs
 
       # Auto-merge: si el deploy desde la rama de la routine fue exitoso y el sitio
       # responde 200, promociona el commit a `main` (fast-forward). Así la routine

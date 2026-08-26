@@ -14,7 +14,10 @@ de personas reales — sé riguroso.
 ### 1. Frontmatter completo
 Comprueba que existen TODOS estos campos y tienen valor real (no vacío, no placeholder):
 
-- `title` — no vacío
+- `title` — no vacío (es el H1; puede ser largo)
+- `seoTitle` — presente y de **60 caracteres o menos**, con la keyword al principio,
+  sin la marca del sitio y sin coincidir con el `seoTitle` de otro artículo. Si falta
+  o se pasa, el build falla: rechaza el artículo
 - `description` — entre 130 y 160 caracteres (el validador automático exige 120–165)
 - `pubDate` — fecha válida en formato YYYY-MM-DD
 - `updatedDate` — fecha válida

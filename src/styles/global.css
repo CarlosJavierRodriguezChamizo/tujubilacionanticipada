@@ -1,3 +1,62 @@
+/*
+ * Tipografías autoalojadas.
+ *
+ * Antes se cargaban con una hoja de estilos de fonts.googleapis.com en el
+ * <head>, que bloquea el render: el navegador tenía que resolver DNS, negociar
+ * TLS y descargar un CSS de un tercero antes de pintar nada. Ahora los ficheros
+ * se sirven desde el propio dominio y las declaraciones viajan en el CSS que ya
+ * se descargaba de todas formas.
+ *
+ * Los ficheros y los unicode-range son los que sirve Google para
+ * Fraunces (opsz 9..144, pesos 400-700) e Inter (400-700), quedándose solo con
+ * los subconjuntos latin y latin-ext: el sitio es en español, así que cirílico,
+ * griego y vietnamita solo añadían peso. Ambas fuentes son OFL, que permite
+ * expresamente el autoalojamiento.
+ *
+ * Para actualizarlas: vuelve a pedir el CSS a Google con un User-Agent de
+ * Chrome, descarga los .woff2 a public/fonts/ y regenera estos bloques.
+ */
+
+@font-face {
+  font-family: 'Fraunces';
+  font-style: normal;
+  /* Fuente variable: un solo fichero cubre todo el rango de pesos. */
+  font-weight: 400 700;
+  font-display: swap;
+  src: url('/fonts/fraunces-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+@font-face {
+  font-family: 'Fraunces';
+  font-style: normal;
+  /* Fuente variable: un solo fichero cubre todo el rango de pesos. */
+  font-weight: 400 700;
+  font-display: swap;
+  src: url('/fonts/fraunces-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  /* Fuente variable: un solo fichero cubre todo el rango de pesos. */
+  font-weight: 400 700;
+  font-display: swap;
+  src: url('/fonts/inter-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  /* Fuente variable: un solo fichero cubre todo el rango de pesos. */
+  font-weight: 400 700;
+  font-display: swap;
+  src: url('/fonts/inter-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;

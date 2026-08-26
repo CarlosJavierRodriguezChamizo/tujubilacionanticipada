@@ -21,7 +21,7 @@ const noindex = page.currentPage === 1;
 
 <Base
   title={`Blog · Página ${page.currentPage}`}
-  description="Artículos sobre jubilación anticipada en España: requisitos, penalizaciones y cálculo de la pensión."
+  description={`Página ${page.currentPage} de ${page.lastPage} del blog sobre jubilación anticipada en España: requisitos, coeficientes reductores, cálculo de la pensión y casos prácticos.`}
   path={`/blog/page/${page.currentPage}`}
   noindex={noindex}
 >

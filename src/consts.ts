@@ -10,7 +10,7 @@ export const SITE = {
   /** Claim principal */
   tagline: 'Entiende tu pensión. Decide cuándo jubilarte.',
   description:
-    'Información clara y orientativa sobre jubilación anticipada en España: requisitos, penalizaciones y un simulador para estimar tu pensión y tus fechas de jubilación.',
+    'Jubilación anticipada en España explicada con fuentes oficiales: requisitos, coeficientes reductores y un simulador para estimar tu pensión y tus fechas.',
   author: 'Redacción de Tu Jubilación Anticipada',
   locale: 'es_ES',
   lang: 'es',

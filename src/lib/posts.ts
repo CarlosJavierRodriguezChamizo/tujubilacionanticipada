@@ -10,6 +10,44 @@ export type BlogPost = CollectionEntry<'blog'>;
  * `public/blog/<slug>.jpg`, lo usa automáticamente. Así una imagen
  * pre-cargada se muestra aunque la routine olvide poner `heroImage`.
  */
+/**
+ * Dimensiones reales de un JPEG de `public/`, leídas en build.
+ *
+ * Se usan para emitir `image` como `ImageObject` con `width` y `height` en el
+ * JSON-LD (mejora la elegibilidad de rich results). Se leen del fichero en vez
+ * de fijarlas a mano porque las portadas no tienen todas el mismo alto: las
+ * antiguas son 1600×915 y las nuevas 1600×900.
+ */
+export function jpegSize(
+  publicPath: string
+): { width: number; height: number } | undefined {
+  try {
+    const file = path.join(process.cwd(), 'public', publicPath.replace(/^\//, ''));
+    if (!fs.existsSync(file)) return undefined;
+    const buf = fs.readFileSync(file);
+    let i = 2;
+    while (i < buf.length) {
+      if (buf[i] !== 0xff) {
+        i += 1;
+        continue;
+      }
+      const marker = buf[i + 1];
+      // SOF0/SOF1/SOF2 llevan alto y ancho; el resto se salta por longitud.
+      if (marker === 0xc0 || marker === 0xc1 || marker === 0xc2) {
+        return { height: buf.readUInt16BE(i + 5), width: buf.readUInt16BE(i + 7) };
+      }
+      if (marker === 0xd8 || marker === 0xd9 || (marker >= 0xd0 && marker <= 0xd7)) {
+        i += 2;
+        continue;
+      }
+      i += 2 + buf.readUInt16BE(i + 2);
+    }
+  } catch {
+    /* en runtime sin fs: se ignora */
+  }
+  return undefined;
+}
+
 export function resolveHeroImage(
   slug: string,
   frontmatterHero?: string

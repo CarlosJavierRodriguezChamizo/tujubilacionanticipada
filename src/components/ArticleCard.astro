@@ -10,6 +10,11 @@ const { post } = Astro.props;
 const { data } = post;
 const minutos = readingTimeMinutes(post.body);
 const heroImage = resolveHeroImage(post.slug, data.heroImage);
+
+// El enlace de la imagen va con aria-hidden y tabindex -1 a propósito: el
+// titular de debajo ya enlaza al mismo sitio y no queremos anunciarlo dos
+// veces. Aun así el `alt` describe el artículo de destino, porque lo leen
+// Google Images y los rastreadores SEO, no solo los lectores de pantalla.
 ---
 
 <article class="group relative flex h-full flex-col overflow-hidden rounded-xl border border-paper-200 bg-paper-50 transition-shadow hover:shadow-card">
@@ -18,7 +23,7 @@ const heroImage = resolveHeroImage(post.slug, data.heroImage);
       <a href={`/blog/${post.slug}`} class="block" tabindex="-1" aria-hidden="true">
         <img
           src={heroImage}
-          alt=""
+          alt={data.heroImageAlt ?? data.title}
           width="1200"
           height="675"
           loading="lazy"

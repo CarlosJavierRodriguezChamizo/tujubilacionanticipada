@@ -6,8 +6,11 @@ import { readdir, readFile } from 'fs/promises'
 import { join } from 'path'
 
 const BLOG_DIR = './src/content/blog'
+/** Longitud máxima del <title> antes de que Google lo trunque o lo reescriba. */
+const MAX_TITLE = 60;
+
 const REQUIRED_FIELDS = [
-  'title', 'description', 'pubDate', 'updatedDate',
+  'title', 'seoTitle', 'description', 'pubDate', 'updatedDate',
   'category', 'author', 'reviewedBy', 'reviewerTitle', 'draft', 'schema',
 ]
 const AUTHORIZED_DOMAINS = [
@@ -54,6 +57,18 @@ for (const file of mdxFiles) {
   for (const field of REQUIRED_FIELDS) {
     if (!fm.includes(`${field}:`)) {
       errors.push(`${file}: Falta campo '${field}'`)
+    }
+  }
+
+  // seoTitle: es lo que sale en el resultado de Google, y por encima de 60
+  // caracteres se trunca o Google lo reescribe por su cuenta.
+  const seoTitleMatch = fm.match(/seoTitle:\s*["']?(.+?)["']?\s*\n/)
+  if (seoTitleMatch) {
+    const seoTitle = seoTitleMatch[1].replace(/^["']|["']$/g, '').trim()
+    if (seoTitle.length > MAX_TITLE) {
+      errors.push(
+        `${file}: seoTitle tiene ${seoTitle.length} caracteres (máximo ${MAX_TITLE})`
+      )
     }
   }
 

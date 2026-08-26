@@ -11,6 +11,11 @@ import { ASESORAMIENTO } from '../consts';
 
 const { href, socialProofCount, avatars } = ASESORAMIENTO;
 const hasProof = socialProofCount > 0;
+
+// Los avatares son decorativos: no aportan información que no esté ya en el
+// texto contiguo, así que van con alt vacío y role="presentation" para dejar
+// la intención explícita. NO son un alt olvidado: no lo "arregles" poniéndoles
+// texto, o se convierten en ruido para los lectores de pantalla.
 ---
 
 <!-- Escritorio: tarjeta flotante lateral -->
@@ -43,6 +48,7 @@ const hasProof = socialProofCount > 0;
           <img
             src={src}
             alt=""
+            role="presentation"
             width="32"
             height="32"
             loading="lazy"

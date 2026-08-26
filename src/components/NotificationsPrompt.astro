@@ -12,7 +12,19 @@ import { SITE, VAPID_PUBLIC_KEY } from '../consts';
       aria-label="Suscripción a notificaciones"
     >
       <div class="flex items-start gap-3">
-        <img src="/logo.png" alt="" width="40" height="40" class="h-10 w-10 shrink-0 rounded-md" />
+        <!--
+          Logo decorativo del aviso de notificaciones: el texto de al lado ya
+          dice de qué se trata. alt vacío + role="presentation" es lo correcto
+          en accesibilidad; no es un alt olvidado.
+        -->
+        <img
+          src="/logo.png"
+          alt=""
+          role="presentation"
+          width="40"
+          height="40"
+          class="h-10 w-10 shrink-0 rounded-md"
+        />
         <div class="min-w-0">
           <p class="text-sm font-semibold text-ink">Suscríbete para recibir notificaciones</p>
           <p class="mt-0.5 text-sm text-ink-soft">

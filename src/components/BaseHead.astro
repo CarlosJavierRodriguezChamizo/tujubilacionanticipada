@@ -31,14 +31,33 @@ const {
 } = Astro.props;
 
 // Canonical robusto: usa Astro.url contra el site configurado.
+//
+// Una sola forma canónica en todo el sitio: SIN barra final, exactamente la
+// misma cadena que publica el sitemap y que usan los enlaces internos. Antes la
+// home canonizaba a ".../" y el sitemap la anunciaba sin barra: una diferencia
+// pequeña, pero es justo el tipo de señal contradictoria que disparó las 78
+// "páginas huérfanas" de la auditoría.
 const canonicalURL = new URL(
   canonicalPath ?? path ?? Astro.url.pathname,
   Astro.site ?? SITE.url,
 );
+// El objeto URL vuelve a poner la barra de la raíz al serializar, así que la
+// forma final se compone como cadena.
+const canonicalHref = canonicalURL.toString().replace(/\/$/, '');
 const ogImageURL = new URL(image, Astro.site ?? SITE.url);
 
-// Título completo: evita duplicar la marca en la home.
-const fullTitle = title === SITE.name ? title : `${title} | ${SITE.name}`;
+// Título completo.
+//
+// El sufijo de marca ocupa 26 caracteres y se añadía siempre, lo que dejaba
+// todos los artículos entre 89 y 114 caracteres: muy por encima de lo que
+// muestra Google, que acababa reescribiendo el title por su cuenta. Ahora solo
+// se añade si el resultado cabe en MAX_TITLE; si no, gana el título.
+const MAX_TITLE = 60;
+const sufijo = ` | ${SITE.name}`;
+const fullTitle =
+  title === SITE.name || title.length + sufijo.length > MAX_TITLE
+    ? title
+    : `${title}${sufijo}`;
 ---
 
 <!-- Generales -->
@@ -115,14 +134,14 @@ const fullTitle = title === SITE.name ? title : `${title} | ${SITE.name}`;
 <meta name="title" content={fullTitle} />
 <meta name="description" content={description} />
 <meta name="author" content={SITE.author} />
-<link rel="canonical" href={canonicalURL} />
+<link rel="canonical" href={canonicalHref} />
 {noindex && <meta name="robots" content="noindex, nofollow" />}
 
 <!-- Open Graph -->
 <meta property="og:type" content={ogType} />
 <meta property="og:site_name" content={SITE.name} />
 <meta property="og:locale" content={SITE.locale} />
-<meta property="og:url" content={canonicalURL} />
+<meta property="og:url" content={canonicalHref} />
 <meta property="og:title" content={fullTitle} />
 <meta property="og:description" content={description} />
 <meta property="og:image" content={ogImageURL} />
@@ -138,15 +157,16 @@ const fullTitle = title === SITE.name ? title : `${title} | ${SITE.name}`;
 
 <!-- Twitter -->
 <meta name="twitter:card" content="summary_large_image" />
-<meta name="twitter:url" content={canonicalURL} />
+<meta name="twitter:url" content={canonicalHref} />
 <meta name="twitter:title" content={fullTitle} />
 <meta name="twitter:description" content={description} />
 <meta name="twitter:image" content={ogImageURL} />
 
 <!-- Tipografía -->
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link
-  rel="stylesheet"
-  href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap"
-/>
+<!--
+  Tipografías autoalojadas (ver src/styles/global.css). Ya no hay hoja de
+  estilos de terceros bloqueando el render en el <head>. Se precargan los dos
+  subconjuntos latinos, que son los que necesita cualquier página del sitio.
+-->
+<link rel="preload" href="/fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin />
+<link rel="preload" href="/fonts/fraunces-latin.woff2" as="font" type="font/woff2" crossorigin />

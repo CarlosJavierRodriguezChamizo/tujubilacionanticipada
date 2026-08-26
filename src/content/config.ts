@@ -16,6 +16,13 @@ const blog = defineCollection({
   type: 'content',
   schema: z.object({
     title: z.string().max(120),
+    /**
+     * Título para el <title> y las etiquetas Open Graph/Twitter, cuando el
+     * `title` (que es el <h1>) sea demasiado largo para un resultado de Google.
+     * Máximo 60 caracteres: por encima de ahí el SERP lo trunca o Google lo
+     * reescribe. No sustituye al <h1>, que puede seguir siendo descriptivo.
+     */
+    seoTitle: z.string().max(60).optional(),
     description: z.string().max(200),
     pubDate: z.coerce.date(),
     updatedDate: z.coerce.date().optional(),

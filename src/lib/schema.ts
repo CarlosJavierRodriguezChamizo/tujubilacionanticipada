@@ -8,7 +8,7 @@
  */
 import type { CollectionEntry } from 'astro:content';
 import { SITE, SOCIAL_PROFILES, REVIEWERS } from '../consts';
-import { resolveHeroImage } from './posts';
+import { jpegSize, resolveHeroImage } from './posts';
 import { getCanonicalSlug } from './canonical-map';
 
 type JsonLd = Record<string, unknown>;
@@ -166,20 +166,81 @@ export function blogPostingSchema(post: CollectionEntry<'blog'>): JsonLd {
     dateModified: (data.updatedDate ?? data.pubDate).toISOString(),
     inLanguage: SITE.lang,
     url: mainEntityUrl,
-    mainEntityOfPage: { '@type': 'WebPage', '@id': mainEntityUrl },
+    mainEntityOfPage: { '@id': `${mainEntityUrl}#webpage` },
     isPartOf: { '@id': WEBSITE_ID },
     articleSection: data.category,
     ...(data.tags.length > 0 ? { keywords: data.tags.join(', ') } : {}),
-    author: { '@type': 'Organization', name: data.author, url: SITE.url },
-    // Señal EEAT: revisión editorial por una persona acreditada.
-    ...(data.reviewedBy
-      ? { reviewedBy: reviewerReferenceSchema(data.reviewedBy, data.reviewerTitle) }
-      : {}),
+    // Antes era una Organization suelta con name "tujubilacionanticipada.com",
+    // que no referenciaba el @id de #organization ("Tu Jubilación Anticipada"):
+    // dos entidades distintas para el mismo editor en la misma página.
+    author: { '@id': ORG_ID },
+    // `reviewedBy` NO se emite aquí: schema.org lo define sobre WebPage, no
+    // sobre Article, y era el origen del error de validación en 117 URLs. Va en
+    // el nodo WebPage que devuelve articleWebPageSchema().
     publisher: { '@id': ORG_ID },
-    image: absUrl(
+    image: imageObjectSchema(
       data.ogImage ?? resolveHeroImage(post.slug, data.heroImage) ?? SITE.defaultOgImage
     ),
   };
+}
+
+/** `image` como ImageObject con sus dimensiones reales cuando se pueden leer. */
+export function imageObjectSchema(publicPath: string): JsonLd {
+  const size = jpegSize(publicPath);
+  return {
+    '@type': 'ImageObject',
+    url: absUrl(publicPath),
+    ...(size ? { width: size.width, height: size.height } : {}),
+  };
+}
+
+/**
+ * Nodo WebPage del artículo, con el revisor y el Person al que apunta.
+ *
+ * Resuelve los dos errores que reportó la auditoría: `reviewedBy` colgaba de
+ * `Article`, donde schema.org no lo define, y su `@id` apuntaba a un `Person`
+ * que no existía en el grafo de la página, así que ningún parser podía
+ * resolverlo. Ahora la propiedad va donde le corresponde y el Person se emite
+ * completo junto a ella.
+ */
+export function articleWebPageSchema(post: CollectionEntry<'blog'>): JsonLd[] {
+  const { data } = post;
+  const destinoCanonico = getCanonicalSlug(post.slug);
+  const url = absUrl(`/blog/${destinoCanonico ?? post.slug}`);
+
+  const webPage: JsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'WebPage',
+    '@id': `${url}#webpage`,
+    url,
+    name: data.seoTitle ?? data.title,
+    description: data.description,
+    inLanguage: SITE.lang,
+    isPartOf: { '@id': WEBSITE_ID },
+    datePublished: data.pubDate.toISOString(),
+    dateModified: (data.updatedDate ?? data.pubDate).toISOString(),
+    primaryImageOfPage: imageObjectSchema(
+      data.ogImage ?? resolveHeroImage(post.slug, data.heroImage) ?? SITE.defaultOgImage
+    ),
+    ...(data.reviewedBy
+      ? { reviewedBy: reviewerReferenceSchema(data.reviewedBy, data.reviewerTitle) }
+      : {}),
+  };
+
+  // El Person completo al que apunta el @id de reviewedBy: sin él, la
+  // referencia queda colgando y el revisor no se puede resolver como entidad.
+  const person =
+    data.reviewedBy && reviewerPersonId(data.reviewedBy)
+      ? [
+          {
+            '@context': 'https://schema.org',
+            ...reviewerPersonSchema(data.reviewedBy, data.reviewerTitle),
+            worksFor: { '@id': ORG_ID },
+          } as JsonLd,
+        ]
+      : [];
+
+  return [webPage, ...person];
 }
 
 /** Listado del blog como colección con sus artículos. */

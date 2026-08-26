@@ -47,6 +47,12 @@ const POSTS_INDEX = loadPostsIndex();
 // https://astro.build/config
 export default defineConfig({
   site: 'https://tujubilacionanticipada.com',
+  // Una sola forma canónica de URL: SIN barra final. Es la que ya usaban los
+  // enlaces internos y los canonical, mientras el sitemap publicaba la variante
+  // con barra: Ahrefs veía 78 "páginas huérfanas" que en realidad eran las URLs
+  // con barra, sin un solo enlace entrante y no canónicas. `vercel.json` remata
+  // la política redirigiendo (308 permanente) la variante con barra.
+  trailingSlash: 'never',
   markdown: {
     // rehype-slug añade id a las cabeceras → el TOC las enlaza.
     // Orden: ids → TOC → bloques intercalados → enlaces externos.
@@ -66,6 +72,9 @@ export default defineConfig({
       // los artículos consolidados hacia otro vía canonical-map.ts (seo-013).
       filter: (page) => {
         if (/\/(aviso-legal|privacidad|cookies)\/?$/.test(page)) return false;
+        // Confirmación del formulario sin JavaScript: llevan noindex, así que no
+        // deben anunciarse como indexables (auditoría Ahrefs, punto 5-8).
+        if (/\/asesoramiento\/(gracias|error)\/?$/.test(page)) return false;
         if (/\/blog\/page\/1\/?$/.test(page)) return false;
         const match = page.match(/\/blog\/([^/]+)\/?$/);
         if (match) {
@@ -73,6 +82,16 @@ export default defineConfig({
           if (getCanonicalSlug(slug) !== undefined) return false;
         }
         return true;
+      },
+      // El sitemap debe anunciar exactamente la URL canónica: sin barra final
+      // (salvo la home, que es solo el dominio). Antes publicaba la variante con
+      // barra, que es justo la que ningún enlace interno referencia.
+      serialize: (item) => {
+        const u = new URL(item.url);
+        // Cada URL del sitemap debe ser idéntica a su propio canonical: la home
+        // conserva su barra ("https://dominio/") y el resto no la lleva.
+        u.pathname = u.pathname === '/' ? '/' : u.pathname.replace(/\/$/, '');
+        return { ...item, url: u.toString() };
       },
     }),
   ],
