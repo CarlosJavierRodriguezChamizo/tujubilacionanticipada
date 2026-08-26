@@ -16,8 +16,14 @@ on:
       # edita scripts/ (ESTRATEGIA, BACKLOG, ultimo-informe); sin esto el pipeline no
       # dispararía y no se enviaría el email con el informe de replanificación.
       - 'scripts/**'
+      # `public/**`: portadas de los artículos, robots.txt, la clave de IndexNow.
+      # Faltaba, así que un commit que solo añadiera imágenes no desplegaba: se
+      # quedaba esperando a que otro cambio en src/ arrastrase el deploy.
+      - 'public/**'
       - 'astro.config.mjs'
+      - 'vercel.json'
       - 'package.json'
+      - '.github/workflows/**'
   # Permite lanzar el pipeline manualmente desde la pestaña Actions.
   workflow_dispatch:
 
