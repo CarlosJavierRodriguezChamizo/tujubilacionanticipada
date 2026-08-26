@@ -13,14 +13,14 @@
     ],
     "ejecutar_tareas_el_dia_de_replanificacion": true,
     "replanificacion_forzada": {
-      "activa": true,
+      "activa": false,
       "fecha_encargo": "2026-08-24",
       "foco": "producto",
       "motivo": "Encargo directo del propietario: dar forma al producto y llevarlo hasta poder venderse. El QUÉ ya está decidido por el propietario en \"E-1. El producto: informe de decisión, no guía informativa\" (inicio de scripts/ESTRATEGIA.md): un informe personalizado de fecha óptima de jubilación, generado automáticamente desde src/lib/pension-calculo.ts, con coste marginal cero por venta. La guía de 29 € queda descartada. Tu trabajo es el CÓMO: precio justificado, pasarela, entrega automática, captura de datos y motivo de recompra. No reabras el QUÉ.",
-      "instruccion": "En la próxima ejecución de la routine de mejora continua, invoca al subagente estratega-ceo ANTES de despachar ninguna tarea, aunque queden tareas pendientes. Cuando el estratega haya entregado la definición del producto y el product-owner la haya traducido a tareas del backlog, pon \"activa\": false."
+      "instruccion": "Cerrada el 2026-08-26: el estratega-ceo reescribió scripts/ESTRATEGIA.md (Informe de Fecha Óptima de Jubilación, 49€, Stripe Checkout, entrega automática) y el product-owner tradujo las 3 líneas de trabajo a 14 tareas nuevas (ux-005..009, cro-001..008, seo-023) más el reordenamiento de seo-019/seo-020/seo-022/ux-003/ux-004. Bloqueo crítico pendiente y sin resolver por ningún agente: LEGAL.titular, LEGAL.nif y LEGAL.domicilio en src/consts.ts siguen vacíos; sin ellos no hay cuenta de Stripe. Las tareas cro-007 y cro-008 quedan explícitamente bloqueadas por ese dato en su hipótesis/criterio_exito; el resto del backlog no depende de él y puede ejecutarse."
     }
   },
-  "ultima_replanificacion": "2026-08-15",
+  "ultima_replanificacion": "2026-08-26",
   "tareas": [
     {
       "id": "seo-001",
@@ -350,7 +350,7 @@
       "id": "seo-019",
       "titulo": "Renderizar en /simulador una tabla estática de escenarios precalculados",
       "area": "seo",
-      "prioridad": 8,
+      "prioridad": 16,
       "estado": "pendiente",
       "hipotesis": "Si src/pages/simulador.astro usa src/lib/pension-calculo.ts (seo-018) para renderizar en build una tabla HTML con >=40 combinaciones de escenario (edad x años cotizados x tramo de base reguladora), visible y legible con JavaScript desactivado, dejando la isla React <Simulador client:load> como mejora progresiva sobre esa misma tabla, esperamos que <main> pase de 71 palabras únicas a un documento sustancialmente más largo y que un usuario sin JS pueda leer una estimación para su caso, porque hoy toda la página depende de una isla React que no ejecuta nada sin JavaScript.",
       "criterio_exito": "Tras `npm run build`, dist/simulador/index.html contiene una tabla estática con >=40 filas de escenario generada en build (no por JS); simulando la eliminación de la isla React del HTML, la tabla sigue presente y legible; el DISCLAIMER (src/consts.ts) sigue visible fuera de la isla React; ejecutando scripts/auditar-money-set.mjs (seo-012) tras el build, /simulador reporta >=1.200 palabras únicas en <main> (antes: 71). Si al generar los escenarios se detecta un dato normativo incorrecto, la tarea se detiene y lo reporta al CEO.",
@@ -365,7 +365,7 @@
       "id": "seo-020",
       "titulo": "Añadir a /simulador las fuentes normativas, coeficientes reductores y enlace al simulador oficial de la Seguridad Social",
       "area": "seo",
-      "prioridad": 9,
+      "prioridad": 17,
       "estado": "pendiente",
       "hipotesis": "Si añadimos a /simulador, como HTML estático, la fórmula y el artículo de la LGSS que respalda cada cálculo (enlazado dofollow a boe.es o seg-social.es), una tabla de coeficientes reductores vigentes con su fuente oficial, las limitaciones explícitas de la estimación y un enlace visible al simulador oficial de la Seguridad Social, esperamos que /simulador compita como documento frente al simulador oficial y la banca en vez de ocultar que existen alternativas oficiales, porque hoy la página no cita ninguna fuente normativa ni enlaza al simulador oficial, y ESTRATEGIA.md exige explicarlo, no ocultarlo.",
       "criterio_exito": "dist/simulador/index.html contiene al menos un enlace dofollow (sin rel=nofollow, con target=_blank rel=noopener, replicando manualmente la convención de DOFOLLOW_HOSTS en src/lib/rehype-plugins.mjs porque esta página .astro no pasa por el pipeline de markdown) a seg-social.es o boe.es junto a cada coeficiente reductor citado; contiene un enlace visible al simulador oficial de la Seguridad Social; el DISCLAIMER sigue visible; ningún dato normativo se presenta como cálculo oficial. Si al documentar la fórmula se detecta un coeficiente incorrecto respecto a la normativa vigente, la tarea se detiene y lo reporta al CEO en vez de corregirlo por iniciativa propia.",
@@ -397,7 +397,7 @@
       "id": "ux-003",
       "titulo": "Hacer accesibles (WCAG AA) las tablas nuevas de /simulador para el público de 50 a 65 años",
       "area": "ux",
-      "prioridad": 11,
+      "prioridad": 18,
       "estado": "pendiente",
       "hipotesis": "Si la tabla estática de escenarios y la tabla de coeficientes reductores añadidas a /simulador (seo-019, seo-020) usan <caption>, <th scope='col'/'row'>, tamaño de fuente >=16px y contraste AA con los tokens de color ya validados del sitio, esperamos que sean legibles y navegables para el público objetivo de 50 a 65 años sin depender del estilo por defecto del navegador, porque el público de este sitio es explícitamente 50-65 años (restricción permanente de accesibilidad) y una tabla densa de >=40 filas sin semántica ni contraste adecuados es difícil de leer para ese perfil, especialmente con lector de pantalla o zoom.",
       "criterio_exito": "Ambas tablas en dist/simulador/index.html tienen <caption>, cabeceras <th scope> correctas, y el contraste de texto/fondo cumple AA (ratio >=4.5:1 para texto normal) usando colores ya presentes en src/styles/global.css (no se introducen colores nuevos); la tabla es legible/desplazable en viewport móvil sin que el texto quede cortado; `npm run build` pasa.",
@@ -411,7 +411,7 @@
       "id": "ux-004",
       "titulo": "Añadir un aviso <noscript> visible en /simulador que oriente hacia la tabla estática",
       "area": "ux",
-      "prioridad": 12,
+      "prioridad": 19,
       "estado": "pendiente",
       "hipotesis": "Si añadimos un <noscript> visible en /simulador que explique que la calculadora interactiva requiere JavaScript y dirija al usuario a la tabla de escenarios estática de más abajo (seo-019), esperamos evitar que un usuario sin JavaScript interprete el formulario inerte como una página rota, porque hoy el botón 'Calcular mi jubilación' no responde sin JS y no hay ningún mensaje que lo explique ni que oriente hacia una alternativa, incumpliendo la restricción permanente 'el sitio debe funcionar sin JavaScript' incluso después de añadir la tabla estática.",
       "criterio_exito": "dist/simulador/index.html contiene un <noscript> con texto visible (no solo comentario) que menciona la tabla de escenarios como alternativa sin JavaScript; con JS activado el <noscript> no se renderiza (comportamiento nativo del navegador); `npm run build` pasa.",
@@ -425,7 +425,7 @@
       "id": "seo-022",
       "titulo": "Publicar en /simulador las tablas oficiales completas de coeficientes reductores (arts. 207.2 y 208.2 LGSS)",
       "area": "seo",
-      "prioridad": 7,
+      "prioridad": 15,
       "estado": "pendiente",
       "hipotesis": "Si src/pages/simulador.astro renderiza en build, desde src/lib/pension-calculo.ts, las dos tablas legales completas (24 filas × 4 tramos de la voluntaria y 48 × 4 de la involuntaria) con su enlace dofollow al artículo de la LGSS en boe.es, esperamos que /simulador deje de ser un formulario vacío de 71 palabras y compita como documento por el cluster de cálculo, porque el export real de Search Console (scripts/datos/) muestra ~150 impresiones en posiciones 35-68 para \"calculo jubilacion anticipada\", \"calcular jubilación anticipada\" y \"simulador jubilación anticipada\", con /simulador en posición 48 y 3 clics.",
       "criterio_exito": "Tras `npm run build`, dist/simulador/index.html contiene las 24 filas de la tabla del art. 208.2 y las 48 del art. 207.2, cada una con sus 4 tramos, generadas en build y no por JavaScript; los porcentajes coinciden exactamente con COEF_VOLUNTARIA y COEF_INVOLUNTARIA de src/lib/pension-calculo.ts (comparación programática, no visual); hay al menos un enlace dofollow a boe.es junto a cada tabla; el DISCLAIMER sigue visible; eliminando la isla React del HTML las tablas siguen presentes y legibles.",
@@ -434,6 +434,212 @@
         "src/pages/simulador.astro"
       ],
       "objetivo_estrategico": "Línea de trabajo 3 (ESTRATEGIA.md) y encargo E-4 del propietario: la causa raíz normativa que bloqueaba seo-019/seo-020 está resuelta desde el 2026-08-24."
+    },
+    {
+      "id": "ux-005",
+      "titulo": "Crear el esqueleto del PDF del informe con @react-pdf/renderer (portada, índice, numeración y disclaimer)",
+      "area": "ux",
+      "prioridad": 1,
+      "estado": "pendiente",
+      "hipotesis": "Si añadimos @react-pdf/renderer como dependencia y creamos src/lib/informe-pdf.tsx con un componente Document base que solo consume constantes de src/lib/pension-calculo.ts (ANIO_NORMATIVA) para la portada, con numeración de página y el DISCLAIMER de src/consts.ts en una sección propia, esperamos tener el esqueleto paginado que exige E-1 ('un informe de pago mal presentado se percibe como falso') antes de rellenar ninguna tabla, porque hoy no existe ningún módulo de generación de PDF en el repo ni @react-pdf/renderer es dependencia.",
+      "criterio_exito": "package.json incluye @react-pdf/renderer en dependencies; src/lib/informe-pdf.tsx exporta un componente (p.ej. InformePDF) que, renderizado con @react-pdf/renderer, produce un PDF con portada (título y ANIO_NORMATIVA), numeración de página visible en cada página y el texto exacto de DISCLAIMER (src/consts.ts); cuerpo de texto ≥11pt; ninguna cifra normativa se escribe literalmente en el componente (solo se referencian constantes/funciones importadas de pension-calculo.ts); `npm run build` sigue en verde.",
+      "metrica": "Ejecución local del render (script ad-hoc) que produce un archivo .pdf válido (cabecera de bytes %PDF); inspección de que el texto del DISCLAIMER en el PDF coincide literalmente con src/consts.ts.",
+      "archivos_sugeridos": [
+        "package.json",
+        "src/lib/informe-pdf.tsx"
+      ],
+      "objetivo_estrategico": "Línea de trabajo 1 (ESTRATEGIA.md): 'el generador del informe, con su verificador... la maquetación es parte de lo que se paga... Documento paginado y descargable (PDF), con portada, índice, numeración y fecha de emisión, no una página web impresa.'"
+    },
+    {
+      "id": "ux-006",
+      "titulo": "Construir la tabla mes a mes del informe (24/48 filas) con pensión y pérdida acumulada",
+      "area": "ux",
+      "prioridad": 2,
+      "estado": "pendiente",
+      "hipotesis": "Si src/lib/informe-pdf.tsx añade una tabla que recorre, para cada mes de anticipo disponible (24 en voluntaria vía COEF_VOLUNTARIA, 48 en involuntaria vía COEF_INVOLUNTARIA), el resultado de calcularEscenario() de src/lib/pension-calculo.ts y muestra pensión resultante, pérdida mensual respecto a la ordinaria y pérdida acumulada a 20 años (240 pagas), esperamos entregar 'el corazón del documento' que exige E-1 sin escribir ninguna cifra a mano, porque hoy pension-calculo.ts solo calcula un escenario a la vez y no existe ninguna tabla que itere sobre todos los meses de anticipo.",
+      "criterio_exito": "Para un caso de modalidad voluntaria el PDF contiene exactamente 24 filas y para uno involuntario 48 filas; cada fila usa el resultado literal de calcularEscenario() (pensionFinal, penalizacionPct) sin redondeos ni cifras reescritas en el componente; la pérdida acumulada a 20 años de cada fila se calcula en el propio módulo como (pensiónOrdinaria − pensiónFila) × 240, nunca en la plantilla; `npm run build` pasa.",
+      "metrica": "Conteo de filas de tabla para un caso voluntario (=24) y uno involuntario (=48); comparación celda a celda de 5 filas contra la salida directa de calcularEscenario() para los mismos inputs.",
+      "archivos_sugeridos": [
+        "src/lib/informe-pdf.tsx"
+      ],
+      "objetivo_estrategico": "E-1 (encargo del propietario, ESTRATEGIA.md): 'La tabla de sus fechas posibles, mes a mes (24 en voluntaria, 48 en involuntaria): pensión resultante, pérdida mensual y pérdida acumulada a 20 años en cada una.'"
+    },
+    {
+      "id": "ux-007",
+      "titulo": "Calcular y señalar en el PDF los acantilados de coeficiente y el punto de equilibrio",
+      "area": "ux",
+      "prioridad": 3,
+      "estado": "pendiente",
+      "hipotesis": "Si creamos src/lib/informe-analisis.ts con funciones puras detectarAcantilados() (compara la reducción de reduccionPorAnticipo() entre meses consecutivos de anticipo y marca los saltos de mayor tamaño) y puntoEquilibrio() (meses de cobro necesarios para que esperar compense lo dejado de percibir), alimentadas solo por pension-calculo.ts, y las consumimos en informe-pdf.tsx para destacar visualmente esas filas, esperamos entregar 'sus acantilados, señalados' y el 'punto de equilibrio' que exige E-1, porque hoy ningún módulo del repo calcula ninguna de las dos cosas.",
+      "criterio_exito": "src/lib/informe-analisis.ts exporta detectarAcantilados(casos) y puntoEquilibrio(casoA, casoB), ambas puras y sin I/O; para el ejemplo del 'último mes de anticipo' de E-1 (base reguladora 1.800 €/mes, edad legal 65, 41 años cotizados), detectarAcantilados() marca el salto de 23 a 24 meses de anticipo como el de mayor tamaño; en informe-pdf.tsx las filas marcadas se destacan con un estilo visual que no depende solo del color (también un símbolo o etiqueta de texto, para que se distinga igual en blanco y negro); `npm run build` pasa.",
+      "metrica": "Ejecución directa de detectarAcantilados()/puntoEquilibrio() sobre los 3 ejemplos numéricos de E-1 en ESTRATEGIA.md, comparando el resultado con las cifras que E-1 documenta (45 €/mes, 36 €/mes, 22 meses).",
+      "archivos_sugeridos": [
+        "src/lib/informe-analisis.ts",
+        "src/lib/informe-pdf.tsx"
+      ],
+      "objetivo_estrategico": "E-1 (ESTRATEGIA.md): 'Sus acantilados, señalados: en qué meses concretos esperar un poco más produce un salto desproporcionado... Punto de equilibrio de esperar frente a adelantar.'"
+    },
+    {
+      "id": "ux-008",
+      "titulo": "Crear la función serverless que genera el PDF a partir de un caso (api/informe-render.ts)",
+      "area": "ux",
+      "prioridad": 4,
+      "estado": "pendiente",
+      "hipotesis": "Si creamos api/informe-render.ts, una función serverless en TypeScript que recibe los datos de un caso (fecha de nacimiento, periodo cotizado, base reguladora, modalidad, si sigue cotizando), ejecuta pension-calculo.ts e informe-pdf.tsx/informe-analisis.ts, y devuelve el PDF con Content-Type application/pdf, esperamos aislar la generación del documento en una pieza reutilizable tanto por el webhook de cobro (Línea 2) como por el verificador (ux-009), porque hoy la lógica de PDF solo existe como componente sin ningún punto de entrada HTTP ni programático.",
+      "criterio_exito": "api/informe-render.ts exporta un handler POST que, dado un JSON con los 6 campos, responde con un binario cuyo content-type es application/pdf y cuya cabecera de bytes empieza por %PDF; el módulo no duplica ninguna constante ni fórmula de pension-calculo.ts (import directo, prohibido duplicar el motor en api/); ante datos incompletos responde 400 sin generar ningún PDF; `npm run build` pasa.",
+      "metrica": "Invocación local del handler con ≥3 combinaciones de entrada distintas: código 200 y content-type application/pdf en los 3 casos válidos, 400 en un caso con un campo obligatorio vacío.",
+      "archivos_sugeridos": [
+        "api/informe-render.ts"
+      ],
+      "objetivo_estrategico": "Línea de trabajo 1 (ESTRATEGIA.md): 'función api/informe-render.ts que recibe un caso y devuelve el PDF, alimentado solo por src/lib/pension-calculo.ts.'"
+    },
+    {
+      "id": "ux-009",
+      "titulo": "Crear scripts/verificar-informe.mjs: verificación del PDF por mutación contra el motor",
+      "area": "ux",
+      "prioridad": 5,
+      "estado": "pendiente",
+      "hipotesis": "Si creamos scripts/verificar-informe.mjs que genera ≥20 casos de prueba (incluidos los 3 ejemplos de acantilados de E-1), invoca la generación del PDF (ux-008), extrae su texto y compara cada cifra contra el resultado literal de src/lib/pension-calculo.ts para el mismo caso, y además repite el proceso tras alterar deliberadamente una celda de una tabla de coeficientes para comprobar que el script falla, esperamos replicar el mismo patrón de verificación por mutación que ya funcionó en scripts/verificar-motor.mjs, porque el Objetivo del ciclo exige textualmente 'node scripts/verificar-informe.mjs sale en verde... y sale en 1 si se altera una sola cifra' y hoy ese script no existe.",
+      "criterio_exito": "scripts/verificar-informe.mjs existe y, ejecutado con `node scripts/verificar-informe.mjs`, sale con código 0 para ≥20 casos (incluidos los 3 de E-1) cuando pension-calculo.ts está intacto; ejecutado tras alterar a mano una celda de COEF_VOLUNTARIA o COEF_INVOLUNTARIA, sale con código 1; una revisión de literales numéricos normativos en src/lib/informe-pdf.tsx confirma que ninguna cifra existe fuera de una constante o función importada de pension-calculo.ts.",
+      "metrica": "Código de salida de `node scripts/verificar-informe.mjs` antes y después de la mutación de prueba, pegado en DECISIONES.md como exige el Objetivo del ciclo.",
+      "archivos_sugeridos": [
+        "scripts/verificar-informe.mjs",
+        "package.json"
+      ],
+      "objetivo_estrategico": "Objetivo del ciclo (ESTRATEGIA.md), condición 2: 'node scripts/verificar-informe.mjs sale en verde: para ≥20 casos de prueba, cada cifra del PDF coincide con la que devuelve src/lib/pension-calculo.ts y no existe ninguna cifra normativa escrita a mano en la plantilla.'"
+    },
+    {
+      "id": "cro-001",
+      "titulo": "Quitar el banner <CTAGuia /> de los listados de blog y home",
+      "area": "cro",
+      "prioridad": 6,
+      "estado": "pendiente",
+      "hipotesis": "Si quitamos las líneas <CTAGuia variant=\"banner\" /> (y su import comentado) de src/pages/blog/index.astro, src/pages/blog/page/[page].astro y src/pages/index.astro, esperamos dejar de promocionar un producto que E-1 descarta explícitamente ('la guía de 29 € queda descartada... no se reaprovecha como bonus, ni como lead magnet, ni como upsell'), porque hoy esas 3 páginas siguen renderizando el banner de la guía aunque el producto ya no se vende. Primer paso de una cadena de 3 tareas (cro-001, cro-002, cro-003) necesaria porque retirar la guía entera toca más de 3 archivos.",
+      "criterio_exito": "Ninguno de los 3 archivos contiene <CTAGuia; tras `npm run build`, dist/blog/index.html, dist/blog/page/2/index.html y dist/index.html no contienen ningún enlace a /guia-jubilacion-anticipada procedente de estas páginas; `npm run build` pasa.",
+      "metrica": "grep de 'CTAGuia' y de '/guia-jubilacion-anticipada' en los 3 archivos fuente tras el cambio (0 resultados) y en el /dist generado.",
+      "archivos_sugeridos": [
+        "src/pages/blog/index.astro",
+        "src/pages/blog/page/[page].astro",
+        "src/pages/index.astro"
+      ],
+      "objetivo_estrategico": "Fuera de alcance este ciclo (ESTRATEGIA.md): 'La guía de 29 €. Descartada por el propietario... no se reaprovecha' + Línea de trabajo 2: 'el código muerto confunde a los agentes.'"
+    },
+    {
+      "id": "cro-002",
+      "titulo": "Quitar <CTAGuia /> de BlogPost.astro y borrar el componente CTAGuia.astro",
+      "area": "cro",
+      "prioridad": 7,
+      "estado": "pendiente",
+      "hipotesis": "Tras cro-001, si quitamos el <CTAGuia /> de src/layouts/BlogPost.astro (el último punto de uso del componente) y borramos src/components/CTAGuia.astro, esperamos dejar cero referencias vivas al componente de la guía descartada, porque CTAGuia.astro solo existía para promocionar un producto que E-1 elimina y, sin este paso, borrar la constante GUIA_PRECIO en cro-003 rompería el build.",
+      "criterio_exito": "src/components/CTAGuia.astro no existe; src/layouts/BlogPost.astro no contiene <CTAGuia; `grep -r CTAGuia src/` no devuelve resultados; `npm run build` pasa.",
+      "metrica": "grep -r 'CTAGuia' src/ (0 resultados tras el cambio); build en verde.",
+      "archivos_sugeridos": [
+        "src/layouts/BlogPost.astro",
+        "src/components/CTAGuia.astro"
+      ],
+      "objetivo_estrategico": "Fuera de alcance este ciclo (ESTRATEGIA.md): 'La guía de 29 €... no se reaprovecha' + Línea de trabajo 2: 'el código muerto confunde a los agentes.'"
+    },
+    {
+      "id": "cro-003",
+      "titulo": "Borrar la página de la guía de 29 € y retirar GUIA_PRECIO de consts.ts",
+      "area": "cro",
+      "prioridad": 8,
+      "estado": "pendiente",
+      "hipotesis": "Con cro-001 y cro-002 ya sin ninguna referencia viva a CTAGuia, si borramos src/pages/_guia-jubilacion-anticipada.astro y quitamos la constante GUIA_PRECIO de src/consts.ts, esperamos completar la eliminación del producto descartado sin romper el build, porque tras los dos pasos anteriores ningún archivo del repo importa ya GUIA_PRECIO.",
+      "criterio_exito": "src/pages/_guia-jubilacion-anticipada.astro no existe; src/consts.ts no exporta GUIA_PRECIO; `grep -r GUIA_PRECIO src/` no devuelve resultados; `npm run build` pasa y /dist no contiene ninguna ruta /guia-jubilacion-anticipada.",
+      "metrica": "grep -r GUIA_PRECIO src/ (0 resultados); build en verde; ausencia de dist/guia-jubilacion-anticipada/.",
+      "archivos_sugeridos": [
+        "src/pages/_guia-jubilacion-anticipada.astro",
+        "src/consts.ts"
+      ],
+      "objetivo_estrategico": "Línea de trabajo 2 (ESTRATEGIA.md): 'Se retira GUIA_PRECIO de src/consts.ts y se borra src/pages/_guia-jubilacion-anticipada.astro: la guía está descartada y el código muerto confunde a los agentes.'"
+    },
+    {
+      "id": "cro-004",
+      "titulo": "Crear la página /informe con el formulario nativo de 6 campos y el copy de venta",
+      "area": "cro",
+      "prioridad": 9,
+      "estado": "pendiente",
+      "hipotesis": "Si creamos src/pages/informe.astro con un <form method=\"post\" action=\"/api/informe-crear\"> (mismo patrón sin JavaScript que ya validó legal-001 en /asesoramiento) con los 6 campos de captura (fecha de nacimiento, periodo cotizado en años y meses más fecha del informe de vida laboral, base reguladora, modalidad accesible, si seguirá cotizando, email) y 2 casillas separadas y desmarcadas (RGPD y avisos normativos), más el copy de venta (precio 49,00 € IVA incluido, qué incluye y qué NO incluye tal como los enumera E-1, y el DISCLAIMER), esperamos tener el punto de entrada del embudo de pago funcionando sin JavaScript, porque hoy /informe no existe y es el primer paso obligatorio del circuito de venta. Esta tarea NO depende de que exista cuenta de Stripe: el formulario solo apunta a un endpoint que se construye en cro-005 y se completa en cro-007.",
+      "criterio_exito": "Existe src/pages/informe.astro; tras `npm run build`, dist/informe/index.html contiene un <form method=\"post\" action=\"/api/informe-crear\"> con inputs para los 6 campos y 2 <input type=\"checkbox\"> separadas y sin atributo checked; el texto visible incluye '49,00 €' y las exclusiones literales de E-1; el DISCLAIMER de src/consts.ts aparece visible; ningún dato de tarjeta, nombre ni dirección se pide en este formulario; `npm run build` pasa.",
+      "metrica": "grep de action=\"/api/informe-crear\", de los 6 campos y de las 2 casillas sin checked en dist/informe/index.html; verificación manual de que ninguna casilla viene premarcada.",
+      "archivos_sugeridos": [
+        "src/pages/informe.astro"
+      ],
+      "objetivo_estrategico": "Línea de trabajo 2 (ESTRATEGIA.md): '/informe (página de venta + formulario de 6 campos)... con JavaScript desactivado, un envío nativo del formulario de /informe llega a la página de Checkout de Stripe.'"
+    },
+    {
+      "id": "cro-005",
+      "titulo": "Crear api/informe-crear.ts con el precheck gratuito y la redirección a /informe/no-aplica",
+      "area": "cro",
+      "prioridad": 10,
+      "estado": "pendiente",
+      "hipotesis": "Si creamos api/informe-crear.ts, que recibe los 6 campos del formulario de /informe (cro-004), valida las 2 casillas y los campos obligatorios, y ejecuta el precheck contra src/lib/pension-calculo.ts (35/33 años cotizados, la carencia de MIN_COTIZACION_PENSION y la condición superaMinimaExigida del art. 208.1.c) para decidir si el caso accede a alguna modalidad anticipada, esperamos que ningún caso sin derecho llegue nunca a una pasarela de pago, porque cobrar 49 € a quien no puede jubilarse anticipadamente generaría, según E-1, 'la devolución, la reseña negativa y el correo que nos obliga a contestar a mano'. Esta tarea entrega el precheck y el rechazo; la creación de la sesión de pago para los casos que sí cumplen se completa en cro-007 porque depende de la cuenta de Stripe, hoy bloqueada por LEGAL.titular/nif/domicilio vacíos en src/consts.ts.",
+      "criterio_exito": "api/informe-crear.ts existe y responde con una redirección 303 a /informe/no-aplica cuando el caso no cumple 35/33 años cotizados o no supera la mínima exigida del art. 208.1.c), mostrando en esa página gratis qué le falta y en qué fecha lo cumpliría (usando edadLegalJubilacion() del motor); para un caso que sí cumple, responde hoy con un 501 explícito ('pago pendiente de activar') en vez de simular un cobro; funciona con el envío nativo del formulario (mismo patrón que api/contact.js); `npm run build` pasa.",
+      "metrica": "Invocación directa del handler con un caso de 25 años cotizados (debe ir a /informe/no-aplica) y con uno de 38 años cotizados (debe responder 501, nunca 200 con un cobro simulado).",
+      "archivos_sugeridos": [
+        "api/informe-crear.ts",
+        "src/pages/informe/no-aplica.astro"
+      ],
+      "objetivo_estrategico": "Restricción añadida en este ciclo (ESTRATEGIA.md): 'Prohibido cobrar un informe que el motor no puede emitir. El precheck corre antes de crear la sesión de pago, no después.'"
+    },
+    {
+      "id": "cro-006",
+      "titulo": "Crear api/informe.ts: reemisión firmada por token HMAC durante 12 meses",
+      "area": "cro",
+      "prioridad": 11,
+      "estado": "pendiente",
+      "hipotesis": "Si creamos api/informe.ts con un GET /api/informe/<id>?t=<token> que verifica un token HMAC firmado con INFORME_TOKEN_SECRET, lee el caso guardado en Redis (mismo cliente que api/_redis.js) y regenera el PDF llamando a api/informe-render.ts (ux-008) contra el motor vigente ese día, esperamos dejar lista la reemisión gratuita de 12 meses sin ninguna dependencia de Stripe, porque la reemisión no cobra nada y solo necesita un secreto propio (INFORME_TOKEN_SECRET), no una cuenta de pasarela verificada con los datos legales del titular.",
+      "criterio_exito": "api/informe.ts responde 200 con el PDF regenerado cuando el token HMAC es válido y corresponde a un caso existente en Redis; responde 403 con un token manipulado o caducado (>12 meses); ninguna respuesta expone el email ni el caso de otro id; `npm run build` pasa. Esta tarea es independiente del bloqueo de Stripe: solo requiere INFORME_TOKEN_SECRET (variable nueva, no un dato identificativo del titular).",
+      "metrica": "Invocación directa con un token válido (200 + PDF), uno manipulado (403) y uno simulado como caducado (403).",
+      "archivos_sugeridos": [
+        "api/informe.ts"
+      ],
+      "objetivo_estrategico": "Línea de trabajo 2 (ESTRATEGIA.md): 'el enlace de reemisión funciona con el token válido y devuelve 403 con uno manipulado' + 'Reemisiones ilimitadas y gratuitas durante 12 meses desde un enlace permanente firmado.'"
+    },
+    {
+      "id": "cro-007",
+      "titulo": "[BLOQUEADA] Completar api/informe-crear.ts con la creación de la sesión de Stripe Checkout",
+      "area": "cro",
+      "prioridad": 12,
+      "estado": "pendiente",
+      "hipotesis": "BLOQUEADA por un dato pendiente del propietario. Si añadimos la librería 'stripe' y completamos api/informe-crear.ts (cro-005) para que, cuando el precheck sea positivo, guarde el caso en Redis con TTL de 12 meses y cree una sesión de Stripe Checkout en modo payment (tarjeta + Bizum, price STRIPE_PRICE_INFORME, client_reference_id igual al id del caso, invoice_creation activado) antes del 303 a Stripe, esperaríamos cerrar el tramo de cobro del circuito de venta. Pero esta tarea NO PUEDE COMPLETARSE HOY: según ESTRATEGIA.md, 'sin esos tres campos no hay venta legal ni cuenta de Stripe', y LEGAL.titular, LEGAL.nif y LEGAL.domicilio en src/consts.ts siguen con sus marcadores entre corchetes. Ningún agente puede rellenarlos ni dar de alta una cuenta de Stripe en nombre del propietario.",
+      "criterio_exito": "BLOQUEADO hasta que el propietario rellene LEGAL.titular, LEGAL.nif y LEGAL.domicilio en src/consts.ts, dé de alta la cuenta de Stripe con esos datos y facilite STRIPE_SECRET_KEY y STRIPE_PRICE_INFORME como variables de entorno de Vercel. Cuando eso ocurra, el criterio de éxito es: un envío del formulario de /informe con un caso que supera el precheck produce una redirección 303 a una URL de checkout.stripe.com con client_reference_id igual al id del caso guardado en Redis; `npm run build` pasa. Hasta entonces, ningún agente declara esta tarea 'hecha' ni simula una cuenta o claves de prueba sin autorización expresa del propietario.",
+      "metrica": "No medible por un agente mientras falten los 3 campos y la cuenta de Stripe. En cuanto existan, la métrica es la traza de una compra en modo test (ID de sesión de Stripe) pegada en DECISIONES.md, tal como exige el Objetivo del ciclo.",
+      "archivos_sugeridos": [
+        "api/informe-crear.ts",
+        "package.json"
+      ],
+      "objetivo_estrategico": "Bloqueo crítico citado en ESTRATEGIA.md: 'Sin esos tres campos no hay venta legal ni cuenta de Stripe: es la única dependencia de este ciclo que ningún agente puede resolver.'"
+    },
+    {
+      "id": "cro-008",
+      "titulo": "[BLOQUEADA] Crear api/informe-webhook.ts y /informe/gracias: entrega automática del PDF",
+      "area": "cro",
+      "prioridad": 13,
+      "estado": "pendiente",
+      "hipotesis": "BLOQUEADA por la misma dependencia que cro-007. Si creamos api/informe-webhook.ts para verificar la firma de Stripe (STRIPE_WEBHOOK_SECRET), comprobar idempotencia con un SETNX en Redis, recalcular el caso desde src/lib/pension-calculo.ts, generar el PDF (ux-008) y enviarlo por email con Resend, más src/pages/informe/gracias.astro para la descarga inmediata, esperaríamos cerrar la entrega automática del informe. Pero no puede completarse ni probarse hoy porque no existe cuenta de Stripe (bloqueada por LEGAL.titular/nif/domicilio vacíos) que pueda emitir un evento checkout.session.completed real ni de test contra este dominio.",
+      "criterio_exito": "BLOQUEADO hasta que exista una cuenta de Stripe activada (dependiente de LEGAL.titular/nif/domicilio) con STRIPE_WEBHOOK_SECRET configurado. Cuando exista, el criterio de éxito es el del Objetivo del ciclo: reenviar dos veces el mismo evento de webhook genera un solo email (idempotencia); el PDF entregado coincide cifra a cifra con pension-calculo.ts (verificado por scripts/verificar-informe.mjs, ux-009); el comprador descarga el PDF en /informe/gracias sin depender del email. Ningún agente declara esta tarea 'hecha' sin una prueba real en modo test de Stripe con su traza pegada en DECISIONES.md.",
+      "metrica": "No medible por un agente mientras falte la cuenta de Stripe. En cuanto exista: traza de una compra completa en modo test (formulario → precheck → Checkout → webhook → PDF → email) con JavaScript desactivado en el tramo propio, exigida como criterio 3 del Objetivo del ciclo.",
+      "archivos_sugeridos": [
+        "api/informe-webhook.ts",
+        "src/pages/informe/gracias.astro"
+      ],
+      "objetivo_estrategico": "Objetivo del ciclo (ESTRATEGIA.md), condición 3: 'una compra completa en modo test de Stripe ejecutada por un agente... formulario → precheck → Checkout → webhook → PDF → email... reenviar dos veces el mismo evento de webhook genera un solo email.'"
+    },
+    {
+      "id": "seo-023",
+      "titulo": "Sustituir el bloque muerto de captura de email en Simulador.jsx por el CTA al informe de pago",
+      "area": "seo",
+      "prioridad": 14,
+      "estado": "pendiente",
+      "hipotesis": "Si en src/components/Simulador.jsx eliminamos el bloque {false && (...)} de captura de email para la guía descartada (junto con el estado emailEnviado/emailError y la prop guiaHref, ya sin uso) y en su lugar añadimos, tras el resultado del cálculo, un <a href=\"/informe\"> que invite a pedir el informe exacto y verificado contra el BOE, esperamos convertir a /informe al usuario que ya vio su estimación en el simulador, porque ESTRATEGIA.md ordena explícitamente 'el CTA al informe al final del resultado, ocupando el hueco del bloque de captura de email hoy muerto bajo {false && …} en Simulador.jsx' y hoy ese hueco no lleva a ningún sitio (nunca se renderiza).",
+      "criterio_exito": "src/components/Simulador.jsx no contiene ningún {false && ni la prop guiaHref; tras `npm run build` y con JavaScript activado, al completar el formulario del simulador aparece un enlace <a href=\"/informe\"> visible junto al resultado; el enlace no usa ningún patrón oscuro (sin cuenta atrás, sin precio tachado); `npm run build` pasa. Esta tarea no depende de que el circuito de cobro (cro-007/cro-008) esté desbloqueado: el enlace apunta a /informe (cro-004), que ya explica el precio y las exclusiones.",
+      "metrica": "grep de 'false &&' (0 resultados) y de href=\"/informe\" (≥1) en src/components/Simulador.jsx tras el cambio.",
+      "archivos_sugeridos": [
+        "src/components/Simulador.jsx"
+      ],
+      "objetivo_estrategico": "Línea de trabajo 3 (ESTRATEGIA.md): '/simulador... se añade lo único que les faltaba: el CTA al informe al final del resultado, ocupando el hueco del bloque de captura de email hoy muerto bajo {false && …} en Simulador.jsx.'"
     }
   ]
 }
