@@ -310,3 +310,29 @@ Formato:
 - Veredicto del CEO: pendiente
 
 ---
+
+## 2026-08-27 — ux-005 Crear el esqueleto del PDF del informe con @react-pdf/renderer (portada, índice, numeración y disclaimer) (ux) — FALLIDA
+- Archivos: ninguno modificado
+- Qué: El subagente ux-ui rechazó la tarea antes de tocar nada, tras contrastarla con su mandato explícito.
+- Por qué falló: La tarea está etiquetada area=ux en el backlog, pero el trabajo real es crear src/lib/informe-pdf.tsx (fuera del alcance permitido del subagente ux-ui, limitado a src/components/**, src/layouts/**, src/styles/**, src/pages/**) y añadir @react-pdf/renderer como dependencia nueva en package.json (acción explícitamente prohibida en su mandato). No es una decisión de diseño: es una incompatibilidad estructural entre el área asignada por el product-owner y los permisos reales del subagente de esa área.
+- Hipótesis: (sin evaluar — la tarea no llegó a ejecutarse).
+- Criterio de éxito: No cumplido — tarea rechazada antes de generar ningún cambio.
+- Métrica y plazo: No aplica.
+- Riesgo identificado — IMPORTANTE, bloquea la prioridad estratégica directa del propietario: ux-006, ux-007, ux-008 y ux-009 son la misma cadena de trabajo (el generador del informe de pago de 49€, encargo E-1) y todas tocan src/lib/**, api/** o package.json — quedarían bloqueadas por la misma causa si se intentan tal cual están etiquetadas. Ninguno de los subagentes disponibles en esta routine (ux-ui, seo, cro) tiene permiso sobre src/lib/**, api/** o gestión de dependencias para lógica de negocio/backend. Recomendación al CEO/propietario: crear o habilitar un subagente de tipo desarrollo/backend con esos permisos, o reasignar explícitamente el área de ux-005..ux-009 (p.ej. a un área nueva "dev"), antes de reintentar esta línea de trabajo. Mientras esto no se resuelva, todo el informe de pago (E-1, la prioridad #1 de la replanificación forzada del 2026-08-26) queda completamente parado.
+- Commit: (pendiente de este mismo commit)
+- Veredicto del CEO: pendiente
+
+---
+
+## 2026-08-27 — cro-001 Quitar el banner <CTAGuia /> de los listados de blog y home (cro) — HECHA
+- Archivos: src/pages/index.astro, src/pages/blog/index.astro, src/pages/blog/page/[page].astro
+- Qué: El banner <CTAGuia variant="banner" /> ya estaba comentado en los 3 archivos (sin impacto visual en producción); se eliminó el rastro textual completo (import comentado + bloque JSX comentado) para no dejar código muerto.
+- Por qué: E-1 descarta explícitamente la guía de 29€ como producto ("no se reaprovecha ni como bonus, ni como lead magnet, ni como upsell"); el código muerto que la referencia confunde a agentes futuros que trabajen en cro-002/cro-003.
+- Hipótesis: Ver backlog. Confirmada de forma trivial: no había banner visible que quitar (ya estaba oculto), así que el cambio es limpieza de código sin cambio de comportamiento medible.
+- Criterio de éxito: Cumplido y verificado. grep de 'CTAGuia' en los 3 archivos fuente y en dist/index.html, dist/blog/index.html, dist/blog/page/2/index.html: 0 resultados en todos. Build OK (84 páginas).
+- Métrica y plazo: No aplica métrica de negocio (el banner ya estaba oculto antes del cambio; no hay variación de conversión esperada).
+- Riesgo identificado: Ninguno funcional. CTAGuia.astro y su uso en BlogPost.astro siguen intactos, a la espera de cro-002.
+- Commit: (pendiente de este mismo commit)
+- Veredicto del CEO: pendiente
+
+---

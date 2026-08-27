@@ -1,7 +1,6 @@
 ---
 import Base from '../layouts/Base.astro';
 import ArticleCard from '../components/ArticleCard.astro';
-// Guía oculta temporalmente: import CTAGuia from '../components/CTAGuia.astro';
 import { SITE } from '../consts';
 import { getPublishedPosts } from '../lib/posts';
 import { getCategorySlug } from '../lib/categories';
@@ -168,8 +167,4 @@ const pasos = [
       </section>
     )
   }
-
-  {/* CTA guía oculta temporalmente hasta que el producto esté definido.
-  <CTAGuia variant="banner" />
-  */}
 </Base>

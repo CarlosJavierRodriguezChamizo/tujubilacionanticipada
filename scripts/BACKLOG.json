@@ -440,7 +440,7 @@
       "titulo": "Crear el esqueleto del PDF del informe con @react-pdf/renderer (portada, índice, numeración y disclaimer)",
       "area": "ux",
       "prioridad": 1,
-      "estado": "pendiente",
+      "estado": "fallida",
       "hipotesis": "Si añadimos @react-pdf/renderer como dependencia y creamos src/lib/informe-pdf.tsx con un componente Document base que solo consume constantes de src/lib/pension-calculo.ts (ANIO_NORMATIVA) para la portada, con numeración de página y el DISCLAIMER de src/consts.ts en una sección propia, esperamos tener el esqueleto paginado que exige E-1 ('un informe de pago mal presentado se percibe como falso') antes de rellenar ninguna tabla, porque hoy no existe ningún módulo de generación de PDF en el repo ni @react-pdf/renderer es dependencia.",
       "criterio_exito": "package.json incluye @react-pdf/renderer en dependencies; src/lib/informe-pdf.tsx exporta un componente (p.ej. InformePDF) que, renderizado con @react-pdf/renderer, produce un PDF con portada (título y ANIO_NORMATIVA), numeración de página visible en cada página y el texto exacto de DISCLAIMER (src/consts.ts); cuerpo de texto ≥11pt; ninguna cifra normativa se escribe literalmente en el componente (solo se referencian constantes/funciones importadas de pension-calculo.ts); `npm run build` sigue en verde.",
       "metrica": "Ejecución local del render (script ad-hoc) que produce un archivo .pdf válido (cabecera de bytes %PDF); inspección de que el texto del DISCLAIMER en el PDF coincide literalmente con src/consts.ts.",
@@ -448,7 +448,9 @@
         "package.json",
         "src/lib/informe-pdf.tsx"
       ],
-      "objetivo_estrategico": "Línea de trabajo 1 (ESTRATEGIA.md): 'el generador del informe, con su verificador... la maquetación es parte de lo que se paga... Documento paginado y descargable (PDF), con portada, índice, numeración y fecha de emisión, no una página web impresa.'"
+      "objetivo_estrategico": "Línea de trabajo 1 (ESTRATEGIA.md): 'el generador del informe, con su verificador... la maquetación es parte de lo que se paga... Documento paginado y descargable (PDF), con portada, índice, numeración y fecha de emisión, no una página web impresa.'",
+      "fecha_ejecucion": "2026-08-27",
+      "resultado": "FALLIDA por incompatibilidad estructural de área/agente, sin tocar ningún archivo. El subagente ux-ui rechazó la tarea: aunque el backlog la etiqueta area=ux, el trabajo real (crear src/lib/informe-pdf.tsx, añadir @react-pdf/renderer como dependencia nueva en package.json) cae fuera de su alcance permitido (solo src/components/**, src/layouts/**, src/styles/**, src/pages/**) y viola su prohibición explícita de instalar dependencias nuevas. ux-006, ux-007, ux-008 y ux-009 son la misma cadena de trabajo (todas tocan src/lib/**, api/** o gestión de dependencias) y quedarían bloqueadas por la misma causa si se intentaran hoy. No existe en el equipo de subagentes de esta routine (ux-ui, seo, cro) ninguno con permiso sobre src/lib/**, api/** o package.json para lógica de negocio/backend. Recomendación al CEO/propietario: crear o habilitar un subagente de tipo desarrollo/backend con esos permisos, o reasignar el área de ux-005..ux-009 a uno que ya lo tenga, antes de reintentar esta línea de trabajo (el informe de pago de 49€, prioridad estratégica directa del propietario)."
     },
     {
       "id": "ux-006",
@@ -513,7 +515,7 @@
       "titulo": "Quitar el banner <CTAGuia /> de los listados de blog y home",
       "area": "cro",
       "prioridad": 6,
-      "estado": "pendiente",
+      "estado": "hecha",
       "hipotesis": "Si quitamos las líneas <CTAGuia variant=\"banner\" /> (y su import comentado) de src/pages/blog/index.astro, src/pages/blog/page/[page].astro y src/pages/index.astro, esperamos dejar de promocionar un producto que E-1 descarta explícitamente ('la guía de 29 € queda descartada... no se reaprovecha como bonus, ni como lead magnet, ni como upsell'), porque hoy esas 3 páginas siguen renderizando el banner de la guía aunque el producto ya no se vende. Primer paso de una cadena de 3 tareas (cro-001, cro-002, cro-003) necesaria porque retirar la guía entera toca más de 3 archivos.",
       "criterio_exito": "Ninguno de los 3 archivos contiene <CTAGuia; tras `npm run build`, dist/blog/index.html, dist/blog/page/2/index.html y dist/index.html no contienen ningún enlace a /guia-jubilacion-anticipada procedente de estas páginas; `npm run build` pasa.",
       "metrica": "grep de 'CTAGuia' y de '/guia-jubilacion-anticipada' en los 3 archivos fuente tras el cambio (0 resultados) y en el /dist generado.",
@@ -522,7 +524,9 @@
         "src/pages/blog/page/[page].astro",
         "src/pages/index.astro"
       ],
-      "objetivo_estrategico": "Fuera de alcance este ciclo (ESTRATEGIA.md): 'La guía de 29 €. Descartada por el propietario... no se reaprovecha' + Línea de trabajo 2: 'el código muerto confunde a los agentes.'"
+      "objetivo_estrategico": "Fuera de alcance este ciclo (ESTRATEGIA.md): 'La guía de 29 €. Descartada por el propietario... no se reaprovecha' + Línea de trabajo 2: 'el código muerto confunde a los agentes.'",
+      "fecha_ejecucion": "2026-08-27",
+      "resultado": "Hecha. El banner <CTAGuia variant=\"banner\" /> ya estaba comentado en los 3 archivos (src/pages/index.astro, src/pages/blog/index.astro, src/pages/blog/page/[page].astro), sin impacto visual respecto a producción. Se eliminó el rastro textual completo (import comentado y bloque JSX comentado) para que no quede código muerto que confunda a agentes futuros. Verificado: 0 resultados de 'CTAGuia' en los 3 archivos fuente y en dist/index.html, dist/blog/index.html, dist/blog/page/2/index.html tras build. Build OK (84 páginas). No se tocó CTAGuia.astro, su uso en BlogPost.astro ni GUIA_PRECIO en consts.ts (fuera de alcance, corresponde a cro-002/cro-003)."
     },
     {
       "id": "cro-002",

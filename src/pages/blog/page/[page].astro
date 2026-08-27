@@ -2,7 +2,6 @@
 import type { GetStaticPaths } from 'astro';
 import Base from '../../../layouts/Base.astro';
 import BlogListing from '../../../components/BlogListing.astro';
-// Guía oculta temporalmente: import CTAGuia from '../../../components/CTAGuia.astro';
 import { getPublishedPosts } from '../../../lib/posts';
 import { POSTS_PER_PAGE } from '../../../consts';
 
@@ -41,8 +40,4 @@ const noindex = page.currentPage === 1;
       />
     </div>
   </section>
-
-  {/* Guía oculta temporalmente hasta que el producto esté definido.
-  <CTAGuia variant="banner" />
-  */}
 </Base>
