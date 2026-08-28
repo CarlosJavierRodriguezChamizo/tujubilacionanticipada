@@ -336,3 +336,27 @@ Formato:
 - Veredicto del CEO: pendiente
 
 ---
+
+## 2026-08-28 — ux-006 Construir la tabla mes a mes del informe (24/48 filas) con pensión y pérdida acumulada (ux) — FALLIDA
+- Archivos: ninguno modificado
+- Qué: El subagente ux-ui rechazó la tarea antes de tocar nada, tras contrastarla con su mandato explícito.
+- Por qué falló: La tarea está etiquetada area=ux, pero el trabajo real es crear src/lib/informe-pdf.tsx (lógica de datos: iterar 24/48 meses de anticipo, calcular pérdida acumulada), fuera del alcance permitido del subagente ux-ui (limitado a src/components/**, src/layouts/**, src/styles/**, src/pages/**). Es el mismo problema estructural que ux-005 (ver entrada del 2026-08-27): ninguno de los 3 subagentes de esta routine (ux-ui, seo, cro) tiene permiso sobre src/lib/**, api/** o scripts/** de backend.
+- Hipótesis: (sin evaluar — la tarea no llegó a ejecutarse).
+- Criterio de éxito: No cumplido — tarea rechazada antes de generar ningún cambio.
+- Métrica y plazo: No aplica.
+- Riesgo identificado — se repite sin resolver por segundo ciclo consecutivo: ux-007, ux-008 y ux-009 son la misma cadena de trabajo (generador del informe de pago de 49€, encargo directo E-1, prioridad #1 de la replanificación forzada del 2026-08-26) y comparten la misma causa raíz (src/lib/**, api/**, scripts/** fuera del alcance de los 3 subagentes disponibles). No se dispatcharon hoy por la misma razón. Recomendación reiterada al CEO/propietario: crear o habilitar un subagente de tipo desarrollo/backend con permiso sobre esas rutas, o reasignar explícitamente el área de ux-006..ux-009 (p.ej. a un área nueva "dev"), antes del próximo ciclo. Mientras esto no se resuelva, todo el informe de pago (E-1) sigue completamente parado.
+- Commit: (pendiente de este mismo commit)
+- Veredicto del CEO: pendiente
+
+---
+
+## 2026-08-28 — cro-002 Quitar <CTAGuia /> de BlogPost.astro y borrar el componente CTAGuia.astro (cro) — HECHA
+- Archivos: src/layouts/BlogPost.astro, src/components/CTAGuia.astro (borrado)
+- Qué: Eliminado de BlogPost.astro el import comentado de CTAGuia y el bloque JSX comentado que la renderizaba (ya estaba desactivado, sin impacto visual); borrado por completo src/components/CTAGuia.astro.
+- Por qué: Tras cro-001, este era el último punto de uso del componente. E-1 descarta la guía de 29€ como producto; sin este paso, borrar GUIA_PRECIO en cro-003 rompería el build.
+- Hipótesis: Ver backlog. Confirmada: cero referencias vivas a CTAGuia tras el cambio.
+- Criterio de éxito: Cumplido y verificado. grep -r 'CTAGuia' src/ -> 0 resultados. Build OK (85 páginas).
+- Métrica y plazo: No aplica métrica de negocio (limpieza de código muerto, sin cambio de comportamiento).
+- Riesgo identificado: Ninguno funcional. Deja el terreno listo para cro-003 (borrar GUIA_PRECIO de src/consts.ts).
+- Commit: (pendiente de este mismo commit)
+- Veredicto del CEO: pendiente

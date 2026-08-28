@@ -1,7 +1,6 @@
 ---
 import type { CollectionEntry } from 'astro:content';
 import Base from './Base.astro';
-// Guía oculta temporalmente: import CTAGuia from '../components/CTAGuia.astro';
 import { formatDate, toISO, readingTimeMinutes, resolveHeroImage, getPublishedPosts } from '../lib/posts';
 import {
   articleWebPageSchema,
@@ -137,12 +136,6 @@ const breadcrumb = breadcrumbSchema([
     <div class="prose prose-lg mx-auto mt-8 prose-a:font-medium">
       <slot />
     </div>
-
-    {/* Guía oculta temporalmente hasta que el producto esté definido.
-    <div class="mx-auto mt-12 max-w-prose">
-      <CTAGuia />
-    </div>
-    */}
 
     {
       data.reviewedBy && (

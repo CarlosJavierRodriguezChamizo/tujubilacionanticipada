@@ -457,14 +457,16 @@
       "titulo": "Construir la tabla mes a mes del informe (24/48 filas) con pensión y pérdida acumulada",
       "area": "ux",
       "prioridad": 2,
-      "estado": "pendiente",
+      "estado": "fallida",
       "hipotesis": "Si src/lib/informe-pdf.tsx añade una tabla que recorre, para cada mes de anticipo disponible (24 en voluntaria vía COEF_VOLUNTARIA, 48 en involuntaria vía COEF_INVOLUNTARIA), el resultado de calcularEscenario() de src/lib/pension-calculo.ts y muestra pensión resultante, pérdida mensual respecto a la ordinaria y pérdida acumulada a 20 años (240 pagas), esperamos entregar 'el corazón del documento' que exige E-1 sin escribir ninguna cifra a mano, porque hoy pension-calculo.ts solo calcula un escenario a la vez y no existe ninguna tabla que itere sobre todos los meses de anticipo.",
       "criterio_exito": "Para un caso de modalidad voluntaria el PDF contiene exactamente 24 filas y para uno involuntario 48 filas; cada fila usa el resultado literal de calcularEscenario() (pensionFinal, penalizacionPct) sin redondeos ni cifras reescritas en el componente; la pérdida acumulada a 20 años de cada fila se calcula en el propio módulo como (pensiónOrdinaria − pensiónFila) × 240, nunca en la plantilla; `npm run build` pasa.",
       "metrica": "Conteo de filas de tabla para un caso voluntario (=24) y uno involuntario (=48); comparación celda a celda de 5 filas contra la salida directa de calcularEscenario() para los mismos inputs.",
       "archivos_sugeridos": [
         "src/lib/informe-pdf.tsx"
       ],
-      "objetivo_estrategico": "E-1 (encargo del propietario, ESTRATEGIA.md): 'La tabla de sus fechas posibles, mes a mes (24 en voluntaria, 48 en involuntaria): pensión resultante, pérdida mensual y pérdida acumulada a 20 años en cada una.'"
+      "objetivo_estrategico": "E-1 (encargo del propietario, ESTRATEGIA.md): 'La tabla de sus fechas posibles, mes a mes (24 en voluntaria, 48 en involuntaria): pensión resultante, pérdida mensual y pérdida acumulada a 20 años en cada una.'",
+      "fecha_ejecucion": "2026-08-28",
+      "resultado": "El subagente ux-ui rechazó la tarea antes de tocar nada: su mandato está restringido a src/components/**, src/layouts/**, src/styles/**, src/pages/**, y esta tarea requiere crear/editar src/lib/informe-pdf.tsx (lógica de datos, fuera de ese alcance). Mismo problema estructural ya reportado el 2026-08-27 en ux-005 (ver DECISIONES.md): ninguno de los 3 subagentes disponibles (ux-ui, seo, cro) tiene permiso sobre src/lib/**, api/** o gestión de dependencias de backend. Toda la cadena ux-006/007/008/009 (generador del informe de pago, encargo directo E-1) sigue bloqueada por la misma causa sin resolver desde hace 2 ciclos consecutivos. No se ha tocado ningún archivo."
     },
     {
       "id": "ux-007",
@@ -533,7 +535,7 @@
       "titulo": "Quitar <CTAGuia /> de BlogPost.astro y borrar el componente CTAGuia.astro",
       "area": "cro",
       "prioridad": 7,
-      "estado": "pendiente",
+      "estado": "hecha",
       "hipotesis": "Tras cro-001, si quitamos el <CTAGuia /> de src/layouts/BlogPost.astro (el último punto de uso del componente) y borramos src/components/CTAGuia.astro, esperamos dejar cero referencias vivas al componente de la guía descartada, porque CTAGuia.astro solo existía para promocionar un producto que E-1 elimina y, sin este paso, borrar la constante GUIA_PRECIO en cro-003 rompería el build.",
       "criterio_exito": "src/components/CTAGuia.astro no existe; src/layouts/BlogPost.astro no contiene <CTAGuia; `grep -r CTAGuia src/` no devuelve resultados; `npm run build` pasa.",
       "metrica": "grep -r 'CTAGuia' src/ (0 resultados tras el cambio); build en verde.",
@@ -541,7 +543,9 @@
         "src/layouts/BlogPost.astro",
         "src/components/CTAGuia.astro"
       ],
-      "objetivo_estrategico": "Fuera de alcance este ciclo (ESTRATEGIA.md): 'La guía de 29 €... no se reaprovecha' + Línea de trabajo 2: 'el código muerto confunde a los agentes.'"
+      "objetivo_estrategico": "Fuera de alcance este ciclo (ESTRATEGIA.md): 'La guía de 29 €... no se reaprovecha' + Línea de trabajo 2: 'el código muerto confunde a los agentes.'",
+      "fecha_ejecucion": "2026-08-28",
+      "resultado": "Import comentado de CTAGuia y el bloque JSX comentado que la renderizaba eliminados de src/layouts/BlogPost.astro; src/components/CTAGuia.astro borrado. grep -r CTAGuia src/ -> 0 resultados. Build OK (85 páginas). Sin cambio visible (el componente ya estaba desactivado/comentado en producción). Deja el terreno listo para cro-003 (borrar GUIA_PRECIO de consts.ts)."
     },
     {
       "id": "cro-003",
