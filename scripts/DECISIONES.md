@@ -412,3 +412,16 @@ Formato:
 - Riesgo identificado: El precheck usa los datos declarados por el usuario (no verifica su vida laboral real), lo mismo que el resto del sitio declara explícitamente. La proyección de años cotizados asume cotización continua sin lagunas si el usuario marca que seguirá cotizando; es una simplificación razonable para un filtro gratuito, no para el informe de pago en sí. La personalización de /informe/no-aplica depende de JavaScript (progressive enhancement) por ser un sitio estático sin SSR; sin JS se ve contenido general honesto pero no las cifras del caso concreto.
 - Commit: (pendiente de este mismo commit)
 - Veredicto del CEO: pendiente
+
+---
+
+## 2026-08-29 — seo-023 Sustituir el bloque muerto de captura de email en Simulador.jsx por el CTA al informe de pago (seo) — HECHA
+- Archivos: src/components/Simulador.jsx
+- Qué: Eliminado el bloque {false && (...)} de captura de email (nunca se renderizaba), su estado asociado (email/emailEnviado/emailError/handleEmailSubmit) y la prop guiaHref sin uso; añadido en su lugar un <a href="/informe"> tras el resultado del cálculo, con copy honesto y evento GA4 cta_informe.
+- Por qué: ESTRATEGIA.md ordena colocar el CTA al informe en ese hueco muerto; es el momento de mayor intención del usuario (ya vio su estimación) para ofrecerle el informe de pago verificado, que ya existe en /informe (cro-004) sin depender del circuito de cobro (cro-007/cro-008).
+- Hipótesis: Ver backlog. Confirmada en forma: enlace presente y funcional con JS activado, sin patrones oscuros.
+- Criterio de éxito: Cumplido y verificado de forma independiente: grep de {false &&/guiaHref/emailEnviado/emailError sin resultados; <a href="/informe"> presente en el JSX; npm run build OK (89 páginas).
+- Métrica y plazo: Evento GA4 cta_informe (location: simulador) — tasa de clic hacia /informe desde el simulador y variación de sesiones a /informe, a revisar en ~21 días.
+- Riesgo identificado: Posible competencia visual entre el CTA de asesoramiento gratuito (btn-accent) y el nuevo CTA al informe (btn-primary), ambos al final del resultado; a afinar en una futura iteración de CRO si los datos lo sugieren.
+- Commit: (pendiente de este mismo commit)
+- Veredicto del CEO: pendiente

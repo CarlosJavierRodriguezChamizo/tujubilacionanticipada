@@ -648,14 +648,16 @@
       "titulo": "Sustituir el bloque muerto de captura de email en Simulador.jsx por el CTA al informe de pago",
       "area": "seo",
       "prioridad": 14,
-      "estado": "pendiente",
+      "estado": "hecha",
       "hipotesis": "Si en src/components/Simulador.jsx eliminamos el bloque {false && (...)} de captura de email para la guía descartada (junto con el estado emailEnviado/emailError y la prop guiaHref, ya sin uso) y en su lugar añadimos, tras el resultado del cálculo, un <a href=\"/informe\"> que invite a pedir el informe exacto y verificado contra el BOE, esperamos convertir a /informe al usuario que ya vio su estimación en el simulador, porque ESTRATEGIA.md ordena explícitamente 'el CTA al informe al final del resultado, ocupando el hueco del bloque de captura de email hoy muerto bajo {false && …} en Simulador.jsx' y hoy ese hueco no lleva a ningún sitio (nunca se renderiza).",
       "criterio_exito": "src/components/Simulador.jsx no contiene ningún {false && ni la prop guiaHref; tras `npm run build` y con JavaScript activado, al completar el formulario del simulador aparece un enlace <a href=\"/informe\"> visible junto al resultado; el enlace no usa ningún patrón oscuro (sin cuenta atrás, sin precio tachado); `npm run build` pasa. Esta tarea no depende de que el circuito de cobro (cro-007/cro-008) esté desbloqueado: el enlace apunta a /informe (cro-004), que ya explica el precio y las exclusiones.",
       "metrica": "grep de 'false &&' (0 resultados) y de href=\"/informe\" (≥1) en src/components/Simulador.jsx tras el cambio.",
       "archivos_sugeridos": [
         "src/components/Simulador.jsx"
       ],
-      "objetivo_estrategico": "Línea de trabajo 3 (ESTRATEGIA.md): '/simulador... se añade lo único que les faltaba: el CTA al informe al final del resultado, ocupando el hueco del bloque de captura de email hoy muerto bajo {false && …} en Simulador.jsx.'"
+      "objetivo_estrategico": "Línea de trabajo 3 (ESTRATEGIA.md): '/simulador... se añade lo único que les faltaba: el CTA al informe al final del resultado, ocupando el hueco del bloque de captura de email hoy muerto bajo {false && …} en Simulador.jsx.'",
+      "fecha_ejecucion": "2026-08-29",
+      "resultado": "Eliminado en src/components/Simulador.jsx el bloque muerto {false && (...)} de captura de email para la guía descartada, junto con el estado email/emailEnviado/emailError, handleEmailSubmit y la prop guiaHref (sin uso por ningún llamador). En su lugar, tras el resultado del cálculo, se añadió un <a href=\"/informe\"> con copy honesto (tabla mes a mes, acantilados, verificación con fuente oficial) y evento GA4 cta_informe, sin patrones oscuros. Verificado de forma independiente: git status solo toca ese archivo; grep de {false &&/guiaHref/emailEnviado/emailError -> 0 resultados; grep del href=\"/informe\" presente; npm run build OK (89 páginas)."
     }
   ]
 }

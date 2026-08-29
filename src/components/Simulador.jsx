@@ -34,15 +34,10 @@ function formatEdad(edadDecimal) {
 }
 
 /* ───────────────────────── Componente ───────────────────────── */
-export default function Simulador({ disclaimer, guiaHref = '/guia-jubilacion-anticipada' }) {
+export default function Simulador({ disclaimer }) {
   const [form, setForm] = useState({ edad: '', cotizados: '', base: '' });
   const [resultado, setResultado] = useState(null);
   const [errores, setErrores] = useState({});
-
-  // Captura de email
-  const [email, setEmail] = useState('');
-  const [emailEnviado, setEmailEnviado] = useState(false);
-  const [emailError, setEmailError] = useState('');
 
   const handleChange = (campo) => (e) => {
     setForm((f) => ({ ...f, [campo]: e.target.value }));
@@ -116,7 +111,6 @@ export default function Simulador({ disclaimer, guiaHref = '/guia-jubilacion-ant
     });
 
     setResultado({ edadLegal, ordinaria, voluntaria, forzosa });
-    setEmailEnviado(false);
 
     // Evento GA4: el usuario ha calculado su jubilación con el simulador.
     if (typeof window !== 'undefined' && typeof window.gtag === 'function') {
@@ -133,19 +127,6 @@ export default function Simulador({ disclaimer, guiaHref = '/guia-jubilacion-ant
         block: 'start',
       });
     });
-  }
-
-  function handleEmailSubmit(e) {
-    e.preventDefault();
-    const valido = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-    if (!valido) {
-      setEmailError('Introduce un correo electrónico válido.');
-      return;
-    }
-    setEmailError('');
-    // TODO: conectar con el proveedor de email marketing (Klaviyo, Mailchimp, etc.).
-    // De momento simulamos el alta para no bloquear el flujo.
-    setEmailEnviado(true);
   }
 
   return (
@@ -270,55 +251,29 @@ export default function Simulador({ disclaimer, guiaHref = '/guia-jubilacion-ant
             </div>
           </div>
 
-          {/* Captura de email — oculta temporalmente junto con la guía (producto sin definir) */}
-          {false && (!emailEnviado ? (
-            <div className="rounded-2xl border border-brand-200 bg-brand-50 p-6 sm:p-8">
-              <h3 className="text-xl font-bold text-ink">
-                Recibe la guía completa con todos los pasos para planificar tu
-                jubilación anticipada
-              </h3>
-              <p className="mt-2 text-sm text-ink-soft">
-                Te enviamos un resumen y los siguientes pasos a tu correo. Sin
-                spam, puedes darte de baja cuando quieras.
-              </p>
-              <form
-                onSubmit={handleEmailSubmit}
-                noValidate
-                className="mt-4 flex flex-col gap-3 sm:flex-row"
-              >
-                <label htmlFor="email-capture" className="sr-only">
-                  Correo electrónico
-                </label>
-                <input
-                  id="email-capture"
-                  type="email"
-                  inputMode="email"
-                  autoComplete="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="tu@correo.com"
-                  className="w-full flex-1 rounded-lg border border-gray-300 px-4 py-3 text-base focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500"
-                />
-                <button type="submit" className="btn-primary shrink-0">
-                  Quiero la guía
-                </button>
-              </form>
-              {emailError && (
-                <p className="mt-2 text-sm text-red-600">{emailError}</p>
-              )}
-            </div>
-          ) : (
-            <div className="rounded-2xl border border-green-200 bg-green-50 p-6 text-center sm:p-8">
-              <h3 className="text-xl font-bold text-green-900">¡Gracias! 🎉</h3>
-              <p className="mt-2 text-sm text-green-800">
-                Hemos registrado tu correo. Mientras tanto, puedes echar un
-                vistazo a la guía completa.
-              </p>
-              <a href={guiaHref} className="btn-primary mt-4 inline-flex no-underline">
-                Ver la guía
-              </a>
-            </div>
-          ))}
+          {/* CTA hacia el informe de fecha óptima (de pago) */}
+          <div className="rounded-2xl border border-brand-200 bg-brand-50 p-6 sm:p-8">
+            <h3 className="text-xl font-bold text-ink">
+              ¿Quieres tu fecha exacta, verificada contra el BOE?
+            </h3>
+            <p className="mt-2 text-sm text-ink-soft">
+              Esta estimación es orientativa. El informe de Fecha Óptima de
+              Jubilación calcula, con tus datos concretos, la tabla mes a mes de
+              tus fechas posibles, tus acantilados y tu punto de equilibrio,
+              con cada cifra respaldada por su fuente oficial.
+            </p>
+            <a
+              href="/informe"
+              onClick={() => {
+                if (typeof window !== 'undefined' && typeof window.gtag === 'function') {
+                  window.gtag('event', 'cta_informe', { location: 'simulador' });
+                }
+              }}
+              className="btn-primary mt-4 inline-flex no-underline"
+            >
+              Ver el informe de Fecha Óptima
+            </a>
+          </div>
         </div>
       )}
     </div>
