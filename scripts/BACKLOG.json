@@ -587,7 +587,7 @@
       "titulo": "Crear api/informe-crear.ts con el precheck gratuito y la redirección a /informe/no-aplica",
       "area": "cro",
       "prioridad": 10,
-      "estado": "pendiente",
+      "estado": "hecha",
       "hipotesis": "Si creamos api/informe-crear.ts, que recibe los 6 campos del formulario de /informe (cro-004), valida las 2 casillas y los campos obligatorios, y ejecuta el precheck contra src/lib/pension-calculo.ts (35/33 años cotizados, la carencia de MIN_COTIZACION_PENSION y la condición superaMinimaExigida del art. 208.1.c) para decidir si el caso accede a alguna modalidad anticipada, esperamos que ningún caso sin derecho llegue nunca a una pasarela de pago, porque cobrar 49 € a quien no puede jubilarse anticipadamente generaría, según E-1, 'la devolución, la reseña negativa y el correo que nos obliga a contestar a mano'. Esta tarea entrega el precheck y el rechazo; la creación de la sesión de pago para los casos que sí cumplen se completa en cro-007 porque depende de la cuenta de Stripe, hoy bloqueada por LEGAL.titular/nif/domicilio vacíos en src/consts.ts.",
       "criterio_exito": "api/informe-crear.ts existe y responde con una redirección 303 a /informe/no-aplica cuando el caso no cumple 35/33 años cotizados o no supera la mínima exigida del art. 208.1.c), mostrando en esa página gratis qué le falta y en qué fecha lo cumpliría (usando edadLegalJubilacion() del motor); para un caso que sí cumple, responde hoy con un 501 explícito ('pago pendiente de activar') en vez de simular un cobro; funciona con el envío nativo del formulario (mismo patrón que api/contact.js); `npm run build` pasa.",
       "metrica": "Invocación directa del handler con un caso de 25 años cotizados (debe ir a /informe/no-aplica) y con uno de 38 años cotizados (debe responder 501, nunca 200 con un cobro simulado).",
@@ -595,7 +595,9 @@
         "api/informe-crear.ts",
         "src/pages/informe/no-aplica.astro"
       ],
-      "objetivo_estrategico": "Restricción añadida en este ciclo (ESTRATEGIA.md): 'Prohibido cobrar un informe que el motor no puede emitir. El precheck corre antes de crear la sesión de pago, no después.'"
+      "objetivo_estrategico": "Restricción añadida en este ciclo (ESTRATEGIA.md): 'Prohibido cobrar un informe que el motor no puede emitir. El precheck corre antes de crear la sesión de pago, no después.'",
+      "fecha_ejecucion": "2026-08-29",
+      "resultado": "Creados api/informe-crear.ts y src/pages/informe/no-aplica.astro. El endpoint (patrón nativo/JSON de api/contact.js) recibe los 6 campos de informe.astro, valida obligatoriedad/formato/consentimiento RGPD, y ejecuta el precheck contra pension-calculo.ts real (edadLegalJubilacion, calcularEscenario, fechaDesdeEdad, REQ_COTIZACION_VOLUNTARIA/FORZOSA, MIN_COTIZACION_PENSION, todos verificados existentes con ese nombre): proyecta años cotizados a la edad ordinaria, comprueba el requisito de 35/33 años y la carencia, y para la modalidad voluntaria comprueba superaMinimaExigida en el mejor caso (0 meses de anticipo). Si no accede, redirige 303 a /informe/no-aplica con los datos derivados en query string (progressive enhancement, sitio estático sin SSR); si accede, responde 501 explícito sin simular cobro (bloqueado por Stripe/LEGAL, cro-007). Verificado de forma independiente: git status solo toca los 2 archivos permitidos; npm run build OK (89 páginas); npx tsc --noEmit sobre todo el proyecto (incluye api/) sin errores; los nombres/firma de las funciones importadas de pension-calculo.ts coinciden exactamente con el módulo real (grep de exports)."
     },
     {
       "id": "cro-006",

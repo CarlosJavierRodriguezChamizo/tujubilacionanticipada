@@ -399,3 +399,16 @@ Formato:
 - Riesgo identificado: El endpoint /api/informe-crear no existe todavía (cro-005), así que cualquier envío real del formulario en producción devolverá 404 hasta entonces. Es un riesgo aceptado y temporal, coherente con la secuencia cro-004→cro-005→cro-007 del backlog.
 - Commit: (pendiente de este mismo commit)
 - Veredicto del CEO: pendiente
+
+---
+
+## 2026-08-29 — cro-005 Crear api/informe-crear.ts con el precheck gratuito y la redirección a /informe/no-aplica (cro) — HECHA
+- Archivos: api/informe-crear.ts (nuevo), src/pages/informe/no-aplica.astro (nuevo)
+- Qué: Endpoint serverless que recibe los 6 campos de /informe (cro-004), valida obligatoriedad/RGPD, y ejecuta un precheck real contra pension-calculo.ts (requisito de 35/33 años cotizados proyectados a la edad ordinaria, carencia mínima, y superaMinimaExigida del art. 208.1.c en el mejor caso para la modalidad voluntaria). Si no accede, 303 a /informe/no-aplica con el detalle del caso; si accede, 501 explícito sin cobrar (Stripe pendiente, cro-007).
+- Por qué: E-1 exige que ningún caso sin derecho llegue a la pasarela de pago, para evitar devoluciones y reseñas negativas por cobrar a quien no puede jubilarse anticipadamente.
+- Hipótesis: Ver backlog. Confirmada en forma: la lógica usa las funciones/constantes reales del motor (edadLegalJubilacion, calcularEscenario, fechaDesdeEdad, REQ_COTIZACION_VOLUNTARIA/FORZOSA, MIN_COTIZACION_PENSION), verificadas una a una contra pension-calculo.ts.
+- Criterio de éxito: Cumplido y verificado de forma independiente (no solo por el subagente): git status solo toca los 2 archivos permitidos; npm run build OK (89 páginas); npx tsc --noEmit sobre todo el proyecto sin errores; firmas de las funciones importadas coinciden con el módulo real.
+- Métrica y plazo: 0 sesiones de pago creadas (cuando cro-007 las active) para casos que hoy caerían en motivo=anios/minima; tasa de reseñas por "no podía jubilarme" en 0, a revisar cuando el circuito de pago esté activo.
+- Riesgo identificado: El precheck usa los datos declarados por el usuario (no verifica su vida laboral real), lo mismo que el resto del sitio declara explícitamente. La proyección de años cotizados asume cotización continua sin lagunas si el usuario marca que seguirá cotizando; es una simplificación razonable para un filtro gratuito, no para el informe de pago en sí. La personalización de /informe/no-aplica depende de JavaScript (progressive enhancement) por ser un sitio estático sin SSR; sin JS se ve contenido general honesto pero no las cifras del caso concreto.
+- Commit: (pendiente de este mismo commit)
+- Veredicto del CEO: pendiente

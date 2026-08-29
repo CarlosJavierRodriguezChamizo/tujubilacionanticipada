@@ -1,0 +1,166 @@
+---
+/**
+ * Página gratuita a la que redirige `api/informe-crear.ts` (303, envío nativo
+ * del formulario de /informe) cuando el precheck determina que el caso NO
+ * accede a ninguna modalidad de jubilación anticipada. No se cobra nada.
+ *
+ * El sitio es estático (sin adaptador SSR): esta página no puede leer los
+ * parámetros de la URL en el servidor. Por eso el contenido general explica
+ * siempre lo mismo (sin JavaScript sigue siendo útil y honesto) y un script
+ * de progressive enhancement rellena los datos concretos del caso a partir
+ * de la query string que añade el endpoint, sin llamar a ningún servidor ni
+ * guardar nada.
+ */
+import Base from '../../layouts/Base.astro';
+import { breadcrumbSchema, webPageSchema } from '../../lib/schema';
+import { SITE } from '../../consts';
+
+const path = '/informe/no-aplica';
+const descripcion =
+  'Con los datos que nos has dado, tu caso no cumple hoy los requisitos legales para la jubilación anticipada. No se te ha cobrado nada.';
+
+const schema = [
+  webPageSchema({
+    type: 'WebPage',
+    path,
+    name: 'Tu caso no cumple hoy los requisitos de jubilación anticipada',
+    description: descripcion,
+    breadcrumbPath: path,
+  }),
+  breadcrumbSchema([
+    { name: 'Inicio', path: '/' },
+    { name: 'Informe de Fecha Óptima', path: '/informe' },
+    { name: 'No cumples los requisitos', path },
+  ]),
+];
+---
+
+<Base
+  title="Tu caso no cumple hoy los requisitos de jubilación anticipada"
+  description={descripcion}
+  path={path}
+  noindex={true}
+  schema={schema}
+>
+  <section class="container-prose py-16 sm:py-24">
+    <div class="mx-auto max-w-2xl rounded-2xl border border-paper-300 bg-paper-50 p-8 sm:p-10">
+      <p class="eyebrow">Comprobación gratuita, antes de cobrarte</p>
+      <h1 class="mt-3 text-2xl font-semibold sm:text-3xl">
+        Con los datos que nos has dado, hoy no cumples los requisitos
+      </h1>
+      <p class="mt-4 text-ink-soft">
+        No te hemos cobrado nada: el Informe de Fecha Óptima solo tiene sentido —y
+        solo se paga— si existe una fecha de jubilación anticipada a calcular. Antes
+        de eso comprobamos dos condiciones legales:
+      </p>
+      <ul class="mt-4 space-y-2 text-sm text-ink-soft">
+        <li>
+          Art. 208.1.b) / 207.1.c) LGSS: acreditar 35 años cotizados (voluntaria) o
+          33 años (por causa no imputable) antes de tu edad ordinaria de jubilación.
+        </li>
+        <li>
+          Art. 208.1.c) LGSS: en la modalidad voluntaria, que la pensión resultante
+          supere la pensión mínima que te correspondería a los 65 años.
+        </li>
+      </ul>
+
+      <div
+        id="detalle-caso"
+        class="mt-6 hidden rounded-xl border border-clay-200 bg-clay-50/60 p-5 text-sm leading-relaxed text-ink-soft"
+        aria-live="polite"
+      >
+        <!-- Rellenado por JavaScript a partir de los datos que enviaste. Si tienes
+             JavaScript desactivado, este bloque no aparece: el texto general de
+             arriba y de abajo sigue siendo cierto para tu caso. -->
+      </div>
+
+      <div class="mt-8 rounded-xl border border-paper-200 bg-white p-5 text-sm text-ink-soft">
+        <p>
+          <strong>Esto no es tu cálculo oficial.</strong> Es una comprobación
+          divulgativa hecha con los datos que has escrito en el formulario, sin
+          revisar tu vida laboral. Si crees que hay un error en algún dato, vuelve
+          a intentarlo con la cifra correcta.
+        </p>
+      </div>
+
+      <div class="mt-8 flex flex-wrap gap-3">
+        <a href="/informe#form" class="btn-accent no-underline">Revisar mis datos</a>
+        <a href="/simulador" class="btn-ghost no-underline">Ir al simulador gratuito</a>
+      </div>
+
+      <p class="mt-6 text-xs text-ink-muted">
+        ¿Dudas sobre por qué ha salido este resultado? Escríbenos a
+        <a href={`mailto:${SITE.email}`} class="font-medium text-brand-700 underline">{SITE.email}</a>.
+      </p>
+    </div>
+  </section>
+
+  <script>
+    // Progressive enhancement: si hay JavaScript, personalizamos el mensaje
+    // con los datos que ya calculó el servidor y que llegan en la propia URL
+    // (ningún dato personal identificable, solo cifras derivadas del caso).
+    const params = new URLSearchParams(window.location.search);
+    const motivo = params.get('motivo');
+    const modalidad = params.get('modalidad');
+    const seguiraCotizando = params.get('seguira_cotizando');
+    const aniosActuales = params.get('anios_cotizados_actuales');
+    const aniosRequeridos = params.get('anios_requeridos');
+    const aniosProyectados = params.get('anios_cotizados_proyectados');
+    const edadOrdinaria = params.get('edad_ordinaria');
+    const fechaOrdinaria = params.get('fecha_ordinaria');
+
+    if (motivo && aniosRequeridos) {
+      const nombreModalidad =
+        modalidad === 'voluntaria' ? 'voluntaria' : 'por causa no imputable';
+      const edadOrdinariaNum = edadOrdinaria ? Number(edadOrdinaria) : null;
+      const edadTexto =
+        edadOrdinariaNum != null
+          ? `${Math.floor(edadOrdinariaNum)} años${
+              Math.round((edadOrdinariaNum % 1) * 12) > 0
+                ? ` y ${Math.round((edadOrdinariaNum % 1) * 12)} meses`
+                : ''
+            }`
+          : null;
+
+      const parrafos: string[] = [];
+
+      if (motivo === 'anios') {
+        parrafos.push(
+          `Con tus datos, para la modalidad ${nombreModalidad} llegarías a tu edad ` +
+            `ordinaria de jubilación con ${aniosProyectados ?? aniosActuales} años ` +
+            `cotizados, y esa modalidad exige ${aniosRequeridos}. Hoy tienes ${aniosActuales} ` +
+            `años cotizados.`,
+        );
+        if (seguiraCotizando === 'no') {
+          parrafos.push(
+            'Nos has dicho que no seguirás cotizando: mientras no vuelvas a cotizar, ' +
+              'este número no va a subir.',
+          );
+        }
+      } else if (motivo === 'minima') {
+        parrafos.push(
+          'Cumples los años cotizados exigidos, pero incluso en el mejor escenario ' +
+            'posible dentro de la modalidad voluntaria (el anticipo mínimo), la pensión ' +
+            'resultante con la base reguladora que nos has dado no supera la pensión ' +
+            'mínima que exige el artículo 208.1.c) de la LGSS.',
+        );
+      }
+
+      if (edadTexto && fechaOrdinaria) {
+        parrafos.push(
+          `Referencia útil y gratuita: tu edad ordinaria de jubilación (sin anticipar) ` +
+            `es ${edadTexto}, lo que hoy sitúa esa fecha en torno a ${fechaOrdinaria}. ` +
+            `Es una estimación con tus años cotizados actuales, no tu cálculo oficial.`,
+        );
+      }
+
+      const el = document.getElementById('detalle-caso');
+      if (el && parrafos.length > 0) {
+        el.innerHTML = parrafos
+          .map((p) => `<p class="mt-2 first:mt-0">${p}</p>`)
+          .join('');
+        el.classList.remove('hidden');
+      }
+    }
+  </script>
+</Base>
