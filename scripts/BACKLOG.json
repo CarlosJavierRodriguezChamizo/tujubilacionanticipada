@@ -571,14 +571,16 @@
       "titulo": "Crear la página /informe con el formulario nativo de 6 campos y el copy de venta",
       "area": "cro",
       "prioridad": 9,
-      "estado": "pendiente",
+      "estado": "hecha",
       "hipotesis": "Si creamos src/pages/informe.astro con un <form method=\"post\" action=\"/api/informe-crear\"> (mismo patrón sin JavaScript que ya validó legal-001 en /asesoramiento) con los 6 campos de captura (fecha de nacimiento, periodo cotizado en años y meses más fecha del informe de vida laboral, base reguladora, modalidad accesible, si seguirá cotizando, email) y 2 casillas separadas y desmarcadas (RGPD y avisos normativos), más el copy de venta (precio 49,00 € IVA incluido, qué incluye y qué NO incluye tal como los enumera E-1, y el DISCLAIMER), esperamos tener el punto de entrada del embudo de pago funcionando sin JavaScript, porque hoy /informe no existe y es el primer paso obligatorio del circuito de venta. Esta tarea NO depende de que exista cuenta de Stripe: el formulario solo apunta a un endpoint que se construye en cro-005 y se completa en cro-007.",
       "criterio_exito": "Existe src/pages/informe.astro; tras `npm run build`, dist/informe/index.html contiene un <form method=\"post\" action=\"/api/informe-crear\"> con inputs para los 6 campos y 2 <input type=\"checkbox\"> separadas y sin atributo checked; el texto visible incluye '49,00 €' y las exclusiones literales de E-1; el DISCLAIMER de src/consts.ts aparece visible; ningún dato de tarjeta, nombre ni dirección se pide en este formulario; `npm run build` pasa.",
       "metrica": "grep de action=\"/api/informe-crear\", de los 6 campos y de las 2 casillas sin checked en dist/informe/index.html; verificación manual de que ninguna casilla viene premarcada.",
       "archivos_sugeridos": [
         "src/pages/informe.astro"
       ],
-      "objetivo_estrategico": "Línea de trabajo 2 (ESTRATEGIA.md): '/informe (página de venta + formulario de 6 campos)... con JavaScript desactivado, un envío nativo del formulario de /informe llega a la página de Checkout de Stripe.'"
+      "objetivo_estrategico": "Línea de trabajo 2 (ESTRATEGIA.md): '/informe (página de venta + formulario de 6 campos)... con JavaScript desactivado, un envío nativo del formulario de /informe llega a la página de Checkout de Stripe.'",
+      "fecha_ejecucion": "2026-08-29",
+      "resultado": "Creado src/pages/informe.astro (único archivo nuevo/tocado): formulario nativo sin JS (method=post, action=/api/informe-crear) con los 6 campos de captura, 2 checkboxes separadas (consent_rgpd obligatoria, consent_avisos opcional) sin checked, copy de venta con qué incluye/qué NO incluye literal de E-1, precio 49,00 € (IVA incluido) y el DISCLAIMER de src/consts.ts renderizado sin reescribirlo. Verificado de forma independiente tras npm run build (88 páginas): <form action=\"/api/informe-crear\"> presente; 8 name= de los 6 campos conceptuales presentes; consent_rgpd/consent_avisos sin atributo checked; \"49,00\" aparece 5 veces; DISCLAIMER coincide con consts.ts; sin campos nombre/apellidos/direccion/tarjeta/card. El endpoint /api/informe-crear (cro-005) y las páginas de gracias/error no existen todavía por diseño: cualquier envío real devolverá 404 hasta que se construyan."
     },
     {
       "id": "cro-005",

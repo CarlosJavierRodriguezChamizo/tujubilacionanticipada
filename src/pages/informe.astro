@@ -1,0 +1,266 @@
+---
+import Base from '../layouts/Base.astro';
+import { breadcrumbSchema, webPageSchema } from '../lib/schema';
+import { DISCLAIMER } from '../consts';
+
+const path = '/informe';
+const descripcion =
+  'Informe de Fecha Óptima de Jubilación: tu edad ordinaria exacta, la tabla mes a mes de tus fechas posibles y tus acantilados, calculados sobre tu caso y verificados contra el BOE. 49,00 € IVA incluido.';
+
+const incluye = [
+  'Tu edad ordinaria exacta y la fecha en que la cumples.',
+  'La tabla de tus fechas posibles, mes a mes (24 en voluntaria, 48 en involuntaria): pensión resultante, pérdida mensual y pérdida acumulada a 20 años en cada una.',
+  'Tus acantilados señalados: en qué meses concretos esperar un poco más produce un salto desproporcionado, y cuánto vale cada uno en euros.',
+  'Tu punto de equilibrio entre esperar y adelantar: cuántos meses de cobro se tarda en recuperar lo que se deja de cobrar por esperar.',
+  'Verificación de requisitos: años cotizados exigidos, la regla de que la pensión resultante supere la mínima, el tope máximo y la carencia legal.',
+  'Cada cifra con su fuente oficial enlazada.',
+  'Reemisiones ilimitadas y gratuitas durante 12 meses desde un enlace permanente.',
+  'Aviso por email si tu informe deja de ser válido por un cambio normativo.',
+];
+
+const noIncluye = [
+  'No es el cálculo oficial de la Seguridad Social.',
+  'No calcula tu base reguladora a partir de tus bases de cotización: la aportas tú.',
+  'No contempla convenios especiales, cotizaciones en el extranjero, coeficientes por actividad penosa o peligrosa, jubilación parcial, activa o flexible, complementos a mínimos, complemento de brecha de género ni Clases Pasivas.',
+  'No incluye revisión de tu vida laboral por una persona, ni asesoramiento fiscal, ni de inversión, ni tramitación ante la Seguridad Social.',
+  'El soporte es solo para incidencias de cobro y entrega, por email, en 72 horas hábiles: no se interpretan casos por correo.',
+];
+
+const schema = [
+  webPageSchema({
+    type: 'WebPage',
+    path,
+    name: 'Informe de Fecha Óptima de Jubilación',
+    description: descripcion,
+    breadcrumbPath: path,
+  }),
+  breadcrumbSchema([
+    { name: 'Inicio', path: '/' },
+    { name: 'Informe de Fecha Óptima', path },
+  ]),
+];
+---
+
+<Base
+  title="Informe de Fecha Óptima de Jubilación — 49,00 €"
+  description={descripcion}
+  path={path}
+  schema={schema}
+>
+  <!-- Hero -->
+  <section class="border-b border-paper-200 bg-gradient-to-b from-clay-50/60 to-paper-50">
+    <div class="container-prose py-14 sm:py-20">
+      <p class="eyebrow">Informe de Fecha Óptima de Jubilación</p>
+      <h1 class="mt-3 max-w-3xl text-4xl font-semibold leading-tight sm:text-5xl">
+        La fecha exacta en la que jubilarte te compensa, calculada sobre tu carrera
+      </h1>
+      <p class="mt-5 max-w-2xl text-lg leading-relaxed text-ink-soft">
+        No es una guía genérica: es un cálculo sobre tus propios datos, mes a mes, con
+        cada salto de la escala señalado y verificado contra el BOE.
+      </p>
+      <div class="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
+        <a href="#form" class="btn-accent no-underline">
+          Encargar mi informe — 49,00 €
+        </a>
+        <span class="text-sm text-ink-muted">Pago único · IVA incluido · Entrega automática</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Qué incluye -->
+  <section class="container-prose py-14 sm:py-16">
+    <h2 class="text-2xl font-semibold sm:text-3xl">Qué incluye tu informe</h2>
+    <ul class="mt-6 grid gap-3 sm:grid-cols-2">
+      {
+        incluye.map((item) => (
+          <li class="flex items-start gap-2.5 rounded-xl border border-paper-200 bg-paper-50 p-4 text-sm leading-relaxed text-ink-soft">
+            <span class="mt-0.5 text-clay-600" aria-hidden="true">✓</span>
+            <span>{item}</span>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+
+  <!-- Qué NO incluye -->
+  <section class="border-t border-paper-200 bg-paper-100">
+    <div class="container-prose py-14 sm:py-16">
+      <h2 class="text-2xl font-semibold sm:text-3xl">Qué NO incluye</h2>
+      <p class="mt-3 max-w-2xl text-ink-soft">
+        Preferimos decirlo aquí, con claridad, y no en la letra pequeña.
+      </p>
+      <ul class="mt-6 space-y-3">
+        {
+          noIncluye.map((item) => (
+            <li class="flex items-start gap-2.5 text-sm leading-relaxed text-ink-soft">
+              <span class="mt-0.5 text-ink-muted" aria-hidden="true">–</span>
+              <span>{item}</span>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <!-- Precio -->
+  <section class="container-prose py-14 sm:py-16">
+    <div class="rounded-2xl border border-paper-200 bg-paper-50 p-8 text-center sm:p-10">
+      <p class="eyebrow">Precio</p>
+      <p class="mt-2 text-4xl font-semibold text-ink">49,00 €</p>
+      <p class="mt-1 text-sm text-ink-muted">IVA incluido · pago único · sin suscripción</p>
+      <a href="#form" class="btn-accent mt-6 inline-flex no-underline">
+        Encargar mi informe
+      </a>
+    </div>
+  </section>
+
+  <!-- Disclaimer -->
+  <section class="border-t border-paper-200 bg-paper-100">
+    <div class="container-prose py-10">
+      <p class="text-sm leading-relaxed text-ink-muted">
+        <strong>Aviso:</strong> {DISCLAIMER}
+      </p>
+    </div>
+  </section>
+
+  <!-- Formulario -->
+  <section id="form" class="scroll-mt-20 border-t border-paper-200 bg-paper-100">
+    <div class="container-prose grid gap-10 py-14 sm:py-16 lg:grid-cols-2 lg:gap-16">
+      <div>
+        <h2 class="text-2xl font-semibold sm:text-3xl">Encarga tu informe</h2>
+        <p class="mt-3 text-ink-soft">
+          Rellena tus datos. Antes de cobrarte nada, comprobamos si tu caso cumple los
+          requisitos para jubilarte anticipadamente. Si no los cumple, no se te cobra y
+          te explicamos qué te falta.
+        </p>
+        <ul class="mt-6 space-y-3 text-sm text-ink-soft">
+          <li class="flex items-center gap-2"><span class="text-clay-600" aria-hidden="true">✓</span> Comprobación de requisitos antes de pagar</li>
+          <li class="flex items-center gap-2"><span class="text-clay-600" aria-hidden="true">✓</span> Pago con tarjeta o Bizum, fuera de nuestro dominio</li>
+          <li class="flex items-center gap-2"><span class="text-clay-600" aria-hidden="true">✓</span> Tus datos, tratados conforme al RGPD, solo para emitir tu informe</li>
+        </ul>
+      </div>
+
+      <div>
+        <div
+          id="form-wrap"
+          class="rounded-2xl border border-paper-300 bg-paper-50 p-6 shadow-sm sm:p-8"
+        >
+          <!--
+            Funciona sin JavaScript: `method`/`action` nativos. El navegador valida
+            con los atributos `required`/`type`; el servidor decide si el caso cumple
+            requisitos (precheck) antes de crear la sesión de pago.
+          -->
+          <form
+            id="informe-form"
+            class="space-y-5"
+            method="post"
+            action="/api/informe-crear"
+          >
+            <div>
+              <label for="fecha_nacimiento" class="block text-sm font-medium text-ink">Fecha de nacimiento</label>
+              <input id="fecha_nacimiento" name="fecha_nacimiento" type="date" required autocomplete="bday"
+                class="mt-1.5 w-full rounded-lg border border-paper-300 bg-white px-3 py-2.5 text-base focus:border-clay-500 focus:outline-none focus:ring-2 focus:ring-clay-500" />
+            </div>
+
+            <fieldset>
+              <legend class="block text-sm font-medium text-ink">Periodo cotizado a día de hoy</legend>
+              <p class="mt-1 text-xs text-ink-muted">Según tu informe de vida laboral.</p>
+              <div class="mt-1.5 grid grid-cols-2 gap-3">
+                <div>
+                  <label for="anos_cotizados" class="block text-xs text-ink-soft">Años</label>
+                  <input id="anos_cotizados" name="anos_cotizados" type="number" min="0" max="60" step="1" required inputmode="numeric"
+                    class="mt-1 w-full rounded-lg border border-paper-300 bg-white px-3 py-2.5 text-base focus:border-clay-500 focus:outline-none focus:ring-2 focus:ring-clay-500" />
+                </div>
+                <div>
+                  <label for="meses_cotizados" class="block text-xs text-ink-soft">Meses</label>
+                  <input id="meses_cotizados" name="meses_cotizados" type="number" min="0" max="11" step="1" required inputmode="numeric"
+                    class="mt-1 w-full rounded-lg border border-paper-300 bg-white px-3 py-2.5 text-base focus:border-clay-500 focus:outline-none focus:ring-2 focus:ring-clay-500" />
+                </div>
+              </div>
+              <div class="mt-3">
+                <label for="fecha_informe_vida_laboral" class="block text-xs text-ink-soft">Fecha de tu informe de vida laboral</label>
+                <input id="fecha_informe_vida_laboral" name="fecha_informe_vida_laboral" type="date" required
+                  class="mt-1 w-full rounded-lg border border-paper-300 bg-white px-3 py-2.5 text-base focus:border-clay-500 focus:outline-none focus:ring-2 focus:ring-clay-500" />
+              </div>
+            </fieldset>
+
+            <div>
+              <label for="base_reguladora" class="block text-sm font-medium text-ink">Base reguladora mensual estimada (€)</label>
+              <input id="base_reguladora" name="base_reguladora" type="number" min="0" step="0.01" required inputmode="decimal"
+                class="mt-1.5 w-full rounded-lg border border-paper-300 bg-white px-3 py-2.5 text-base focus:border-clay-500 focus:outline-none focus:ring-2 focus:ring-clay-500" />
+              <p class="mt-1 text-xs text-ink-muted">Si te equivocas, regeneras tu informe gratis durante 12 meses.</p>
+            </div>
+
+            <fieldset>
+              <legend class="block text-sm font-medium text-ink">Modalidad accesible</legend>
+              <div class="mt-1.5 space-y-2">
+                <label class="flex items-center gap-2 text-sm text-ink-soft">
+                  <input type="radio" name="modalidad" value="voluntaria" required
+                    class="h-4 w-4 border-paper-300 text-clay-600 focus:ring-clay-500" />
+                  Voluntaria
+                </label>
+                <label class="flex items-center gap-2 text-sm text-ink-soft">
+                  <input type="radio" name="modalidad" value="no_imputable"
+                    class="h-4 w-4 border-paper-300 text-clay-600 focus:ring-clay-500" />
+                  Por causa no imputable (ERE, despido objetivo…)
+                </label>
+              </div>
+            </fieldset>
+
+            <fieldset>
+              <legend class="block text-sm font-medium text-ink">¿Vas a seguir cotizando hasta jubilarte?</legend>
+              <div class="mt-1.5 flex gap-4">
+                <label class="flex items-center gap-2 text-sm text-ink-soft">
+                  <input type="radio" name="seguira_cotizando" value="si" required
+                    class="h-4 w-4 border-paper-300 text-clay-600 focus:ring-clay-500" />
+                  Sí
+                </label>
+                <label class="flex items-center gap-2 text-sm text-ink-soft">
+                  <input type="radio" name="seguira_cotizando" value="no"
+                    class="h-4 w-4 border-paper-300 text-clay-600 focus:ring-clay-500" />
+                  No
+                </label>
+              </div>
+            </fieldset>
+
+            <div>
+              <label for="email" class="block text-sm font-medium text-ink">Correo electrónico</label>
+              <input id="email" name="email" type="email" required autocomplete="email" inputmode="email"
+                class="mt-1.5 w-full rounded-lg border border-paper-300 bg-white px-3 py-2.5 text-base focus:border-clay-500 focus:outline-none focus:ring-2 focus:ring-clay-500" />
+              <p class="mt-1 text-xs text-ink-muted">Aquí te entregamos el informe.</p>
+            </div>
+
+            <!-- Honeypot anti-spam -->
+            <div class="absolute left-[-9999px]" aria-hidden="true">
+              <label>No rellenar<input name="empresa" type="text" tabindex="-1" autocomplete="off" /></label>
+            </div>
+
+            <div class="space-y-3 border-t border-paper-200 pt-4">
+              <div class="flex items-start gap-2.5">
+                <input id="consent_rgpd" name="consent_rgpd" type="checkbox" required
+                  class="mt-1 h-4 w-4 rounded border-paper-300 text-clay-600 focus:ring-clay-500" />
+                <label for="consent_rgpd" class="text-sm text-ink-soft">
+                  He leído y acepto la
+                  <a href="/privacidad" class="font-medium text-brand-700 underline hover:text-clay-700">política de privacidad</a>
+                  y el tratamiento de mis datos con la única finalidad de emitir mi informe. (Obligatorio)
+                </label>
+              </div>
+              <div class="flex items-start gap-2.5">
+                <input id="consent_avisos" name="consent_avisos" type="checkbox"
+                  class="mt-1 h-4 w-4 rounded border-paper-300 text-clay-600 focus:ring-clay-500" />
+                <label for="consent_avisos" class="text-sm text-ink-soft">
+                  Quiero recibir avisos por email si cambia la normativa que afecta a mi informe. (Opcional, no condiciona la entrega)
+                </label>
+              </div>
+            </div>
+
+            <button type="submit" class="btn-accent w-full">Continuar al pago — 49,00 €</button>
+            <p class="text-center text-xs text-ink-muted">
+              Pago con tarjeta o Bizum a través de Stripe. No pedimos tu tarjeta en esta página.
+            </p>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+</Base>

@@ -386,3 +386,16 @@ Formato:
 - Riesgo identificado: Ninguno funcional. La página nunca fue una ruta pública, ni antes ni después del cambio.
 - Commit: (pendiente de este mismo commit)
 - Veredicto del CEO: pendiente
+
+---
+
+## 2026-08-29 — cro-004 Crear la página /informe con el formulario nativo de 6 campos y el copy de venta (cro) — HECHA
+- Archivos: src/pages/informe.astro (nuevo)
+- Qué: Formulario nativo sin JavaScript (method="post" action="/api/informe-crear") con los 6 campos de captura, 2 checkboxes separadas (RGPD obligatoria, avisos normativos opcional) sin checked, copy de venta con qué incluye/qué NO incluye literal de E-1, precio 49,00 € IVA incluido, y el DISCLAIMER de src/consts.ts renderizado sin reescribirlo.
+- Por qué: Es el primer paso obligatorio del embudo de pago del Informe de Fecha Óptima de Jubilación (E-1); no depende de que exista cuenta de Stripe ni del endpoint (cro-005/cro-007), solo del formulario apuntando a la ruta futura.
+- Hipótesis: Ver backlog. Confirmada en forma: página construida y funcional sin JS a falta del endpoint.
+- Criterio de éxito: Cumplido y verificado de forma independiente (no solo por el subagente): <form action="/api/informe-crear"> presente; 6 campos presentes; 2 checkboxes sin checked; "49,00 €" visible; DISCLAIMER coincide carácter por carácter con consts.ts; sin campos de tarjeta/nombre/dirección. Build OK (88 páginas).
+- Métrica y plazo: Tasa de envíos a /api/informe-crear y de clics en el CTA una vez el endpoint exista (cro-005) y haya tráfico suficiente; no antes de 2-4 semanas.
+- Riesgo identificado: El endpoint /api/informe-crear no existe todavía (cro-005), así que cualquier envío real del formulario en producción devolverá 404 hasta entonces. Es un riesgo aceptado y temporal, coherente con la secuencia cro-004→cro-005→cro-007 del backlog.
+- Commit: (pendiente de este mismo commit)
+- Veredicto del CEO: pendiente
