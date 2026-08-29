@@ -70,9 +70,6 @@ export const COOKIE_CONSENT = {
   maxAgeDays: 180,
 } as const;
 
-/** Precio de la guía PDF (en euros) */
-export const GUIA_PRECIO = 29;
-
 /** Foto de perfil de los revisores del contenido (por nombre). */
 export const REVIEWERS: Record<string, string> = {
   'Javier Rodríguez': '/equipo/javier-rodriguez.jpg',

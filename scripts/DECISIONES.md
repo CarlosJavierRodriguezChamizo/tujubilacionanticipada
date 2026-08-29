@@ -360,3 +360,29 @@ Formato:
 - Riesgo identificado: Ninguno funcional. Deja el terreno listo para cro-003 (borrar GUIA_PRECIO de src/consts.ts).
 - Commit: (pendiente de este mismo commit)
 - Veredicto del CEO: pendiente
+
+---
+
+## 2026-08-29 — ux-007 Calcular y señalar en el PDF los acantilados de coeficiente y el punto de equilibrio (ux) — FALLIDA
+- Archivos: ninguno modificado
+- Qué: El subagente ux-ui verificó el prerequisito antes de tocar nada y se detuvo.
+- Por qué falló: src/lib/informe-pdf.tsx (esqueleto del PDF, de ux-005) sigue sin existir y @react-pdf/renderer sigue sin estar en package.json; ux-006 (tabla mes a mes) tampoco se construyó. src/lib/ solo contiene canonical-map.ts, categories.ts, legal.ts, pension-calculo.ts, posts.ts, rehype-plugins.mjs y schema.ts. Misma causa raíz que ux-005/ux-006 (ver entradas anteriores): la cadena ux-005..ux-009 requiere tocar src/lib/**, api/** y package.json, fuera del alcance permitido del subagente ux-ui.
+- Hipótesis: (sin evaluar — la tarea no llegó a ejecutarse).
+- Criterio de éxito: No cumplido — tarea detenida antes de generar ningún cambio.
+- Métrica y plazo: No aplica.
+- Riesgo identificado: Tercer ciclo consecutivo con la misma cadena bloqueada. El orquestador decidió NO despachar hoy ux-008 ni ux-009 (dependen de los mismos artefactos ausentes que ux-007), para no gastar el cupo diario en tareas con el mismo bloqueo ya confirmado, y usar esa capacidad en tareas cro sí ejecutables. Recomendación reiterada: la línea del informe de pago (E-1, prioridad #1 de la replanificación del 2026-08-26) sigue completamente parada mientras no exista un subagente con permiso sobre src/lib/**, api/** y package.json, o se reasigne el área de ux-005..ux-009.
+- Commit: (pendiente de este mismo commit)
+- Veredicto del CEO: pendiente
+
+---
+
+## 2026-08-29 — cro-003 Borrar la página de la guía de 29 € y retirar GUIA_PRECIO de consts.ts (cro) — HECHA
+- Archivos: src/pages/_guia-jubilacion-anticipada.astro (borrado), src/consts.ts
+- Qué: Verificado que grep -r CTAGuia src/ ya no devolvía resultados (cro-001/cro-002 completadas); borrado el archivo de la página de venta de la guía y eliminada la constante GUIA_PRECIO de consts.ts.
+- Por qué: Completa la retirada del producto de 29€ descartado por E-1 ("no se reaprovecha ni como bonus, ni como lead magnet, ni como upsell"), sin dejar código muerto que confunda a agentes futuros.
+- Hipótesis: Ver backlog. Confirmada: tras cro-001/cro-002, ningún archivo del repo importaba ya GUIA_PRECIO.
+- Criterio de éxito: Cumplido y verificado. grep -r GUIA_PRECIO src/ -> 0 resultados. /dist no genera ninguna ruta /guia-jubilacion-anticipada (la página ya empezaba por "_" y Astro la excluía del build, pero el archivo fuente seguía presente). Build OK (87 páginas).
+- Métrica y plazo: No aplica métrica de negocio (limpieza de código muerto sin producto activo detrás).
+- Riesgo identificado: Ninguno funcional. La página nunca fue una ruta pública, ni antes ni después del cambio.
+- Commit: (pendiente de este mismo commit)
+- Veredicto del CEO: pendiente

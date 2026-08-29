@@ -473,7 +473,7 @@
       "titulo": "Calcular y señalar en el PDF los acantilados de coeficiente y el punto de equilibrio",
       "area": "ux",
       "prioridad": 3,
-      "estado": "pendiente",
+      "estado": "fallida",
       "hipotesis": "Si creamos src/lib/informe-analisis.ts con funciones puras detectarAcantilados() (compara la reducción de reduccionPorAnticipo() entre meses consecutivos de anticipo y marca los saltos de mayor tamaño) y puntoEquilibrio() (meses de cobro necesarios para que esperar compense lo dejado de percibir), alimentadas solo por pension-calculo.ts, y las consumimos en informe-pdf.tsx para destacar visualmente esas filas, esperamos entregar 'sus acantilados, señalados' y el 'punto de equilibrio' que exige E-1, porque hoy ningún módulo del repo calcula ninguna de las dos cosas.",
       "criterio_exito": "src/lib/informe-analisis.ts exporta detectarAcantilados(casos) y puntoEquilibrio(casoA, casoB), ambas puras y sin I/O; para el ejemplo del 'último mes de anticipo' de E-1 (base reguladora 1.800 €/mes, edad legal 65, 41 años cotizados), detectarAcantilados() marca el salto de 23 a 24 meses de anticipo como el de mayor tamaño; en informe-pdf.tsx las filas marcadas se destacan con un estilo visual que no depende solo del color (también un símbolo o etiqueta de texto, para que se distinga igual en blanco y negro); `npm run build` pasa.",
       "metrica": "Ejecución directa de detectarAcantilados()/puntoEquilibrio() sobre los 3 ejemplos numéricos de E-1 en ESTRATEGIA.md, comparando el resultado con las cifras que E-1 documenta (45 €/mes, 36 €/mes, 22 meses).",
@@ -481,7 +481,9 @@
         "src/lib/informe-analisis.ts",
         "src/lib/informe-pdf.tsx"
       ],
-      "objetivo_estrategico": "E-1 (ESTRATEGIA.md): 'Sus acantilados, señalados: en qué meses concretos esperar un poco más produce un salto desproporcionado... Punto de equilibrio de esperar frente a adelantar.'"
+      "objetivo_estrategico": "E-1 (ESTRATEGIA.md): 'Sus acantilados, señalados: en qué meses concretos esperar un poco más produce un salto desproporcionado... Punto de equilibrio de esperar frente a adelantar.'",
+      "fecha_ejecucion": "2026-08-29",
+      "resultado": "FALLIDA por dependencia incompleta, sin tocar ningún archivo. Verificado: src/lib/informe-pdf.tsx no existe y @react-pdf/renderer no está en package.json (ux-005, prerequisito de esta cadena, quedó fallida sin construir el esqueleto del PDF; ux-006 tampoco construyó la tabla mes a mes). src/lib/ solo contiene canonical-map.ts, categories.ts, legal.ts, pension-calculo.ts, posts.ts, rehype-plugins.mjs y schema.ts. Implementar una versión reducida de informe-pdf.tsx solo para esta tarea habría significado improvisar el alcance no validado de ux-005/ux-006. Por la misma causa, el orquestador no despachó hoy ux-008 ni ux-009 (dependen de los mismos artefactos ausentes). Recomendación: reasignar ux-005/ux-006/ux-007/ux-008/ux-009 a un subagente con permisos sobre src/lib/**, api/** y package.json antes de reintentar esta línea de trabajo."
     },
     {
       "id": "ux-008",
@@ -552,7 +554,7 @@
       "titulo": "Borrar la página de la guía de 29 € y retirar GUIA_PRECIO de consts.ts",
       "area": "cro",
       "prioridad": 8,
-      "estado": "pendiente",
+      "estado": "hecha",
       "hipotesis": "Con cro-001 y cro-002 ya sin ninguna referencia viva a CTAGuia, si borramos src/pages/_guia-jubilacion-anticipada.astro y quitamos la constante GUIA_PRECIO de src/consts.ts, esperamos completar la eliminación del producto descartado sin romper el build, porque tras los dos pasos anteriores ningún archivo del repo importa ya GUIA_PRECIO.",
       "criterio_exito": "src/pages/_guia-jubilacion-anticipada.astro no existe; src/consts.ts no exporta GUIA_PRECIO; `grep -r GUIA_PRECIO src/` no devuelve resultados; `npm run build` pasa y /dist no contiene ninguna ruta /guia-jubilacion-anticipada.",
       "metrica": "grep -r GUIA_PRECIO src/ (0 resultados); build en verde; ausencia de dist/guia-jubilacion-anticipada/.",
@@ -560,7 +562,9 @@
         "src/pages/_guia-jubilacion-anticipada.astro",
         "src/consts.ts"
       ],
-      "objetivo_estrategico": "Línea de trabajo 2 (ESTRATEGIA.md): 'Se retira GUIA_PRECIO de src/consts.ts y se borra src/pages/_guia-jubilacion-anticipada.astro: la guía está descartada y el código muerto confunde a los agentes.'"
+      "objetivo_estrategico": "Línea de trabajo 2 (ESTRATEGIA.md): 'Se retira GUIA_PRECIO de src/consts.ts y se borra src/pages/_guia-jubilacion-anticipada.astro: la guía está descartada y el código muerto confunde a los agentes.'",
+      "fecha_ejecucion": "2026-08-29",
+      "resultado": "Borrado src/pages/_guia-jubilacion-anticipada.astro y eliminada la constante GUIA_PRECIO de src/consts.ts, tras verificar que grep -r CTAGuia src/ ya no devolvía resultados (cro-001/cro-002 completadas). Verificado: grep -r GUIA_PRECIO src/ -> 0 resultados; npm run build OK (87 páginas); /dist no genera ninguna ruta /guia-jubilacion-anticipada (la página ya empezaba por _ y estaba excluida del build de Astro, pero el archivo fuente y la constante seguían presentes como código muerto). Único riesgo teórico (import externo de GUIA_PRECIO fuera de src/) descartado por el grep. Único archivo de BACKLOG.json modificado en paralelo fue el de la tarea ux-007 (fallida), ajeno a este cambio."
     },
     {
       "id": "cro-004",
