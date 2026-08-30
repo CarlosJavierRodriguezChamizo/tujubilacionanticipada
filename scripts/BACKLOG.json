@@ -426,14 +426,16 @@
       "titulo": "Publicar en /simulador las tablas oficiales completas de coeficientes reductores (arts. 207.2 y 208.2 LGSS)",
       "area": "seo",
       "prioridad": 15,
-      "estado": "pendiente",
+      "estado": "hecha",
       "hipotesis": "Si src/pages/simulador.astro renderiza en build, desde src/lib/pension-calculo.ts, las dos tablas legales completas (24 filas × 4 tramos de la voluntaria y 48 × 4 de la involuntaria) con su enlace dofollow al artículo de la LGSS en boe.es, esperamos que /simulador deje de ser un formulario vacío de 71 palabras y compita como documento por el cluster de cálculo, porque el export real de Search Console (scripts/datos/) muestra ~150 impresiones en posiciones 35-68 para \"calculo jubilacion anticipada\", \"calcular jubilación anticipada\" y \"simulador jubilación anticipada\", con /simulador en posición 48 y 3 clics.",
       "criterio_exito": "Tras `npm run build`, dist/simulador/index.html contiene las 24 filas de la tabla del art. 208.2 y las 48 del art. 207.2, cada una con sus 4 tramos, generadas en build y no por JavaScript; los porcentajes coinciden exactamente con COEF_VOLUNTARIA y COEF_INVOLUNTARIA de src/lib/pension-calculo.ts (comparación programática, no visual); hay al menos un enlace dofollow a boe.es junto a cada tabla; el DISCLAIMER sigue visible; eliminando la isla React del HTML las tablas siguen presentes y legibles.",
       "metrica": "node scripts/auditar-money-set.mjs tras el build: palabras únicas en <main> de /simulador (antes: 71). Conteo de filas <tr> en cada tabla de dist/simulador/index.html.",
       "archivos_sugeridos": [
         "src/pages/simulador.astro"
       ],
-      "objetivo_estrategico": "Línea de trabajo 3 (ESTRATEGIA.md) y encargo E-4 del propietario: la causa raíz normativa que bloqueaba seo-019/seo-020 está resuelta desde el 2026-08-24."
+      "objetivo_estrategico": "Línea de trabajo 3 (ESTRATEGIA.md) y encargo E-4 del propietario: la causa raíz normativa que bloqueaba seo-019/seo-020 está resuelta desde el 2026-08-24.",
+      "fecha_ejecucion": "2026-08-30",
+      "resultado": "Anadidas en src/pages/simulador.astro las dos tablas oficiales completas de coeficientes reductores (24 filas x 4 tramos, art. 208.2 LGSS voluntaria; 48 filas x 4 tramos, art. 207.2 LGSS involuntaria), generadas en build desde COEF_VOLUNTARIA/COEF_INVOLUNTARIA/ETIQUETAS_TRAMOS de src/lib/pension-calculo.ts (import directo, sin duplicar cifras), cada una con enlace dofollow a boe.es (BOE-A-2015-11724). Verificado: filas coinciden exactamente con las constantes del motor; palabras unicas en <main> de /simulador subieron de 71 a 893 (auditar-money-set.mjs); DISCLAIMER intacto; tablas sobreviven a la eliminacion de la isla React. npm run build OK (89 paginas), verificado tambien de forma independiente por el orquestador. Un solo archivo tocado."
     },
     {
       "id": "ux-005",
@@ -490,21 +492,23 @@
       "titulo": "Crear la función serverless que genera el PDF a partir de un caso (api/informe-render.ts)",
       "area": "ux",
       "prioridad": 4,
-      "estado": "pendiente",
+      "estado": "fallida",
       "hipotesis": "Si creamos api/informe-render.ts, una función serverless en TypeScript que recibe los datos de un caso (fecha de nacimiento, periodo cotizado, base reguladora, modalidad, si sigue cotizando), ejecuta pension-calculo.ts e informe-pdf.tsx/informe-analisis.ts, y devuelve el PDF con Content-Type application/pdf, esperamos aislar la generación del documento en una pieza reutilizable tanto por el webhook de cobro (Línea 2) como por el verificador (ux-009), porque hoy la lógica de PDF solo existe como componente sin ningún punto de entrada HTTP ni programático.",
       "criterio_exito": "api/informe-render.ts exporta un handler POST que, dado un JSON con los 6 campos, responde con un binario cuyo content-type es application/pdf y cuya cabecera de bytes empieza por %PDF; el módulo no duplica ninguna constante ni fórmula de pension-calculo.ts (import directo, prohibido duplicar el motor en api/); ante datos incompletos responde 400 sin generar ningún PDF; `npm run build` pasa.",
       "metrica": "Invocación local del handler con ≥3 combinaciones de entrada distintas: código 200 y content-type application/pdf en los 3 casos válidos, 400 en un caso con un campo obligatorio vacío.",
       "archivos_sugeridos": [
         "api/informe-render.ts"
       ],
-      "objetivo_estrategico": "Línea de trabajo 1 (ESTRATEGIA.md): 'función api/informe-render.ts que recibe un caso y devuelve el PDF, alimentado solo por src/lib/pension-calculo.ts.'"
+      "objetivo_estrategico": "Línea de trabajo 1 (ESTRATEGIA.md): 'función api/informe-render.ts que recibe un caso y devuelve el PDF, alimentado solo por src/lib/pension-calculo.ts.'",
+      "fecha_ejecucion": "2026-08-30",
+      "resultado": "No ejecutada. El subagente ux-ui la rechazo explicitamente por estar fuera de su alcance declarado (src/components/**, src/layouts/**, src/styles/**, src/pages/** sin blog): crear api/informe-render.ts es desarrollo backend/serverless puro, sin componente de UI. Ningun archivo tocado. Misma causa raiz que ux-005/ux-006/ux-007 (ver DECISIONES.md, ciclos anteriores): la cadena ux-005..ux-009 requiere permisos sobre src/lib/**, api/** y package.json que ningun subagente del equipo tiene hoy. Cuarto ciclo consecutivo con el mismo bloqueo."
     },
     {
       "id": "ux-009",
       "titulo": "Crear scripts/verificar-informe.mjs: verificación del PDF por mutación contra el motor",
       "area": "ux",
       "prioridad": 5,
-      "estado": "pendiente",
+      "estado": "fallida",
       "hipotesis": "Si creamos scripts/verificar-informe.mjs que genera ≥20 casos de prueba (incluidos los 3 ejemplos de acantilados de E-1), invoca la generación del PDF (ux-008), extrae su texto y compara cada cifra contra el resultado literal de src/lib/pension-calculo.ts para el mismo caso, y además repite el proceso tras alterar deliberadamente una celda de una tabla de coeficientes para comprobar que el script falla, esperamos replicar el mismo patrón de verificación por mutación que ya funcionó en scripts/verificar-motor.mjs, porque el Objetivo del ciclo exige textualmente 'node scripts/verificar-informe.mjs sale en verde... y sale en 1 si se altera una sola cifra' y hoy ese script no existe.",
       "criterio_exito": "scripts/verificar-informe.mjs existe y, ejecutado con `node scripts/verificar-informe.mjs`, sale con código 0 para ≥20 casos (incluidos los 3 de E-1) cuando pension-calculo.ts está intacto; ejecutado tras alterar a mano una celda de COEF_VOLUNTARIA o COEF_INVOLUNTARIA, sale con código 1; una revisión de literales numéricos normativos en src/lib/informe-pdf.tsx confirma que ninguna cifra existe fuera de una constante o función importada de pension-calculo.ts.",
       "metrica": "Código de salida de `node scripts/verificar-informe.mjs` antes y después de la mutación de prueba, pegado en DECISIONES.md como exige el Objetivo del ciclo.",
@@ -512,7 +516,9 @@
         "scripts/verificar-informe.mjs",
         "package.json"
       ],
-      "objetivo_estrategico": "Objetivo del ciclo (ESTRATEGIA.md), condición 2: 'node scripts/verificar-informe.mjs sale en verde: para ≥20 casos de prueba, cada cifra del PDF coincide con la que devuelve src/lib/pension-calculo.ts y no existe ninguna cifra normativa escrita a mano en la plantilla.'"
+      "objetivo_estrategico": "Objetivo del ciclo (ESTRATEGIA.md), condición 2: 'node scripts/verificar-informe.mjs sale en verde: para ≥20 casos de prueba, cada cifra del PDF coincide con la que devuelve src/lib/pension-calculo.ts y no existe ninguna cifra normativa escrita a mano en la plantilla.'",
+      "fecha_ejecucion": "2026-08-30",
+      "resultado": "No despachada. Depende de api/informe-render.ts (ux-008), que no existe tras el rechazo de ux-008 en este mismo ciclo; ademas scripts/verificar-informe.mjs y package.json tampoco entran en el alcance declarado del subagente ux-ui. El orquestador decidio no gastar una invocacion de agente en una tarea con el bloqueo ya confirmado y usar esa capacidad en tareas ejecutables."
     },
     {
       "id": "cro-001",
@@ -604,14 +610,16 @@
       "titulo": "Crear api/informe.ts: reemisión firmada por token HMAC durante 12 meses",
       "area": "cro",
       "prioridad": 11,
-      "estado": "pendiente",
+      "estado": "fallida",
       "hipotesis": "Si creamos api/informe.ts con un GET /api/informe/<id>?t=<token> que verifica un token HMAC firmado con INFORME_TOKEN_SECRET, lee el caso guardado en Redis (mismo cliente que api/_redis.js) y regenera el PDF llamando a api/informe-render.ts (ux-008) contra el motor vigente ese día, esperamos dejar lista la reemisión gratuita de 12 meses sin ninguna dependencia de Stripe, porque la reemisión no cobra nada y solo necesita un secreto propio (INFORME_TOKEN_SECRET), no una cuenta de pasarela verificada con los datos legales del titular.",
       "criterio_exito": "api/informe.ts responde 200 con el PDF regenerado cuando el token HMAC es válido y corresponde a un caso existente en Redis; responde 403 con un token manipulado o caducado (>12 meses); ninguna respuesta expone el email ni el caso de otro id; `npm run build` pasa. Esta tarea es independiente del bloqueo de Stripe: solo requiere INFORME_TOKEN_SECRET (variable nueva, no un dato identificativo del titular).",
       "metrica": "Invocación directa con un token válido (200 + PDF), uno manipulado (403) y uno simulado como caducado (403).",
       "archivos_sugeridos": [
         "api/informe.ts"
       ],
-      "objetivo_estrategico": "Línea de trabajo 2 (ESTRATEGIA.md): 'el enlace de reemisión funciona con el token válido y devuelve 403 con uno manipulado' + 'Reemisiones ilimitadas y gratuitas durante 12 meses desde un enlace permanente firmado.'"
+      "objetivo_estrategico": "Línea de trabajo 2 (ESTRATEGIA.md): 'el enlace de reemisión funciona con el token válido y devuelve 403 con uno manipulado' + 'Reemisiones ilimitadas y gratuitas durante 12 meses desde un enlace permanente firmado.'",
+      "fecha_ejecucion": "2026-08-30",
+      "resultado": "No ejecutada. El subagente cro la rechazo explicitamente por estar fuera de su alcance (copy/CTAs/formularios/jerarquia de conversion): crear api/informe.ts implica verificacion HMAC, gestion de expiracion y lectura de datos personales en Redis, que calific de logica de autenticacion y seguridad, no de CRO. Recomienda reasignarla a un rol de backend/seguridad. Ningun archivo tocado. Misma causa raiz que ux-008/ux-009: falta un subagente con permiso sobre api/**."
     },
     {
       "id": "cro-007",

@@ -8,6 +8,21 @@ import {
   webApplicationSchema,
   webPageSchema,
 } from '../lib/schema';
+import { COEF_VOLUNTARIA, COEF_INVOLUNTARIA, ETIQUETAS_TRAMOS } from '../lib/pension-calculo';
+
+const BOE_LGSS = 'https://www.boe.es/buscar/act.php?id=BOE-A-2015-11724';
+
+/** Formatea el % de reducción con 2 decimales fijos, sin alterar el valor. */
+const formatoPorcentaje = (valor: number) =>
+  valor.toLocaleString('es-ES', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+const filasVoluntaria = Object.entries(COEF_VOLUNTARIA)
+  .map(([meses, tramos]) => ({ meses: Number(meses), tramos }))
+  .sort((a, b) => a.meses - b.meses);
+
+const filasInvoluntaria = Object.entries(COEF_INVOLUNTARIA)
+  .map(([meses, tramos]) => ({ meses: Number(meses), tramos }))
+  .sort((a, b) => a.meses - b.meses);
 
 const path = '/simulador';
 const descripcion =
@@ -75,6 +90,124 @@ const schema = [
 
     <div class="mt-10">
       <Simulador client:load disclaimer={DISCLAIMER} />
+    </div>
+
+    <div class="mt-16">
+      <h2 class="text-2xl font-semibold">
+        Tabla de coeficientes reductores: jubilación anticipada voluntaria
+      </h2>
+      <p class="mt-2 max-w-3xl text-ink-soft">
+        Porcentaje total de reducción de la pensión según los meses de
+        anticipación respecto a tu edad ordinaria de jubilación y los años
+        cotizados acreditados, conforme al
+        <a
+          href={BOE_LGSS}
+          class="underline"
+          target="_blank"
+          rel="noopener"
+        >
+          artículo 208.2 de la Ley General de la Seguridad Social
+        </a>.
+      </p>
+      <div class="mt-4 overflow-x-auto">
+        <table class="w-full text-sm">
+          <caption class="sr-only">
+            Coeficientes reductores de la jubilación anticipada voluntaria
+            por meses de anticipación y tramo de cotización (art. 208.2 LGSS)
+          </caption>
+          <thead>
+            <tr class="border-b border-paper-200 text-left">
+              <th scope="col" class="py-2 pr-4 font-semibold">
+                Meses de anticipación
+              </th>
+              {
+                ETIQUETAS_TRAMOS.map((etiqueta) => (
+                  <th scope="col" class="py-2 pr-4 font-semibold">
+                    {etiqueta}
+                  </th>
+                ))
+              }
+            </tr>
+          </thead>
+          <tbody>
+            {
+              filasVoluntaria.map(({ meses, tramos }) => (
+                <tr class="border-b border-paper-200/60">
+                  <th scope="row" class="py-1.5 pr-4 text-left font-normal">
+                    {meses} {meses === 1 ? 'mes' : 'meses'}
+                  </th>
+                  {
+                    tramos.map((valor) => (
+                      <td class="py-1.5 pr-4 tabular-nums">
+                        {formatoPorcentaje(valor)} %
+                      </td>
+                    ))
+                  }
+                </tr>
+              ))
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="mt-16">
+      <h2 class="text-2xl font-semibold">
+        Tabla de coeficientes reductores: jubilación anticipada involuntaria
+      </h2>
+      <p class="mt-2 max-w-3xl text-ink-soft">
+        Porcentaje total de reducción de la pensión aplicable cuando el cese
+        en el trabajo se debe a una causa no imputable a la persona
+        trabajadora (ERE, despido objetivo u otras), conforme al
+        <a
+          href={BOE_LGSS}
+          class="underline"
+          target="_blank"
+          rel="noopener"
+        >
+          artículo 207.2 de la Ley General de la Seguridad Social
+        </a>.
+      </p>
+      <div class="mt-4 overflow-x-auto">
+        <table class="w-full text-sm">
+          <caption class="sr-only">
+            Coeficientes reductores de la jubilación anticipada involuntaria
+            por meses de anticipación y tramo de cotización (art. 207.2 LGSS)
+          </caption>
+          <thead>
+            <tr class="border-b border-paper-200 text-left">
+              <th scope="col" class="py-2 pr-4 font-semibold">
+                Meses de anticipación
+              </th>
+              {
+                ETIQUETAS_TRAMOS.map((etiqueta) => (
+                  <th scope="col" class="py-2 pr-4 font-semibold">
+                    {etiqueta}
+                  </th>
+                ))
+              }
+            </tr>
+          </thead>
+          <tbody>
+            {
+              filasInvoluntaria.map(({ meses, tramos }) => (
+                <tr class="border-b border-paper-200/60">
+                  <th scope="row" class="py-1.5 pr-4 text-left font-normal">
+                    {meses} {meses === 1 ? 'mes' : 'meses'}
+                  </th>
+                  {
+                    tramos.map((valor) => (
+                      <td class="py-1.5 pr-4 tabular-nums">
+                        {formatoPorcentaje(valor)} %
+                      </td>
+                    ))
+                  }
+                </tr>
+              ))
+            }
+          </tbody>
+        </table>
+      </div>
     </div>
 
     <div class="mt-12 max-w-3xl">

@@ -1,48 +1,30 @@
-# Informe de mejora continua — 2026-08-29
+# Informe de mejora continua — 2026-08-30
 
 ## Resumen
-Se completó la página de venta del informe (/informe), el precheck gratuito que evita cobrar a quien no tiene derecho, y el CTA desde el simulador; la línea de generación del PDF (ux-007/008/009) sigue bloqueada porque su prerequisito (informe-pdf.tsx, de ux-005/ux-006) nunca se construyó.
+De 4 tareas ejecutables hoy, solo 1 (seo-022) pudo completarse: las otras 3 (ux-008, ux-009, cro-006) siguen bloqueadas porque ningún subagente del equipo tiene permiso sobre `api/**`, `src/lib/**` ni `package.json` — es el cuarto ciclo consecutivo con el mismo bloqueo estructural en la línea de trabajo del informe de pago.
 
 ## Cambios aplicados
 
-### cro cro-003 — Borrar la página de la guía de 29 € y retirar GUIA_PRECIO de consts.ts
-**Qué:** Borrado src/pages/_guia-jubilacion-anticipada.astro y eliminada la constante GUIA_PRECIO de src/consts.ts.
-**Por qué:** Completar la retirada del producto de 29 € descartado por E-1, sin dejar código muerto que confunda a agentes futuros.
-**Hipótesis:** Confirmada — tras cro-001/cro-002 ningún archivo importaba ya GUIA_PRECIO.
-**Cómo lo mediremos:** No aplica métrica de negocio (limpieza de código muerto sin producto activo detrás).
-**Riesgo identificado:** Ninguno funcional; la página nunca fue una ruta pública indexable.
-**Archivos:** src/pages/_guia-jubilacion-anticipada.astro (borrado), src/consts.ts
-
-### cro cro-004 — Crear la página /informe con el formulario nativo de 6 campos y el copy de venta
-**Qué:** Creada src/pages/informe.astro: formulario sin JavaScript hacia /api/informe-crear con los 6 campos de captura, 2 casillas de consentimiento separadas y sin marcar, copy de qué incluye/qué NO incluye literal de E-1, precio 49,00 € IVA incluido y el DISCLAIMER de consts.ts.
-**Por qué:** Es el primer paso obligatorio del embudo de pago del Informe de Fecha Óptima de Jubilación.
-**Hipótesis:** Confirmada en forma — página funcional sin JS a falta del endpoint.
-**Cómo lo mediremos:** Tasa de envíos a /api/informe-crear y de clics en el CTA, cuando haya tráfico suficiente (no antes de 2-4 semanas).
-**Riesgo identificado:** El endpoint /api/informe-crear no existía en el momento de crear esta página (se completó horas después, en cro-005, dentro del mismo día).
-**Archivos:** src/pages/informe.astro
-
-### cro cro-005 — Crear api/informe-crear.ts con el precheck gratuito y la redirección a /informe/no-aplica
-**Qué:** Endpoint serverless que valida el formulario de /informe y ejecuta un precheck real contra pension-calculo.ts (35/33 años cotizados proyectados a la edad ordinaria, carencia mínima, superaMinimaExigida del art. 208.1.c en el mejor caso). Si no accede, 303 a /informe/no-aplica con el detalle del caso; si accede, 501 explícito sin cobrar (Stripe pendiente, cro-007).
-**Por qué:** E-1 exige que ningún caso sin derecho llegue a la pasarela de pago, para evitar devoluciones y reseñas negativas.
-**Hipótesis:** Confirmada en forma — la lógica usa las funciones y constantes reales del motor, verificadas una a una.
-**Cómo lo mediremos:** 0 sesiones de pago creadas para casos sin derecho; tasa de reseñas por "no podía jubilarme" en 0, cuando el circuito de pago esté activo.
-**Riesgo identificado:** El precheck confía en los datos declarados por el usuario (no verifica su vida laboral real); la página /informe/no-aplica depende de JavaScript para mostrar el detalle del caso, por ser un sitio estático sin SSR.
-**Archivos:** api/informe-crear.ts, src/pages/informe/no-aplica.astro
-
-### seo seo-023 — Sustituir el bloque muerto de captura de email en Simulador.jsx por el CTA al informe de pago
-**Qué:** Eliminado el bloque {false && (...)} de captura de email (código muerto) y su estado asociado; añadido un enlace a /informe tras el resultado del simulador, con copy honesto y evento GA4 cta_informe.
-**Por qué:** ESTRATEGIA.md ordena colocar el CTA al informe en ese hueco muerto, en el momento de mayor intención del usuario.
-**Hipótesis:** Confirmada en forma — enlace presente y funcional con JS activado, sin patrones oscuros.
-**Cómo lo mediremos:** Evento GA4 cta_informe (location: simulador) — tasa de clic hacia /informe y variación de sesiones, a revisar en ~21 días.
-**Riesgo identificado:** Posible competencia visual entre el CTA de asesoramiento gratuito y el nuevo CTA al informe, ambos al final del resultado.
-**Archivos:** src/components/Simulador.jsx
+### seo seo-022 — Publicar en /simulador las tablas oficiales completas de coeficientes reductores
+**Qué:** Añadidas en `src/pages/simulador.astro` las dos tablas legales completas de coeficientes reductores (24 filas × 4 tramos, art. 208.2 LGSS voluntaria; 48 filas × 4 tramos, art. 207.2 LGSS involuntaria), generadas en build desde `COEF_VOLUNTARIA`/`COEF_INVOLUNTARIA`/`ETIQUETAS_TRAMOS` de `src/lib/pension-calculo.ts`, cada una con enlace dofollow a boe.es.
+**Por qué:** `/simulador` competía mal (posición ~48 en Search Console, 3 clics, solo 71 palabras únicas en `<main>`) por ser casi un formulario vacío sin contenido indexable.
+**Hipótesis:** Publicar las tablas oficiales completas, con cifras verificables contra el motor de cálculo y fuente oficial enlazada, hace que `/simulador` compita como documento real por el cluster "calculo/calcular/simulador jubilación anticipada".
+**Cómo lo mediremos:** Palabras únicas en `<main>` de /simulador (71 → 893, ya verificado con `scripts/auditar-money-set.mjs`); impresiones y posición en Google Search Console para esas consultas, a revisar en ~21 días.
+**Riesgo identificado:** Canibalización preexistente (no introducida hoy) entre `/simulador` y `/blog/como-interpretar-simulador-jubilacion`. Las tablas son largas (24/48 filas) y dependen de `overflow-x-auto` en móvil.
+**Archivos:** `src/pages/simulador.astro`
 
 ## Incidencias
-- **ux-007 fallida por dependencia incompleta.** Su prerequisito, `src/lib/informe-pdf.tsx` (de ux-005) y la dependencia `@react-pdf/renderer`, no existen: ux-005 y ux-006 quedaron "fallida" en ciclos anteriores porque ese trabajo (crear el motor de PDF en src/lib/**, añadir una dependencia npm) cae fuera del alcance permitido de los subagentes disponibles (ux-ui, seo, cro), ninguno con permiso sobre src/lib/**, api/** o package.json para ese tipo de tarea. El subagente ux-ui verificó esto antes de tocar nada y se detuvo, sin modificar ningún archivo.
-- **ux-008, ux-009 y cro-006 no se despacharon hoy.** Dependen del mismo artefacto ausente (informe-pdf.tsx / informe-analisis.ts / api/informe-render.ts) que ux-007; despacharlas habría reproducido el mismo bloqueo ya confirmado, así que el orquestador usó esa capacidad del cupo diario en tareas cro sí ejecutables (cro-004, cro-005) en su lugar.
-- Sin rutas prohibidas tocadas, sin builds rotos.
-- **Recomendación reiterada al CEO/propietario:** la línea del informe de pago (E-1, prioridad #1 de la replanificación forzada del 2026-08-26) tiene su embudo de captación y precheck completos (/informe, /informe/no-aplica, api/informe-crear.ts), pero la generación del PDF en sí sigue completamente parada por tercer ciclo consecutivo. Se necesita reasignar ux-005..ux-009 a un subagente con permiso sobre src/lib/**, api/** y package.json, o crear uno nuevo, antes del próximo ciclo.
+
+**Bloqueo estructural persistente (4º ciclo consecutivo) — sin subagente para `api/**`:**
+- **ux-008** (crear `api/informe-render.ts`): rechazada por el subagente `ux-ui` por estar fuera de su alcance declarado (solo `src/components/**`, `src/layouts/**`, `src/styles/**`, `src/pages/**` sin blog). Ningún archivo tocado.
+- **ux-009** (crear `scripts/verificar-informe.mjs`): no despachada por el orquestador — depende de ux-008 (que no existe) y tampoco entra en el alcance de `ux-ui`.
+- **cro-006** (crear `api/informe.ts`, reemisión con token HMAC): rechazada por el subagente `cro` por ser lógica de autenticación/seguridad backend, fuera de su alcance de copy/CTAs/formularios/conversión. El propio subagente advirtió del riesgo de un fallo de seguridad si se fuerza fuera de rol.
+- **cro-007, cro-008** (Stripe Checkout y webhook de entrega): siguen `pendiente`, bloqueadas por decisión previa del propietario — `LEGAL.titular`, `LEGAL.nif` y `LEGAL.domicilio` en `src/consts.ts` siguen vacíos, sin lo cual no hay cuenta de Stripe. No se despacharon hoy.
+
+Esto confirma que el bloqueo no es solo del área "ux": **ningún subagente actual tiene permiso sobre `api/**`, `src/lib/**` ni `package.json`.** La línea de trabajo de mayor prioridad de la estrategia vigente (E-1, el informe de pago — la única vía de monetización planificada) lleva 4 ciclos completamente parada por esta causa, independientemente del bloqueo de Stripe (que solo afecta a cro-007/cro-008, no a ux-008/ux-009/cro-006). Recomendación reiterada al propietario/CEO: crear un subagente con permiso sobre esas rutas (p. ej. un rol "backend"), o ampliar explícitamente el alcance de uno existente, antes del próximo ciclo.
+
+**Tareas no despachadas por conflicto de archivo:** seo-019, seo-020, ux-003 y ux-004 también sugieren `src/pages/simulador.astro` y quedan para otro ciclo (regla: no tocar el mismo archivo dos veces el mismo día).
 
 ## Estado del backlog
-10 pendientes · 27 hechas · 3 fallidas
+6 pendientes · 28 hechas · 6 fallidas
 Próxima replanificación: cuando queden 0 pendientes

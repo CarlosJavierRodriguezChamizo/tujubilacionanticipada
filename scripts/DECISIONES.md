@@ -425,3 +425,55 @@ Formato:
 - Riesgo identificado: Posible competencia visual entre el CTA de asesoramiento gratuito (btn-accent) y el nuevo CTA al informe (btn-primary), ambos al final del resultado; a afinar en una futura iteración de CRO si los datos lo sugieren.
 - Commit: (pendiente de este mismo commit)
 - Veredicto del CEO: pendiente
+
+---
+
+## 2026-08-30 — ux-008 Crear api/informe-render.ts (ux) — FALLIDA
+- Archivos: ninguno (rechazada antes de tocar nada)
+- Qué: El subagente ux-ui evaluó el encargo y se negó a ejecutarlo.
+- Por qué falló: api/informe-render.ts es una función serverless backend (recibe un caso, ejecuta pension-calculo.ts e informe-pdf.tsx/informe-analisis.ts, devuelve un PDF), sin ningún componente de interfaz. Cae fuera del alcance declarado del subagente ux-ui (src/components/**, src/layouts/**, src/styles/**, src/pages/** sin blog). Cuarto ciclo consecutivo con la misma cadena ux-005..ux-009 bloqueada por la misma causa raíz: ningún subagente del equipo tiene permiso sobre src/lib/**, api/** ni package.json.
+- Hipótesis: (sin evaluar — la tarea no llegó a ejecutarse).
+- Criterio de éxito: No cumplido — tarea detenida antes de generar ningún cambio.
+- Métrica y plazo: No aplica.
+- Riesgo identificado: La línea de trabajo 1 de ESTRATEGIA.md (generación del PDF del informe de pago) sigue completamente parada. Recomendación reiterada por cuarta vez: crear un subagente con permiso sobre src/lib/**, api/** y package.json (p.ej. un rol "backend"), o ampliar explícitamente el alcance de un agente existente para esas rutas, antes de volver a programar ux-008/ux-009.
+- Commit: (pendiente de este mismo commit)
+- Veredicto del CEO: pendiente
+
+---
+
+## 2026-08-30 — ux-009 Crear scripts/verificar-informe.mjs (ux) — FALLIDA
+- Archivos: ninguno (no despachada)
+- Qué: El orquestador decidió no invocar al subagente ux-ui para esta tarea.
+- Por qué falló: Depende de api/informe-render.ts (ux-008), que no existe tras el rechazo de ux-008 en este mismo ciclo; además scripts/verificar-informe.mjs y package.json tampoco están dentro del alcance declarado de ux-ui. Se evitó gastar una invocación de agente en un resultado ya predecible.
+- Hipótesis: (sin evaluar).
+- Criterio de éxito: No cumplido.
+- Métrica y plazo: No aplica.
+- Riesgo identificado: Mismo bloqueo estructural que ux-008.
+- Commit: (pendiente de este mismo commit)
+- Veredicto del CEO: pendiente
+
+---
+
+## 2026-08-30 — cro-006 Crear api/informe.ts: reemisión firmada por token HMAC (cro) — FALLIDA
+- Archivos: ninguno (rechazada antes de tocar nada)
+- Qué: El subagente cro evaluó el encargo y se negó a ejecutarlo.
+- Por qué falló: api/informe.ts implica verificación criptográfica HMAC, gestión de expiración de tokens y lectura aislada de datos personales en Redis — lógica de autenticación y seguridad, no copy/CTAs/formularios/jerarquía de conversión (alcance declarado del subagente cro). El propio subagente advirtió del riesgo de introducir un fallo de seguridad (fuga de datos entre usuarios) si un rol sin responsabilidad de backend/seguridad improvisa este código. Misma causa raíz que ux-008/ux-009.
+- Hipótesis: (sin evaluar — la tarea no llegó a ejecutarse).
+- Criterio de éxito: No cumplido.
+- Métrica y plazo: No aplica.
+- Riesgo identificado: La línea de trabajo 2 de ESTRATEGIA.md (reemisión gratuita del informe) también depende de api/**, así que también está parada. Confirma que el bloqueo no es solo del área "ux": ningún subagente actual cubre api/**. Recomendación: resolverlo junto con ux-008/ux-009 como una sola pieza (nuevo rol backend o ampliación de alcance), no de forma independiente por área.
+- Commit: (pendiente de este mismo commit)
+- Veredicto del CEO: pendiente
+
+---
+
+## 2026-08-30 — seo-022 Publicar en /simulador las tablas oficiales completas de coeficientes reductores (seo) — HECHA
+- Archivos: src/pages/simulador.astro
+- Qué: Añadidas dos tablas estáticas generadas en build desde COEF_VOLUNTARIA y COEF_INVOLUNTARIA de src/lib/pension-calculo.ts (24 filas × 4 tramos, art. 208.2 LGSS voluntaria; 48 filas × 4 tramos, art. 207.2 LGSS involuntaria), cada una con enlace dofollow a boe.es (BOE-A-2015-11724) y encabezados semánticos (thead/tbody/caption/th scope).
+- Por qué: /simulador competía mal (posición ~48, 3 clics, 71 palabras en <main>) por ser casi un formulario vacío; las tablas lo convierten en un documento de referencia real para el cluster "calculo/calcular/simulador jubilación anticipada", con cifras verificables contra el motor y trazabilidad EEAT hacia la fuente oficial.
+- Hipótesis: Ver backlog. Confirmada en forma: tablas generadas en build (no por JS), presentes tras eliminar la isla React del HTML.
+- Criterio de éxito: Cumplido y verificado de forma independiente por el orquestador (no solo por el subagente): git status solo toca 1 archivo; npm run build OK (89 páginas); filas de <tr> = 24 y 48 respectivamente, valores coincidentes con las constantes del motor; DISCLAIMER intacto.
+- Métrica y plazo: node scripts/auditar-money-set.mjs: palabras únicas en <main> de /simulador subieron de 71 a 893. Impresiones/posición en Google Search Console para "calculo jubilacion anticipada" y afines, a revisar en ~21 días.
+- Riesgo identificado: Canibalización preexistente (no introducida por esta tarea) entre /simulador y /blog/como-interpretar-simulador-jubilacion para "simulador jubilacion", ya detectada por auditar-money-set.mjs. Tablas largas (24/48 filas) dependen de overflow-x-auto en móvil — validar visualmente. seo-019/seo-020/ux-003/ux-004 quedan pendientes para otro ciclo por tocar el mismo archivo hoy.
+- Commit: (pendiente de este mismo commit)
+- Veredicto del CEO: pendiente
