@@ -8,7 +8,20 @@ import {
   webApplicationSchema,
   webPageSchema,
 } from '../lib/schema';
-import { COEF_VOLUNTARIA, COEF_INVOLUNTARIA, ETIQUETAS_TRAMOS } from '../lib/pension-calculo';
+import {
+  COEF_VOLUNTARIA,
+  COEF_INVOLUNTARIA,
+  ETIQUETAS_TRAMOS,
+  EDAD_LEGAL_REDUCIDA,
+  ANTICIPO_VOLUNTARIA_MESES,
+  ANTICIPO_VOLUNTARIA_ANIOS,
+  ANTICIPO_FORZOSA_MESES,
+  ANTICIPO_FORZOSA_ANIOS,
+  REQ_COTIZACION_VOLUNTARIA,
+  REQ_COTIZACION_FORZOSA,
+  edadLegalJubilacion,
+  calcularEscenario,
+} from '../lib/pension-calculo';
 
 const BOE_LGSS = 'https://www.boe.es/buscar/act.php?id=BOE-A-2015-11724';
 
@@ -23,6 +36,87 @@ const filasVoluntaria = Object.entries(COEF_VOLUNTARIA)
 const filasInvoluntaria = Object.entries(COEF_INVOLUNTARIA)
   .map(([meses, tramos]) => ({ meses: Number(meses), tramos }))
   .sort((a, b) => a.meses - b.meses);
+
+/* ═══════ Tabla estática de escenarios precalculados (seo-019) ═══════
+ * Fallback sin JavaScript de la isla <Simulador>: aplica las mismas
+ * funciones de src/lib/pension-calculo.ts (motor único de cálculo, ya
+ * usado por la isla React) a una rejilla fija de edad actual × años
+ * cotizados × base reguladora, para que exista una estimación legible
+ * con JS desactivado. La isla sigue siendo la mejora progresiva para
+ * datos exactos del usuario.
+ */
+const eurEstatico = new Intl.NumberFormat('es-ES', {
+  style: 'currency',
+  currency: 'EUR',
+  maximumFractionDigits: 0,
+});
+
+function formatEdadEstatico(edadDecimal: number) {
+  const anios = Math.floor(edadDecimal);
+  const meses = Math.round((edadDecimal - anios) * 12);
+  if (meses === 0) return `${anios} años`;
+  return `${anios} años y ${meses} ${meses === 1 ? 'mes' : 'meses'}`;
+}
+
+const EDADES_ESCENARIO = [50, 55, 58, 60, 62];
+const COTIZADOS_ESCENARIO = [30, 33, 35, 38, 41];
+const BASES_ESCENARIO = [1500, 2500];
+
+interface FilaEscenario {
+  edadActual: number;
+  aniosCotizadosActuales: number;
+  baseReguladora: number;
+  edadLegal: number;
+  ordinaria: ReturnType<typeof calcularEscenario>;
+  voluntaria: ReturnType<typeof calcularEscenario>;
+  forzosa: ReturnType<typeof calcularEscenario>;
+}
+
+const escenariosPrecalculados: FilaEscenario[] = [];
+for (const edadActual of EDADES_ESCENARIO) {
+  for (const aniosCotizadosActuales of COTIZADOS_ESCENARIO) {
+    for (const baseReguladora of BASES_ESCENARIO) {
+      // Misma proyección que usa la isla React: se sigue cotizando hasta
+      // la edad de jubilación de cada modalidad (arts. 207.2 y 208.2 LGSS).
+      const cotizadosA65 =
+        aniosCotizadosActuales + Math.max(0, EDAD_LEGAL_REDUCIDA - edadActual);
+      const edadLegal = edadLegalJubilacion(cotizadosA65);
+      const base = { edadActual, aniosCotizadosActuales, baseReguladora };
+
+      const ordinaria = calcularEscenario({
+        ...base,
+        edadJubilacion: edadLegal,
+        mesesAnticipo: 0,
+        modalidad: 'ordinaria',
+        requisitoCotizacion: null,
+      });
+      const voluntaria = calcularEscenario({
+        ...base,
+        edadJubilacion: edadLegal - ANTICIPO_VOLUNTARIA_ANIOS,
+        mesesAnticipo: ANTICIPO_VOLUNTARIA_MESES,
+        modalidad: 'voluntaria',
+        requisitoCotizacion: REQ_COTIZACION_VOLUNTARIA,
+      });
+      const forzosa = calcularEscenario({
+        ...base,
+        edadJubilacion: edadLegal - ANTICIPO_FORZOSA_ANIOS,
+        mesesAnticipo: ANTICIPO_FORZOSA_MESES,
+        modalidad: 'involuntaria',
+        requisitoCotizacion: REQ_COTIZACION_FORZOSA,
+      });
+
+      escenariosPrecalculados.push({
+        edadActual,
+        aniosCotizadosActuales,
+        baseReguladora,
+        edadLegal,
+        ordinaria,
+        voluntaria,
+        forzosa,
+      });
+    }
+  }
+}
 
 const path = '/simulador';
 const descripcion =
@@ -48,12 +142,12 @@ const schema = [
     name: 'Calcula tu jubilación anticipada: simulador gratuito',
     description: descripcion,
     path,
-    // requiresJs se mantiene en true (valor por defecto) porque hoy la
-    // calculadora sigue siendo una isla React sin tabla estática
-    // equivalente (seo-019/seo-020 quedaron pendientes por precaución
-    // normativa): sin JavaScript el formulario no calcula nada. Cuando
-    // exista esa alternativa estática, este valor debe pasar a false.
-    requiresJs: true,
+    // requiresJs pasa a false (seo-019): /simulador ya incluye una tabla
+    // estática de escenarios precalculados (edad × años cotizados × base
+    // reguladora) que no depende de JavaScript. La isla <Simulador> sigue
+    // siendo una mejora progresiva sobre esa misma tabla para datos
+    // exactos del usuario.
+    requiresJs: false,
   }),
   faqSchema(faqs),
   breadcrumbSchema([
@@ -90,6 +184,121 @@ const schema = [
 
     <div class="mt-10">
       <Simulador client:load disclaimer={DISCLAIMER} />
+    </div>
+
+    <div class="mt-16">
+      <h2 class="text-2xl font-semibold">
+        Tabla de estimaciones: pensión según edad, años cotizados y base
+        reguladora
+      </h2>
+      <p class="mt-2 max-w-3xl text-ink-soft">
+        Esta tabla aplica las mismas fórmulas que la calculadora de arriba
+        (porcentaje sobre base reguladora del art. 210.1 LGSS y coeficientes
+        reductores de los arts. 207.2 y 208.2 LGSS) a {escenariosPrecalculados.length}{' '}
+        combinaciones de edad actual, años cotizados y base reguladora ya
+        calculadas, así que funciona aunque tengas JavaScript desactivado.
+        Localiza la fila más parecida a tu caso para hacerte una idea
+        rápida; con JavaScript activado, la calculadora de arriba ajusta el
+        resultado a tus datos exactos.
+      </p>
+
+      <p
+        role="note"
+        class="mt-4 max-w-3xl rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm leading-relaxed text-amber-900"
+      >
+        <strong class="font-semibold">Aviso:</strong> {DISCLAIMER}
+      </p>
+
+      <div class="mt-4 overflow-x-auto">
+        <table class="w-full text-xs sm:text-sm">
+          <caption class="sr-only">
+            Estimación de pensión mensual para jubilación ordinaria,
+            anticipada voluntaria y anticipada forzosa según edad actual,
+            años cotizados y base reguladora
+          </caption>
+          <thead>
+            <tr class="border-b border-paper-200 text-left">
+              <th scope="col" rowspan="2" class="py-2 pr-4 align-bottom font-semibold">
+                Edad actual
+              </th>
+              <th scope="col" rowspan="2" class="py-2 pr-4 align-bottom font-semibold">
+                Años cotizados
+              </th>
+              <th scope="col" rowspan="2" class="py-2 pr-4 align-bottom font-semibold">
+                Base reguladora
+              </th>
+              <th scope="colgroup" colspan="2" class="border-l border-paper-200 py-2 pr-4 text-center font-semibold">
+                Jubilación ordinaria
+              </th>
+              <th scope="colgroup" colspan="2" class="border-l border-paper-200 py-2 pr-4 text-center font-semibold">
+                Anticipada voluntaria
+              </th>
+              <th scope="colgroup" colspan="2" class="border-l border-paper-200 py-2 pr-4 text-center font-semibold">
+                Anticipada forzosa
+              </th>
+            </tr>
+            <tr class="border-b border-paper-200 text-left">
+              <th scope="col" class="border-l border-paper-200 py-2 pr-4 font-normal">Edad</th>
+              <th scope="col" class="py-2 pr-4 font-normal">Pensión est.</th>
+              <th scope="col" class="border-l border-paper-200 py-2 pr-4 font-normal">Edad</th>
+              <th scope="col" class="py-2 pr-4 font-normal">Pensión est.</th>
+              <th scope="col" class="border-l border-paper-200 py-2 pr-4 font-normal">Edad</th>
+              <th scope="col" class="py-2 pr-4 font-normal">Pensión est.</th>
+            </tr>
+          </thead>
+          <tbody>
+            {
+              escenariosPrecalculados.map((fila) => (
+                <tr class="border-b border-paper-200/60">
+                  <td class="py-1.5 pr-4 tabular-nums">{fila.edadActual} años</td>
+                  <td class="py-1.5 pr-4 tabular-nums">{fila.aniosCotizadosActuales} años</td>
+                  <td class="py-1.5 pr-4 tabular-nums">
+                    {eurEstatico.format(fila.baseReguladora)}/mes
+                  </td>
+                  <td class="border-l border-paper-200/60 py-1.5 pr-4 tabular-nums">
+                    {formatEdadEstatico(fila.edadLegal)}
+                  </td>
+                  <td class="py-1.5 pr-4 tabular-nums">
+                    {eurEstatico.format(fila.ordinaria.pensionFinal)}
+                  </td>
+                  <td class="border-l border-paper-200/60 py-1.5 pr-4 tabular-nums">
+                    {formatEdadEstatico(fila.voluntaria.edadJubilacion)}
+                  </td>
+                  <td class="py-1.5 pr-4 tabular-nums">
+                    {fila.voluntaria.cumpleRequisito
+                      ? eurEstatico.format(fila.voluntaria.pensionFinal)
+                      : `No cumple los ${REQ_COTIZACION_VOLUNTARIA} años exigidos`}
+                  </td>
+                  <td class="border-l border-paper-200/60 py-1.5 pr-4 tabular-nums">
+                    {formatEdadEstatico(fila.forzosa.edadJubilacion)}
+                  </td>
+                  <td class="py-1.5 pr-4 tabular-nums">
+                    {fila.forzosa.cumpleRequisito
+                      ? eurEstatico.format(fila.forzosa.pensionFinal)
+                      : `No cumple los ${REQ_COTIZACION_FORZOSA} años exigidos`}
+                  </td>
+                </tr>
+              ))
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <p class="mt-3 max-w-3xl text-xs text-ink-muted">
+        Estimación calculada con el porcentaje sobre base reguladora del{' '}
+        <a href={BOE_LGSS} class="underline" target="_blank" rel="noopener">
+          artículo 210.1 de la Ley General de la Seguridad Social
+        </a>
+        , los coeficientes reductores de los artículos 207.2 y 208.2 LGSS y
+        el límite máximo de pensión pública del RD 241/2026. No incluye
+        convenios especiales, cotizaciones en el extranjero, coeficientes
+        por actividad penosa, complementos a mínimos ni el complemento de
+        brecha de género: es una estimación divulgativa, no un cálculo
+        oficial. La jubilación anticipada voluntaria exige al menos{' '}
+        {REQ_COTIZACION_VOLUNTARIA} años cotizados y la forzosa al menos
+        {' '}{REQ_COTIZACION_FORZOSA}; cuando el escenario no los alcanza, la
+        tabla lo indica en vez de mostrar un importe.
+      </p>
     </div>
 
     <div class="mt-16">

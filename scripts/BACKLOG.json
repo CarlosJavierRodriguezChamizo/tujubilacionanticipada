@@ -351,7 +351,7 @@
       "titulo": "Renderizar en /simulador una tabla estática de escenarios precalculados",
       "area": "seo",
       "prioridad": 16,
-      "estado": "pendiente",
+      "estado": "hecha",
       "hipotesis": "Si src/pages/simulador.astro usa src/lib/pension-calculo.ts (seo-018) para renderizar en build una tabla HTML con >=40 combinaciones de escenario (edad x años cotizados x tramo de base reguladora), visible y legible con JavaScript desactivado, dejando la isla React <Simulador client:load> como mejora progresiva sobre esa misma tabla, esperamos que <main> pase de 71 palabras únicas a un documento sustancialmente más largo y que un usuario sin JS pueda leer una estimación para su caso, porque hoy toda la página depende de una isla React que no ejecuta nada sin JavaScript.",
       "criterio_exito": "Tras `npm run build`, dist/simulador/index.html contiene una tabla estática con >=40 filas de escenario generada en build (no por JS); simulando la eliminación de la isla React del HTML, la tabla sigue presente y legible; el DISCLAIMER (src/consts.ts) sigue visible fuera de la isla React; ejecutando scripts/auditar-money-set.mjs (seo-012) tras el build, /simulador reporta >=1.200 palabras únicas en <main> (antes: 71). Si al generar los escenarios se detecta un dato normativo incorrecto, la tarea se detiene y lo reporta al CEO.",
       "metrica": "Salida de scripts/auditar-money-set.mjs antes (71 palabras, seo-012) vs después de esta tarea, pegada en DECISIONES.md; conteo de filas de la tabla en dist/simulador/index.html >=40.",
@@ -359,7 +359,8 @@
         "src/pages/simulador.astro"
       ],
       "objetivo_estrategico": "Falsable de la Línea 3 (ESTRATEGIA.md): '<main> de /simulador >=1.200 palabras únicas (hoy 71); >=40 combinaciones de escenario presentes en el HTML estático; con la isla React eliminada del HTML, la página sigue conteniendo una tabla de estimación legible'.",
-      "resultado": "FALLIDA por precaución normativa, sin tocar ningún archivo. Antes de escribir en simulador.astro, se verificó el riesgo ya señalado por seo-018 contra fuentes externas: EDAD_LEGAL_PLENA (66a8m) y UMBRAL_COTIZACION_EDAD_REDUCIDA (38.5) en src/lib/pension-calculo.ts corresponden a la normativa de 2025, no a la vigente en 2026 (66a10m / 38a3m, contrastado en varias fuentes coincidentes). Publicar una tabla estática indexable de >=40 filas con la fecha de jubilación estimada mal calculada en un sitio YMYL se consideró un riesgo inaceptable. Tarea detenida, sin build ejecutado (no había cambios que verificar). Recomendación: corregir las dos constantes en pension-calculo.ts (con revisión experta) antes de reintentar seo-019. || REACTIVADA el 2026-08-24: la causa raíz está resuelta. src/lib/pension-calculo.ts implementa ya las tablas mensuales oficiales de los arts. 207.2 y 208.2 LGSS, la edad ordinaria de 2026 de la DT 7.ª (65 años con 38 años y 3 meses cotizados; 66 años y 10 meses con menos) y los importes del RD 241/2026 (máximo 3.359,60 €/mes). La tabla estática debe generarse consumiendo ese módulo, sin reescribir ninguna cifra a mano."
+      "resultado": "Añadida tabla estática de 50 filas de escenarios (edad x años cotizados x base reguladora) en src/pages/simulador.astro usando calcularEscenario()/edadLegalJubilacion() de pension-calculo.ts, como mejora progresiva bajo la isla React. DISCLAIMER ahora visible fuera de la isla. webApplicationSchema requiresJs pasado a false. auditar-money-set.mjs: 893→2053 palabras únicas en <main> (umbral 1200 superado). npm run build OK, 90 páginas. Sin datos normativos nuevos ni incorrectos.",
+      "fecha_ejecucion": "2026-08-31"
     },
     {
       "id": "seo-020",
