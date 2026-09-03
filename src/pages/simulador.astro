@@ -26,6 +26,8 @@ import {
 
 const BOE_LGSS = 'https://www.boe.es/buscar/act.php?id=BOE-A-2015-11724';
 const BOE_RD241_2026 = 'https://www.boe.es/diario_boe/txt.php?id=BOE-A-2026-6977';
+const SEG_SOCIAL_SIMULADOR =
+  'https://prestaciones.seg-social.es/simulador-servicio/simulador-pension-jubilacion.html';
 
 /** Formatea el % de reducción con 2 decimales fijos, sin alterar el valor. */
 const formatoPorcentaje = (valor: number) =>
@@ -192,6 +194,45 @@ const schema = [
       class="mt-8 max-w-3xl rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm leading-relaxed text-amber-900"
     >
       <strong class="font-semibold">Aviso:</strong> {DISCLAIMER}
+    </div>
+
+    <div class="mt-8 max-w-3xl rounded-xl border border-paper-200 bg-paper-50 p-5">
+      <h2 class="text-lg font-semibold">Limitaciones de esta estimación</h2>
+      <ul class="mt-3 list-disc space-y-1.5 pl-5 text-sm text-ink-soft">
+        <li>
+          No accede a tu historial real de cotizaciones: la base reguladora y
+          los años cotizados son los que tú introduces, no los que constan en
+          las bases de datos de la Seguridad Social.
+        </li>
+        <li>
+          No incluye complementos (por ejemplo, el de reducción de la brecha
+          de género), mínimos por cónyuge a cargo, situaciones de
+          pluriactividad, regímenes especiales ni convenios internacionales
+          de Seguridad Social.
+        </li>
+        <li>
+          No calcula la retención de IRPF ni otros descuentos sobre el
+          importe bruto de la pensión.
+        </li>
+        <li>
+          Los importes de pensión mínima y máxima corresponden al ejercicio
+          2026 y se actualizan cada año.
+        </li>
+      </ul>
+      <p class="mt-4 text-sm text-ink-soft">
+        Para una simulación con tus datos reales de cotización, usa el
+        {' '}
+        <a
+          href={SEG_SOCIAL_SIMULADOR}
+          class="font-semibold underline"
+          target="_blank"
+          rel="noopener"
+        >
+          simulador oficial de pensión de jubilación de la Seguridad Social
+        </a>
+        , que requiere identificación (Cl@ve o certificado digital) para
+        acceder a tu historial real.
+      </p>
     </div>
 
     <div class="mt-12">
