@@ -93,6 +93,24 @@ for (const file of mdxFiles) {
     errors.push(`${file}: draft: true — no se puede publicar`)
   }
 
+  // Transparencia de IA (art. 50 del Reglamento (UE) 2024/1689).
+  //
+  // El layout etiqueta por defecto todos los artículos como redactados con IA
+  // y con portada generada con IA, que es lo que hace el pipeline. Desactivar
+  // esa etiqueta es una afirmación sobre cómo se produjo ESTE artículo, así que
+  // exige dejar por escrito el motivo en `aiNota`: sin él, la divulgación
+  // desaparecería de la página sin que nadie pueda comprobar por qué.
+  const desactivaTexto = /aiTextGenerated:\s*false/.test(fm)
+  const desactivaImagen = /aiImageGenerated:\s*false/.test(fm)
+  const tieneNotaIA = /aiNota:\s*\S/.test(fm)
+  if ((desactivaTexto || desactivaImagen) && !tieneNotaIA) {
+    errors.push(
+      `${file}: desactiva la divulgación de IA (aiTextGenerated/aiImageGenerated: false) ` +
+        `sin explicar el motivo en 'aiNota' — la etiqueta del art. 50 RIA solo puede ` +
+        `quitarse si el contenido realmente no se generó con IA`
+    )
+  }
+
   // Disclaimer presente
   const hasDisclaimerStart = body.toLowerCase().includes('orientativo') ||
     body.toLowerCase().includes('no constituye asesor')

@@ -1,0 +1,529 @@
+---
+/**
+ * Declaración pública de transparencia sobre el uso de inteligencia
+ * artificial, conforme al Reglamento (UE) 2024/1689 (RIA).
+ *
+ * Es la página a la que apuntan la insignia de cada artículo, el bloque de
+ * divulgación del pie del artículo, el aviso de las herramientas de cálculo,
+ * el footer de todo el sitio y las páginas legales. Todo lo que declara sale
+ * de `IA` en src/consts.ts: aquí solo se presenta.
+ *
+ * Indexable a propósito: una declaración de transparencia que no se puede
+ * encontrar no informa a nadie (art. 50.5 RIA).
+ */
+import Base from '../layouts/Base.astro';
+import { SITE, IA, LEGAL } from '../consts';
+import { webPageSchema, breadcrumbSchema } from '../lib/schema';
+import calendario from '../../scripts/calendario.json';
+
+const reviewerName = calendario.config.reviewer_name;
+const reviewerTitle = calendario.config.reviewer_title;
+
+const path = '/transparencia-ia';
+const descripcion =
+  'Qué partes de este sitio se elaboran con inteligencia artificial, cuáles no, quién las revisa y qué derechos tienes. Declaración conforme al Reglamento (UE) 2024/1689.';
+
+/** Índice de la página: doble función, navegación y resumen del alcance. */
+const secciones = [
+  { id: 'sistemas', titulo: 'Qué sistemas de IA usamos' },
+  { id: 'sin-ia', titulo: 'Qué NO usa inteligencia artificial' },
+  { id: 'revision', titulo: 'Cómo se revisa lo que publicamos' },
+  { id: 'limites', titulo: 'Límites y riesgos conocidos' },
+  { id: 'datos', titulo: 'Tus datos y la IA' },
+  { id: 'errores', titulo: 'Cómo avisarnos de un error' },
+  { id: 'marco-legal', titulo: 'Marco legal y clasificación de riesgo' },
+  { id: 'marcado', titulo: 'Marcado legible por máquina' },
+  { id: 'cambios', titulo: 'Cambios en esta declaración' },
+];
+
+/**
+ * Correspondencia entre cada obligación del RIA que puede alcanzarnos y lo
+ * que hace el sitio. Se publica entera, incluidas las obligaciones que no
+ * nos aplican: decir por qué no aplican también es transparencia.
+ */
+const obligaciones = [
+  {
+    norma: 'Art. 50.1',
+    exige:
+      'Informar a la persona de que está interactuando con un sistema de IA, salvo que resulte evidente.',
+    respuesta:
+      'Este sitio no tiene chatbot ni asistente conversacional: no hay ninguna interacción con IA en tiempo real. Si algún día lo hubiera, se anunciará antes de la primera interacción.',
+  },
+  {
+    norma: 'Art. 50.2',
+    exige:
+      'Marcar los contenidos sintéticos en un formato legible por máquina y detectable como generados artificialmente.',
+    respuesta:
+      'Obligación dirigida al proveedor del modelo, no a quien lo usa. Aun así, cada artículo generado con IA incluye metadatos y datos estructurados que declaran su origen (ver «Marcado legible por máquina»).',
+  },
+  {
+    norma: 'Art. 50.4, párr. 1.º',
+    exige:
+      'Revelar las ultrafalsificaciones: imágenes, audio o vídeo generados o manipulados que parezcan auténticos.',
+    respuesta:
+      'No publicamos ninguna. Las ilustraciones de los artículos son dibujos editoriales que no representan personas, lugares ni hechos reales, y aun así se etiquetan una a una bajo la propia imagen.',
+  },
+  {
+    norma: 'Art. 50.4, párr. 2.º',
+    exige:
+      'Revelar el texto generado por IA que se publique para informar al público sobre asuntos de interés público, salvo que haya revisión humana y alguien asuma la responsabilidad editorial.',
+    respuesta:
+      'Podríamos acogernos a esa excepción, porque hay revisión humana y responsabilidad editorial. No lo hacemos: lo divulgamos igualmente en cada artículo, porque quien lee sobre su pensión merece saber cómo se ha escrito lo que lee.',
+  },
+  {
+    norma: 'Art. 50.5',
+    exige:
+      'Dar esa información de forma clara y distinguible, a más tardar en la primera interacción o exposición, y de manera accesible.',
+    respuesta:
+      'La etiqueta aparece junto a la firma, antes del texto del artículo, sin desplegables ni ventanas que haya que abrir. Es texto real (no una imagen ni solo un color), legible por lector de pantalla y navegable con teclado.',
+  },
+  {
+    norma: 'Art. 4',
+    exige:
+      'Garantizar un nivel suficiente de alfabetización en materia de IA de quienes operan estos sistemas.',
+    respuesta:
+      'Quien opera el proceso de publicación conoce los límites de los modelos usados, y el procedimiento interno de verificación y corrección está documentado en el repositorio del proyecto.',
+  },
+  {
+    norma: 'Art. 5',
+    exige: 'Prohibición de determinadas prácticas de IA.',
+    respuesta:
+      'Ninguna se da aquí. En particular, y aunque nuestro público esté mayoritariamente entre los 50 y los 65 años, no usamos IA para explotar la vulnerabilidad por edad ni situación económica, ni técnicas subliminales, ni urgencia artificial, ni puntuación de personas.',
+  },
+  {
+    norma: 'Anexo III',
+    exige: 'Sistemas de IA de alto riesgo.',
+    respuesta:
+      'No usamos ninguno. No decidimos sobre tu acceso a prestaciones públicas —eso solo lo hace la Seguridad Social—, no evaluamos tu solvencia, no intervenimos en empleo ni en educación, y ningún sistema de IA calcula tus cifras.',
+  },
+];
+
+/** Fechas de aplicación del RIA, para situar al lector. */
+const calendarioRia = [
+  { fecha: '1 de agosto de 2024', hito: 'Entrada en vigor del Reglamento.' },
+  {
+    fecha: '2 de febrero de 2025',
+    hito: 'Aplicables las prácticas prohibidas (art. 5) y la alfabetización en IA (art. 4).',
+  },
+  {
+    fecha: '2 de agosto de 2025',
+    hito: 'Aplicables las obligaciones de los modelos de uso general y el régimen de gobernanza y sanciones.',
+  },
+  {
+    fecha: '2 de agosto de 2026',
+    hito: 'Aplicables las obligaciones de transparencia del art. 50, que son las que rigen esta página.',
+  },
+  {
+    fecha: '2 de agosto de 2027',
+    hito: 'Aplicable el resto del Reglamento a los sistemas de alto riesgo incorporados a productos regulados.',
+  },
+];
+
+const schema = [
+  webPageSchema({
+    type: 'WebPage',
+    path,
+    name: 'Transparencia sobre el uso de inteligencia artificial',
+    description: descripcion,
+    breadcrumbPath: path,
+  }),
+  breadcrumbSchema([
+    { name: 'Inicio', path: '/' },
+    { name: 'Transparencia IA', path },
+  ]),
+];
+---
+
+<Base
+  title="Transparencia sobre el uso de IA"
+  description={descripcion}
+  path={path}
+  schema={schema}
+>
+  <!-- Cabecera -->
+  <section class="border-b border-paper-200 bg-gradient-to-b from-clay-50/60 to-paper-50">
+    <div class="container-prose py-12 sm:py-16">
+      <p class="eyebrow">Transparencia</p>
+      <h1 class="mt-3 max-w-3xl text-4xl font-semibold leading-tight sm:text-5xl">
+        Cómo usamos la inteligencia artificial en este sitio
+      </h1>
+      <p class="mt-5 max-w-2xl text-lg leading-relaxed text-ink-soft">
+        Aquí lees sobre tu pensión, así que tienes derecho a saber cómo se ha
+        escrito lo que lees y qué máquina ha intervenido. Esta página lo explica
+        entero, sin letra pequeña.
+      </p>
+      <p class="mt-4 text-sm text-ink-muted">
+        Declaración conforme al artículo 50 del{' '}
+        <a
+          href="https://eur-lex.europa.eu/legal-content/ES/TXT/?uri=CELEX%3A32024R1689"
+          class="underline underline-offset-2"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Reglamento (UE) 2024/1689
+        </a>{' '}
+        (Reglamento de Inteligencia Artificial) · Versión {IA.version} ·
+        Actualizada en {IA.actualizado}
+      </p>
+    </div>
+  </section>
+
+  <!-- Resumen -->
+  <section class="container-prose py-12 sm:py-14">
+    <div class="rounded-2xl border border-paper-300 border-l-4 border-l-clay-500 bg-paper-100 p-6 sm:p-8">
+      <h2 class="text-xl font-semibold sm:text-2xl">En una pantalla</h2>
+      <ul class="mt-4 space-y-3 text-ink-soft">
+        <li class="flex items-start gap-2.5">
+          <span class="mt-0.5 shrink-0 text-clay-600" aria-hidden="true">•</span>
+          <span>
+            <strong class="text-ink">Los artículos del blog</strong> se redactan
+            en borrador con un modelo de lenguaje y se revisan antes de
+            publicarse. Cada uno lo dice en su propia cabecera.
+          </span>
+        </li>
+        <li class="flex items-start gap-2.5">
+          <span class="mt-0.5 shrink-0 text-clay-600" aria-hidden="true">•</span>
+          <span>
+            <strong class="text-ink">Las ilustraciones de portada</strong> se
+            generan con IA y están etiquetadas bajo cada imagen. No son
+            fotografías ni documentan hechos.
+          </span>
+        </li>
+        <li class="flex items-start gap-2.5">
+          <span class="mt-0.5 shrink-0 text-clay-600" aria-hidden="true">•</span>
+          <span>
+            <strong class="text-ink">Tus cifras no las calcula una IA.</strong>{' '}
+            El simulador y el informe aplican las fórmulas de la Ley General de
+            la Seguridad Social: mismo dato de entrada, mismo resultado, siempre.
+          </span>
+        </li>
+        <li class="flex items-start gap-2.5">
+          <span class="mt-0.5 shrink-0 text-clay-600" aria-hidden="true">•</span>
+          <span>
+            <strong class="text-ink">Ninguna máquina decide sobre ti.</strong> No
+            hay perfilado ni decisiones automatizadas con efectos jurídicos, y
+            siempre puedes escribirnos y hablar con una persona.
+          </span>
+        </li>
+      </ul>
+    </div>
+
+    <nav aria-label="Índice de esta página" class="mt-10">
+      <h2 class="text-sm font-semibold uppercase tracking-[0.14em] text-clay-700">
+        En esta página
+      </h2>
+      <ol class="mt-3 grid gap-x-8 gap-y-2 text-sm sm:grid-cols-2">
+        {
+          secciones.map((s, i) => (
+            <li>
+              <a href={`#${s.id}`} class="text-brand-700 underline underline-offset-2 hover:text-clay-700">
+                {i + 1}. {s.titulo}
+              </a>
+            </li>
+          ))
+        }
+      </ol>
+    </nav>
+  </section>
+
+  <!-- 1. Sistemas -->
+  <section id="sistemas" class="scroll-mt-20 border-t border-paper-200 bg-paper-100">
+    <div class="container-prose py-12 sm:py-14">
+      <h2 class="text-2xl font-semibold sm:text-3xl">1. Qué sistemas de IA usamos</h2>
+      <p class="mt-3 max-w-2xl text-ink-soft">
+        {SITE.name} es <strong>responsable del despliegue</strong> de estos
+        sistemas: los usa, no los desarrolla ni los vende. Este es el inventario
+        completo, con su finalidad y dónde puedes ver el resultado.
+      </p>
+      <div class="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {
+          IA.sistemas.map((s) => (
+            <article class="flex flex-col rounded-xl border border-paper-300 bg-paper-50 p-5">
+              <h3 class="font-serif text-lg font-semibold text-ink">{s.nombre}</h3>
+              <p class="mt-3 text-sm leading-relaxed text-ink-soft">
+                <span class="font-semibold text-ink">Para qué:</span> {s.finalidad}
+              </p>
+              <p class="mt-2 text-sm leading-relaxed text-ink-soft">
+                <span class="font-semibold text-ink">Dónde lo ves:</span> {s.donde}
+              </p>
+              <p class="mt-2 text-sm leading-relaxed text-ink-soft">
+                <span class="font-semibold text-ink">Supervisión:</span> {s.supervision}
+              </p>
+            </article>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- 2. Lo que no usa IA -->
+  <section id="sin-ia" class="scroll-mt-20 container-prose py-12 sm:py-14">
+    <h2 class="text-2xl font-semibold sm:text-3xl">2. Qué NO usa inteligencia artificial</h2>
+    <p class="mt-3 max-w-2xl text-ink-soft">
+      Es la parte que más importa: <strong>ningún modelo generativo interviene
+      en tus números</strong>. Un cálculo determinista no «opina» ni improvisa,
+      aplica una fórmula legal y se puede comprobar.
+    </p>
+    <ul class="mt-6 space-y-4">
+      {
+        IA.sinIA.map((item) => (
+          <li class="rounded-xl border border-paper-200 bg-paper-50 p-5">
+            <p class="font-semibold text-ink">{item.nombre}</p>
+            <p class="mt-1.5 text-sm leading-relaxed text-ink-soft">{item.detalle}</p>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+
+  <!-- 3. Revisión -->
+  <section id="revision" class="scroll-mt-20 border-t border-paper-200 bg-paper-100">
+    <div class="container-prose py-12 sm:py-14">
+      <h2 class="text-2xl font-semibold sm:text-3xl">3. Cómo se revisa lo que publicamos</h2>
+      <p class="mt-3 max-w-2xl text-ink-soft">{IA.revisionHumana}</p>
+      <ol class="mt-6 space-y-4">
+        {
+          [
+            {
+              t: 'Encargo editorial',
+              d: 'Cada artículo parte de un tema, una intención de búsqueda y una fuente oficial de referencia fijados de antemano, no de lo que a un modelo le apetezca escribir.',
+            },
+            {
+              t: 'Borrador generado con IA',
+              d: 'Un modelo de lenguaje redacta el borrador siguiendo esas instrucciones, con la obligación de enlazar la fuente oficial de cada dato normativo.',
+            },
+            {
+              t: 'Verificación automática',
+              d: 'Un validador bloquea la publicación si falta el aviso legal, la nota de revisión, el enlace a una fuente oficial autorizada (Seguridad Social, BOE, SEPE, CNMV) o si aparecen fórmulas vagas del tipo «según algunos expertos».',
+            },
+            {
+              t: 'Revisión editorial humana',
+              d: `${reviewerName} (${reviewerTitle}) contrasta los datos normativos con la fuente oficial antes de que el artículo se publique, y su nombre queda firmado al pie.`,
+            },
+            {
+              t: 'Auditoría posterior',
+              d: 'Una auditoría automática vuelve sobre los artículos ya publicados buscando cifras normativas que hayan quedado derogadas, para corregirlas sin esperar a que alguien se queje.',
+            },
+          ].map((paso, i) => (
+            <li class="flex items-start gap-4 rounded-xl border border-paper-200 bg-paper-50 p-5">
+              <span
+                class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brand-600 text-sm font-semibold text-white"
+                aria-hidden="true"
+              >
+                {i + 1}
+              </span>
+              <span>
+                <span class="block font-semibold text-ink">{paso.t}</span>
+                <span class="mt-1 block text-sm leading-relaxed text-ink-soft">{paso.d}</span>
+              </span>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  <!-- 4. Límites -->
+  <section id="limites" class="scroll-mt-20 container-prose py-12 sm:py-14">
+    <h2 class="text-2xl font-semibold sm:text-3xl">4. Límites y riesgos conocidos</h2>
+    <p class="mt-3 max-w-2xl text-ink-soft">
+      Ninguna de estas advertencias es retórica: la segunda nos ocurrió de
+      verdad y por eso existe la auditoría del paso 5.
+    </p>
+    <ul class="mt-6 space-y-3">
+      {
+        IA.limitaciones.map((l) => (
+          <li class="flex items-start gap-2.5 rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm leading-relaxed text-amber-900">
+            <span class="mt-0.5 shrink-0" aria-hidden="true">!</span>
+            <span>{l}</span>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+
+  <!-- 5. Datos -->
+  <section id="datos" class="scroll-mt-20 border-t border-paper-200 bg-paper-100">
+    <div class="container-prose py-12 sm:py-14">
+      <h2 class="text-2xl font-semibold sm:text-3xl">5. Tus datos y la IA</h2>
+      <ul class="mt-6 space-y-3 text-ink-soft">
+        <li class="flex items-start gap-2.5">
+          <span class="mt-0.5 shrink-0 text-clay-600" aria-hidden="true">•</span>
+          <span>
+            <strong class="text-ink">No entrenamos modelos con tus datos</strong>{' '}
+            ni los enviamos a ningún sistema de IA generativa. Los sistemas de la
+            tabla anterior trabajan sobre encargos editoriales, no sobre datos de
+            usuarios.
+          </span>
+        </li>
+        <li class="flex items-start gap-2.5">
+          <span class="mt-0.5 shrink-0 text-clay-600" aria-hidden="true">•</span>
+          <span>
+            Lo que escribes en el <strong class="text-ink">simulador</strong> (edad,
+            años cotizados, base reguladora) se calcula <strong class="text-ink">en tu
+            propio navegador</strong>: no sale de tu dispositivo ni llega a
+            nuestros servidores.
+          </span>
+        </li>
+        <li class="flex items-start gap-2.5">
+          <span class="mt-0.5 shrink-0 text-clay-600" aria-hidden="true">•</span>
+          <span>
+            Los datos del <strong class="text-ink">formulario del informe</strong> se
+            usan solo para comprobar requisitos y emitir tu informe, según la{' '}
+            <a href="/privacidad" class="text-brand-700 underline underline-offset-2 hover:text-clay-700">
+              política de privacidad
+            </a>.
+          </span>
+        </li>
+        <li class="flex items-start gap-2.5">
+          <span class="mt-0.5 shrink-0 text-clay-600" aria-hidden="true">•</span>
+          <span>
+            <strong class="text-ink">No hay decisiones automatizadas con efectos
+            jurídicos</strong> sobre ti (art. 22 del RGPD). La comprobación previa
+            de requisitos del informe solo evita cobrarte por algo que no te
+            serviría; no valora tu persona ni condiciona ningún derecho.
+          </span>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- 6. Errores -->
+  <section id="errores" class="scroll-mt-20 container-prose py-12 sm:py-14">
+    <h2 class="text-2xl font-semibold sm:text-3xl">6. Cómo avisarnos de un error</h2>
+    <p class="mt-3 max-w-2xl text-ink-soft">
+      Si crees que un contenido está equivocado o desactualizado —lo haya
+      escrito una persona o una máquina— dínoslo. No hace falta que justifiques
+      nada ni que seas cliente.
+    </p>
+    <div class="mt-6 rounded-2xl border border-paper-300 bg-paper-50 p-6 sm:p-8">
+      <p class="text-ink-soft">
+        Escríbenos a{' '}
+        <a
+          href={`mailto:${SITE.email}?subject=Correcci%C3%B3n%20de%20contenido`}
+          class="font-medium text-brand-700 underline underline-offset-2 hover:text-clay-700"
+        >
+          {SITE.email}
+        </a>{' '}
+        indicando la dirección de la página y qué dato crees que falla.
+      </p>
+      <ul class="mt-4 space-y-2 text-sm text-ink-soft">
+        <li>· Contrastamos el dato con su fuente oficial.</li>
+        <li>· Si el error existe, corregimos el artículo y actualizamos su fecha de revisión.</li>
+        <li>· Te respondemos contándote qué hemos hecho.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- 7. Marco legal -->
+  <section id="marco-legal" class="scroll-mt-20 border-t border-paper-200 bg-paper-100">
+    <div class="container-prose py-12 sm:py-14">
+      <h2 class="text-2xl font-semibold sm:text-3xl">7. Marco legal y clasificación de riesgo</h2>
+      <p class="mt-3 max-w-3xl text-ink-soft">
+        El Reglamento de IA clasifica los sistemas por el riesgo que suponen.
+        Los que usamos son <strong>sistemas de riesgo limitado</strong>: solo
+        les alcanzan obligaciones de transparencia. Esta es la correspondencia,
+        obligación por obligación, incluidas las que no nos aplican.
+      </p>
+      <div class="mt-6 overflow-x-auto">
+        <table class="w-full text-sm">
+          <caption class="sr-only">
+            Obligaciones del Reglamento (UE) 2024/1689 y cómo las cumple este sitio
+          </caption>
+          <thead>
+            <tr class="border-b border-paper-300 text-left align-bottom">
+              <th scope="col" class="py-2 pr-4 font-semibold">Norma</th>
+              <th scope="col" class="py-2 pr-4 font-semibold">Qué exige</th>
+              <th scope="col" class="py-2 font-semibold">Qué hacemos</th>
+            </tr>
+          </thead>
+          <tbody>
+            {
+              obligaciones.map((o) => (
+                <tr class="border-b border-paper-200 align-top">
+                  <th scope="row" class="py-3 pr-4 text-left font-semibold text-ink whitespace-nowrap">
+                    {o.norma}
+                  </th>
+                  <td class="py-3 pr-4 leading-relaxed text-ink-soft">{o.exige}</td>
+                  <td class="py-3 leading-relaxed text-ink-soft">{o.respuesta}</td>
+                </tr>
+              ))
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <h3 class="mt-10 text-lg font-semibold">Calendario de aplicación</h3>
+      <ul class="mt-4 space-y-2 text-sm text-ink-soft">
+        {
+          calendarioRia.map((c) => (
+            <li class="flex flex-col gap-0.5 border-l-2 border-paper-300 pl-4 sm:flex-row sm:gap-3">
+              <span class="font-semibold text-ink whitespace-nowrap">{c.fecha}</span>
+              <span>{c.hito}</span>
+            </li>
+          ))
+        }
+      </ul>
+      <p class="mt-6 max-w-3xl text-sm text-ink-muted">
+        Esta declaración se aplica junto al{' '}
+        <a href="/aviso-legal" class="underline underline-offset-2">aviso legal</a>, la{' '}
+        <a href="/privacidad" class="underline underline-offset-2">política de privacidad</a> y la{' '}
+        <a href="/cookies" class="underline underline-offset-2">política de cookies</a>. No
+        sustituye a ninguna de ellas.
+      </p>
+    </div>
+  </section>
+
+  <!-- 8. Marcado legible por máquina -->
+  <section id="marcado" class="scroll-mt-20 container-prose py-12 sm:py-14">
+    <h2 class="text-2xl font-semibold sm:text-3xl">8. Marcado legible por máquina</h2>
+    <p class="mt-3 max-w-3xl text-ink-soft">
+      Además de la etiqueta que ves, cada artículo elaborado con IA lo declara
+      en su código para que puedan detectarlo buscadores, agregadores y
+      herramientas de verificación:
+    </p>
+    <ul class="mt-6 space-y-3 text-sm text-ink-soft">
+      <li class="rounded-xl border border-paper-200 bg-paper-50 p-4">
+        <code class="text-xs text-ink">&lt;meta name="ai-generated-content"&gt;</code>{' '}
+        en la cabecera de la página, indicando qué elementos (texto, imagen) se
+        generaron con IA y si hubo revisión humana.
+      </li>
+      <li class="rounded-xl border border-paper-200 bg-paper-50 p-4">
+        <code class="text-xs text-ink">digitalSourceType</code> del vocabulario
+        del IPTC en los datos estructurados de la página, con el valor{' '}
+        <code class="text-xs text-ink">trainedAlgorithmicMedia</code> para el
+        contenido generado por un modelo y revisado por una persona.
+      </li>
+      <li class="rounded-xl border border-paper-200 bg-paper-50 p-4">
+        <code class="text-xs text-ink">publishingPrinciples</code> de Schema.org
+        apuntando a esta misma página desde la entidad editora y desde cada
+        artículo.
+      </li>
+    </ul>
+  </section>
+
+  <!-- 9. Cambios -->
+  <section id="cambios" class="scroll-mt-20 border-t border-paper-200 bg-paper-100">
+    <div class="container-prose py-12 sm:py-14">
+      <h2 class="text-2xl font-semibold sm:text-3xl">9. Cambios en esta declaración</h2>
+      <p class="mt-3 max-w-3xl text-ink-soft">
+        Si cambia la forma en que producimos el contenido, cambia esta página
+        antes que el contenido. Cada versión lleva número y fecha, y la etiqueta
+        de los artículos se actualiza con ella.
+      </p>
+      <p class="mt-4 text-sm text-ink-muted">
+        Versión {IA.version} · Actualizada en {IA.actualizado} · Textos legales
+        del sitio actualizados en {LEGAL.actualizado}.
+      </p>
+      <p class="mt-6 text-ink-soft">
+        ¿Alguna duda sobre esto? Escríbenos a{' '}
+        <a
+          href={`mailto:${SITE.email}?subject=Transparencia%20IA`}
+          class="font-medium text-brand-700 underline underline-offset-2 hover:text-clay-700"
+        >
+          {SITE.email}
+        </a>.
+      </p>
+    </div>
+  </section>
+</Base>

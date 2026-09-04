@@ -19,6 +19,8 @@ interface Props {
   noindex?: boolean;
   /** JSON-LD a inyectar. Puede ser un objeto o un array de objetos. */
   schema?: Record<string, unknown> | Record<string, unknown>[];
+  /** Divulgación de IA legible por máquina (ver BaseHead). */
+  aiDisclosure?: { elementos: string[]; revisionHumana: boolean };
 }
 
 const {
@@ -30,6 +32,7 @@ const {
   ogType = 'website',
   noindex = false,
   schema,
+  aiDisclosure,
 } = Astro.props;
 
 // Entidades sitewide (Organization + WebSite) presentes en todas las páginas.
@@ -52,6 +55,7 @@ const schemaList = [
       image={image}
       ogType={ogType}
       noindex={noindex}
+      aiDisclosure={aiDisclosure}
     />
     {
       schemaList.map((s) => (

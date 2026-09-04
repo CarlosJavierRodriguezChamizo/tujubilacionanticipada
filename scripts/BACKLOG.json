@@ -359,8 +359,8 @@
         "src/pages/simulador.astro"
       ],
       "objetivo_estrategico": "Falsable de la Línea 3 (ESTRATEGIA.md): '<main> de /simulador >=1.200 palabras únicas (hoy 71); >=40 combinaciones de escenario presentes en el HTML estático; con la isla React eliminada del HTML, la página sigue conteniendo una tabla de estimación legible'.",
-      "resultado": "Añadida tabla estática de 50 filas de escenarios (edad x años cotizados x base reguladora) en src/pages/simulador.astro usando calcularEscenario()/edadLegalJubilacion() de pension-calculo.ts, como mejora progresiva bajo la isla React. DISCLAIMER ahora visible fuera de la isla. webApplicationSchema requiresJs pasado a false. auditar-money-set.mjs: 893→2053 palabras únicas en <main> (umbral 1200 superado). npm run build OK, 90 páginas. Sin datos normativos nuevos ni incorrectos.",
-      "fecha_ejecucion": "2026-08-31"
+      "resultado": "Tabla estática de escenarios generada en build en src/pages/simulador.astro (72 filas >=40 exigido: 6 edades x 5 tramos años cotizados x 3 tramos base reguladora, filtradas por plausibilidad), consumiendo calcularEscenario()/edadLegalJubilacion() de pension-calculo.ts sin reescribir cifras a mano. DISCLAIMER de consts.ts renderizado como bloque estático visible sin JS antes de la isla React. requiresJs del webApplicationSchema pasado a false. Verificado por el orquestador: git status solo toca src/pages/simulador.astro; npm run build OK (91 páginas); auditar-money-set.mjs confirma 2137 palabras únicas en <main> (>=1200 exigido, subagente reportó base previa de 893 por seo-022, no 71); 146 <tr> en la tabla. Sin dudas normativas nuevas.",
+      "fecha_ejecucion": "2026-09-01"
     },
     {
       "id": "seo-020",

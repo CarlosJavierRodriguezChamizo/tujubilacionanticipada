@@ -44,6 +44,7 @@ export const FOOTER_LEGAL_LINKS = [
   { href: '/aviso-legal', label: 'Aviso legal' },
   { href: '/privacidad', label: 'Privacidad' },
   { href: '/cookies', label: 'Cookies' },
+  { href: '/transparencia-ia', label: 'Transparencia IA' },
   { href: '/sobre-este-sitio', label: 'Sobre este sitio' },
 ] as const;
 
@@ -147,4 +148,114 @@ export const LEGAL = {
   email: SITE.email,
   /** Fecha de última actualización de los textos legales. */
   actualizado: 'agosto de 2026',
+} as const;
+
+/**
+ * Transparencia sobre el uso de inteligencia artificial.
+ *
+ * Fuente única de verdad de todo lo que el sitio declara públicamente sobre
+ * IA: la insignia de cada artículo, el bloque de divulgación, la página
+ * /transparencia-ia y las etiquetas legibles por máquina. Si cambia el
+ * proceso de producción, se cambia AQUÍ y el sitio entero queda coherente.
+ *
+ * Marco normativo: Reglamento (UE) 2024/1689 (Reglamento de Inteligencia
+ * Artificial, «RIA»), en particular su artículo 50 (obligaciones de
+ * transparencia) y su artículo 4 (alfabetización en materia de IA). El
+ * sitio actúa como **responsable del despliegue** («deployer»): usa
+ * sistemas de IA de terceros, no los desarrolla ni los comercializa.
+ *
+ * El art. 50.4 exime de la obligación de divulgar cuando el contenido
+ * generado por IA se somete a revisión humana y alguien asume la
+ * responsabilidad editorial. Aquí se divulga **igualmente**: la exención es
+ * discutible caso por caso y la transparencia nunca es sancionable.
+ *
+ * ⚠️ Estas declaraciones deben describir el proceso REAL. Si algún día el
+ * contenido dejara de revisarse antes de publicarse, hay que corregir el
+ * texto de `revisionHumana` y `etiquetaArticulo`, no mantenerlo por inercia:
+ * una divulgación inexacta es peor que no tenerla (art. 5 y 7 de la
+ * Directiva 2005/29/CE, RDL 1/2007 y art. 50.5 RIA).
+ */
+export const IA = {
+  /** Página pública con la declaración completa. */
+  href: '/transparencia-ia',
+  /** Versión de la declaración; súbela cuando cambie el proceso descrito. */
+  version: '1.0',
+  /** Fecha de la última revisión de la declaración. */
+  actualizado: 'septiembre de 2026',
+
+  /** Etiqueta corta que acompaña a cada artículo (visible, primera exposición). */
+  etiquetaArticulo: 'Texto elaborado con inteligencia artificial y revisado por una persona',
+  /** Etiqueta corta de las ilustraciones generadas con IA. */
+  etiquetaImagen: 'Ilustración generada con inteligencia artificial',
+  /** Etiqueta de las herramientas de cálculo, que NO usan IA. */
+  etiquetaHerramienta: 'Cálculo determinista: esta herramienta no usa inteligencia artificial',
+
+  /**
+   * Inventario de sistemas de IA en uso (art. 50 RIA y art. 26 por analogía).
+   * `donde` debe permitir a cualquiera localizar el resultado en el sitio.
+   */
+  sistemas: [
+    {
+      id: 'redaccion',
+      nombre: 'Modelo de lenguaje generativo (Claude, de Anthropic)',
+      finalidad:
+        'Redactar el borrador de los artículos del blog a partir de un calendario editorial, unas instrucciones fijas y las fuentes oficiales indicadas en cada encargo.',
+      donde: 'Artículos publicados en /blog.',
+      supervision:
+        'Ningún borrador se publica tal cual: pasa un verificador automático de datos normativos y la revisión editorial de una persona identificada en el artículo.',
+    },
+    {
+      id: 'ilustracion',
+      nombre: 'Modelo de generación de imágenes (Magnific / Freepik)',
+      finalidad:
+        'Generar la ilustración de portada de cada artículo, en un estilo editorial fijo, sin texto y sin representar a personas reales, hechos reales ni lugares identificables.',
+      donde: 'Imágenes de portada de los artículos de /blog.',
+      supervision:
+        'Se revisan antes de publicarse. No son fotografías, no documentan hechos y nunca se presentan como tales.',
+    },
+    {
+      id: 'mantenimiento',
+      nombre: 'Agentes de desarrollo asistidos por IA (Claude Code)',
+      finalidad:
+        'Mantener el código del sitio y auditar el contenido publicado (enlaces, coherencia normativa, SEO técnico).',
+      donde: 'Código y procesos internos; no genera contenido que leas como información.',
+      supervision:
+        'Cada cambio queda registrado en el repositorio del proyecto y se despliega bajo la responsabilidad del titular del sitio.',
+    },
+  ],
+
+  /**
+   * Lo que NO usa IA. Es tan relevante como lo que sí: evita que el usuario
+   * atribuya a un modelo generativo un resultado que produce una fórmula
+   * legal cerrada, auditable y reproducible.
+   */
+  sinIA: [
+    {
+      nombre: 'Simulador de jubilación (/simulador)',
+      detalle:
+        'Aplica las fórmulas y los coeficientes de la Ley General de la Seguridad Social. Con los mismos datos devuelve siempre el mismo resultado: no infiere, no aprende y no cambia con el uso. Los datos se calculan en tu navegador y no se envían a ningún servidor.',
+    },
+    {
+      nombre: 'Informe de Fecha Óptima (/informe)',
+      detalle:
+        'Se genera con el mismo motor de cálculo determinista, verificado contra el BOE. Ningún modelo generativo interviene en tus cifras.',
+    },
+    {
+      nombre: 'Comprobación previa de requisitos (/informe)',
+      detalle:
+        'Es una comprobación automática de requisitos legales, no una valoración de tu persona: no hay perfilado, no puntúa, y su único efecto es evitar que compres un informe que no te serviría.',
+    },
+  ],
+
+  /** Cómo se supervisa el contenido generado (art. 50.4 RIA). */
+  revisionHumana:
+    'Antes de publicarse, cada artículo se contrasta con la fuente oficial citada y lo revisa una persona identificada con nombre y cargo al pie del propio artículo. La responsabilidad editorial de lo publicado es del titular del sitio.',
+
+  /** Limitaciones conocidas que el usuario debe poder leer antes de fiarse. */
+  limitaciones: [
+    'Un modelo de lenguaje puede redactar con seguridad un dato equivocado. Por eso ninguna cifra normativa se publica sin enlace a su fuente oficial.',
+    'Los modelos se entrenan con textos de internet, donde abundan datos derogados. Este sitio publicó durante meses el coeficiente reductor fijo del 1,875 % por trimestre, derogado en 2022, precisamente por ese motivo: se corrigió y hoy una auditoría automática vigila esas cifras.',
+    'La normativa cambia. Un artículo correcto en su fecha de publicación puede quedar desactualizado: comprueba siempre la fecha de actualización que figura en él.',
+    'Nada de lo publicado —lo escriba una persona o una máquina— es asesoramiento jurídico, fiscal o financiero, ni sustituye a la información oficial de la Seguridad Social sobre tu caso.',
+  ],
 } as const;

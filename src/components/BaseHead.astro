@@ -1,5 +1,5 @@
 ---
-import { SITE, GA_MEASUREMENT_ID, COOKIE_CONSENT } from '../consts';
+import { SITE, GA_MEASUREMENT_ID, COOKIE_CONSENT, IA } from '../consts';
 
 interface Props {
   title: string;
@@ -18,6 +18,12 @@ interface Props {
   ogType?: 'website' | 'article';
   /** Evita indexación */
   noindex?: boolean;
+  /**
+   * Divulgación de IA legible por máquina (art. 50 RIA). `elementos` lista qué
+   * partes de la página se generaron con un sistema de IA ('text', 'image') y
+   * `revisionHumana` indica si pasaron por revisión editorial humana.
+   */
+  aiDisclosure?: { elementos: string[]; revisionHumana: boolean };
 }
 
 const {
@@ -28,7 +34,11 @@ const {
   image = SITE.defaultOgImage,
   ogType = 'website',
   noindex = false,
+  aiDisclosure,
 } = Astro.props;
+
+/** URL absoluta de la declaración de transparencia sobre IA. */
+const aiDisclosureURL = new URL(IA.href, Astro.site ?? SITE.url).toString();
 
 // Canonical robusto: usa Astro.url contra el site configurado.
 //
@@ -136,6 +146,25 @@ const fullTitle =
 <meta name="author" content={SITE.author} />
 <link rel="canonical" href={canonicalHref} />
 {noindex && <meta name="robots" content="noindex, nofollow" />}
+
+<!--
+  Transparencia sobre IA legible por máquina (art. 50 del Reglamento (UE)
+  2024/1689). Complementa —no sustituye— la etiqueta visible que ve la
+  persona: agregadores, buscadores y herramientas de verificación pueden
+  leer aquí el origen del contenido sin interpretar el diseño de la página.
+-->
+{
+  aiDisclosure && aiDisclosure.elementos.length > 0 && (
+    <>
+      <meta name="ai-generated-content" content={aiDisclosure.elementos.join(',')} />
+      <meta
+        name="ai-content-human-review"
+        content={aiDisclosure.revisionHumana ? 'true' : 'false'}
+      />
+      <meta name="ai-disclosure" content={aiDisclosureURL} />
+    </>
+  )
+}
 
 <!-- Open Graph -->
 <meta property="og:type" content={ogType} />

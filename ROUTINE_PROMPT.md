@@ -57,6 +57,12 @@ El frontmatter debe incluir `heroImage: "/blog/[slug].jpg"` y un `heroImageAlt` 
 y el cuerpo debe contener el `import BarChart` y al menos un `<BarChart>` con datos reales
 (según `PROMPT_REDACTOR.md`).
 
+**Transparencia sobre IA:** no añadas campos de IA al frontmatter. El sitio ya etiqueta
+por defecto todos los artículos como redactados con IA y con portada generada con IA
+(art. 50 del Reglamento (UE) 2024/1689), y publica solo la etiqueta visible, el pie de
+la ilustración, el bloque de divulgación final y los metadatos legibles por máquina.
+Ver `docs/CUMPLIMIENTO-IA.md` y la sección de transparencia de `PROMPT_REDACTOR.md`.
+
 ## Paso 3b — Imagen destacada (usa la pre-cargada si existe)
 
 **PRIMERO comprueba si la imagen ya existe** en el repo: `public/blog/[slug].jpg`.

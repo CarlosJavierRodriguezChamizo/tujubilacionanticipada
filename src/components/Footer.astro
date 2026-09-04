@@ -1,5 +1,5 @@
 ---
-import { SITE, NAV_LINKS, FOOTER_LEGAL_LINKS } from '../consts';
+import { SITE, NAV_LINKS, FOOTER_LEGAL_LINKS, IA } from '../consts';
 
 const year = new Date().getFullYear();
 ---
@@ -34,6 +34,23 @@ const year = new Date().getFullYear();
           Portal informativo independiente. El contenido es orientativo y no
           sustituye el asesoramiento profesional ni la información oficial de la
           Seguridad Social.
+        </p>
+        <!--
+          Divulgación de IA presente en TODAS las páginas del sitio, no solo en
+          los artículos (art. 50 del Reglamento (UE) 2024/1689). El simulador y
+          el informe se nombran expresamente para que nadie deduzca que sus
+          cifras las produce un modelo generativo.
+        -->
+        <p class="mt-3 max-w-sm text-xs leading-relaxed text-brand-200">
+          Los artículos se elaboran con ayuda de inteligencia artificial y se
+          revisan antes de publicarse; el simulador y el informe son cálculos
+          deterministas sin IA.{' '}
+          <a
+            href={IA.href}
+            class="font-medium text-paper-200 underline underline-offset-2 transition-colors hover:text-white"
+          >
+            Transparencia IA
+          </a>.
         </p>
       </div>
 

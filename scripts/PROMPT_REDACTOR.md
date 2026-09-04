@@ -171,6 +171,28 @@ draft: false
   Nunca dejes el texto `NOMBRE_REVISORA` ni un placeholder: el build se bloquea.
 - El nombre del archivo es `src/content/blog/[slug].mdx`, usando el `slug` del calendario.
 
+### Transparencia sobre IA (art. 50 del Reglamento (UE) 2024/1689)
+
+**No añadas ningún campo de IA al frontmatter.** El esquema de contenido
+(`src/content/config.ts`) ya asume por defecto que el borrador lo ha redactado un
+sistema de IA (`aiTextGenerated: true`) y que la portada se ha generado con IA
+(`aiImageGenerated: true`), que es exactamente lo que hace este pipeline. Con eso, el
+layout publica solo:
+
+- la etiqueta visible junto a la firma del artículo,
+- el pie bajo la ilustración,
+- el bloque «Cómo se ha elaborado este contenido» al final,
+- y los metadatos legibles por máquina del `<head>` y del JSON-LD.
+
+Solo se tocan esos campos en un caso: que el artículo **no** lo haya redactado una IA
+o que la portada **no** se haya generado con IA. Entonces se pone el campo a `false`
+y se explica el motivo en `aiNota`; sin `aiNota`, el validador bloquea el deploy.
+Poner `false` en un artículo redactado con IA sería una divulgación falsa, no un
+detalle de estilo.
+
+**Tampoco escribas en el cuerpo del artículo frases del tipo «escrito por nuestro
+equipo de redactores»**: contradicen la etiqueta que el propio sitio publica.
+
 ---
 
 ### `seoTitle`: obligatorio y máximo 60 caracteres

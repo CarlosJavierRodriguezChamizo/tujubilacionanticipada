@@ -1,6 +1,7 @@
 ---
 import Base from '../layouts/Base.astro';
 import Simulador from '../components/Simulador.jsx';
+import AvisoIA from '../components/AvisoIA.astro';
 import { DISCLAIMER } from '../consts';
 import {
   faqSchema,
@@ -14,16 +15,18 @@ import {
   ETIQUETAS_TRAMOS,
   EDAD_LEGAL_REDUCIDA,
   ANTICIPO_VOLUNTARIA_MESES,
-  ANTICIPO_VOLUNTARIA_ANIOS,
   ANTICIPO_FORZOSA_MESES,
+  ANTICIPO_VOLUNTARIA_ANIOS,
   ANTICIPO_FORZOSA_ANIOS,
   REQ_COTIZACION_VOLUNTARIA,
   REQ_COTIZACION_FORZOSA,
   edadLegalJubilacion,
   calcularEscenario,
+  type EscenarioResultado,
 } from '../lib/pension-calculo';
 
 const BOE_LGSS = 'https://www.boe.es/buscar/act.php?id=BOE-A-2015-11724';
+const BOE_RD241_2026 = 'https://www.boe.es/diario_boe/txt.php?id=BOE-A-2026-6977';
 
 /** Formatea el % de reducción con 2 decimales fijos, sin alterar el valor. */
 const formatoPorcentaje = (valor: number) =>
@@ -37,51 +40,42 @@ const filasInvoluntaria = Object.entries(COEF_INVOLUNTARIA)
   .map(([meses, tramos]) => ({ meses: Number(meses), tramos }))
   .sort((a, b) => a.meses - b.meses);
 
-/* ═══════ Tabla estática de escenarios precalculados (seo-019) ═══════
- * Fallback sin JavaScript de la isla <Simulador>: aplica las mismas
- * funciones de src/lib/pension-calculo.ts (motor único de cálculo, ya
- * usado por la isla React) a una rejilla fija de edad actual × años
- * cotizados × base reguladora, para que exista una estimación legible
- * con JS desactivado. La isla sigue siendo la mejora progresiva para
- * datos exactos del usuario.
+/* ─────────── Tabla estática de escenarios precalculados (seo-019) ───────────
+ * Genera en build (sin JavaScript) una tabla de ejemplos combinando edad
+ * actual x años cotizados x base reguladora, usando el mismo motor de
+ * cálculo (src/lib/pension-calculo.ts, normativa 2026) que la calculadora
+ * interactiva. Es contenido de ejemplo, no un dato del usuario: sirve para
+ * que la página tenga una estimación legible sin JS, y la isla React de
+ * abajo añade el cálculo personalizado como mejora progresiva.
+ *
+ * Combinaciones filtradas a edad-cotizados plausibles (edad mínima legal de
+ * incorporación al mercado laboral: 16 años) para no mostrar ejemplos
+ * imposibles.
  */
-const eurEstatico = new Intl.NumberFormat('es-ES', {
-  style: 'currency',
-  currency: 'EUR',
-  maximumFractionDigits: 0,
-});
+const EDADES_EJEMPLO = [45, 50, 55, 58, 60, 63] as const;
+const ANIOS_COTIZADOS_EJEMPLO = [20, 25, 30, 35, 40] as const;
+const BASES_EJEMPLO = [1400, 2200, 3200] as const;
+const EDAD_MINIMA_INICIO_COTIZACION = 16;
 
-function formatEdadEstatico(edadDecimal: number) {
-  const anios = Math.floor(edadDecimal);
-  const meses = Math.round((edadDecimal - anios) * 12);
-  if (meses === 0) return `${anios} años`;
-  return `${anios} años y ${meses} ${meses === 1 ? 'mes' : 'meses'}`;
-}
-
-const EDADES_ESCENARIO = [50, 55, 58, 60, 62];
-const COTIZADOS_ESCENARIO = [30, 33, 35, 38, 41];
-const BASES_ESCENARIO = [1500, 2500];
-
-interface FilaEscenario {
+interface FilaEjemplo {
   edadActual: number;
-  aniosCotizadosActuales: number;
+  aniosCotizados: number;
   baseReguladora: number;
   edadLegal: number;
-  ordinaria: ReturnType<typeof calcularEscenario>;
-  voluntaria: ReturnType<typeof calcularEscenario>;
-  forzosa: ReturnType<typeof calcularEscenario>;
+  ordinaria: EscenarioResultado;
+  voluntaria: EscenarioResultado;
+  forzosa: EscenarioResultado;
 }
 
-const escenariosPrecalculados: FilaEscenario[] = [];
-for (const edadActual of EDADES_ESCENARIO) {
-  for (const aniosCotizadosActuales of COTIZADOS_ESCENARIO) {
-    for (const baseReguladora of BASES_ESCENARIO) {
-      // Misma proyección que usa la isla React: se sigue cotizando hasta
-      // la edad de jubilación de cada modalidad (arts. 207.2 y 208.2 LGSS).
+const escenariosEjemplo: FilaEjemplo[] = [];
+for (const edadActual of EDADES_EJEMPLO) {
+  for (const aniosCotizados of ANIOS_COTIZADOS_EJEMPLO) {
+    if (aniosCotizados > edadActual - EDAD_MINIMA_INICIO_COTIZACION) continue;
+    for (const baseReguladora of BASES_EJEMPLO) {
       const cotizadosA65 =
-        aniosCotizadosActuales + Math.max(0, EDAD_LEGAL_REDUCIDA - edadActual);
+        aniosCotizados + Math.max(0, EDAD_LEGAL_REDUCIDA - edadActual);
       const edadLegal = edadLegalJubilacion(cotizadosA65);
-      const base = { edadActual, aniosCotizadosActuales, baseReguladora };
+      const base = { edadActual, aniosCotizadosActuales: aniosCotizados, baseReguladora };
 
       const ordinaria = calcularEscenario({
         ...base,
@@ -105,9 +99,9 @@ for (const edadActual of EDADES_ESCENARIO) {
         requisitoCotizacion: REQ_COTIZACION_FORZOSA,
       });
 
-      escenariosPrecalculados.push({
+      escenariosEjemplo.push({
         edadActual,
-        aniosCotizadosActuales,
+        aniosCotizados,
         baseReguladora,
         edadLegal,
         ordinaria,
@@ -117,6 +111,20 @@ for (const edadActual of EDADES_ESCENARIO) {
     }
   }
 }
+
+const euroTabla = (valor: number) =>
+  valor.toLocaleString('es-ES', {
+    style: 'currency',
+    currency: 'EUR',
+    maximumFractionDigits: 0,
+  });
+
+/** Celda de pensión: honesta sobre los casos que no alcanzan requisitos. */
+const celdaPension = (esc: EscenarioResultado) => {
+  if (!esc.cumplePensionMinima) return 'No llega a los 15 años mínimos';
+  if (!esc.cumpleRequisito) return `${euroTabla(esc.pensionFinal)} (posible falta de requisito)`;
+  return euroTabla(esc.pensionFinal);
+};
 
 const path = '/simulador';
 const descripcion =
@@ -142,11 +150,9 @@ const schema = [
     name: 'Calcula tu jubilación anticipada: simulador gratuito',
     description: descripcion,
     path,
-    // requiresJs pasa a false (seo-019): /simulador ya incluye una tabla
-    // estática de escenarios precalculados (edad × años cotizados × base
-    // reguladora) que no depende de JavaScript. La isla <Simulador> sigue
-    // siendo una mejora progresiva sobre esa misma tabla para datos
-    // exactos del usuario.
+    // seo-019: la página ya renderiza en build una tabla estática de
+    // escenarios precalculados (sin JavaScript) equivalente en contenido a
+    // la isla React, que ahora es una mejora progresiva sobre esa tabla.
     requiresJs: false,
   }),
   faqSchema(faqs),
@@ -182,8 +188,94 @@ const schema = [
       </p>
     </div>
 
-    <div class="mt-10">
-      <Simulador client:load disclaimer={DISCLAIMER} />
+    <div
+      role="note"
+      class="mt-8 max-w-3xl rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm leading-relaxed text-amber-900"
+    >
+      <strong class="font-semibold">Aviso:</strong> {DISCLAIMER}
+    </div>
+
+    <!--
+      Transparencia sobre IA (Reglamento (UE) 2024/1689). Aquí la declaración
+      relevante es la inversa de la del blog: esta herramienta NO usa IA, y
+      decirlo evita que se atribuya a un modelo generativo un resultado que
+      produce una fórmula legal cerrada y reproducible.
+    -->
+    <AvisoIA
+      variante="herramienta"
+      class="mt-4 max-w-3xl"
+      nota="Los datos que introduces se calculan en tu navegador: no se envían a ningún servidor ni se guardan."
+    />
+
+    <div class="mt-12">
+      <h2 class="text-2xl font-semibold">
+        Ejemplos de pensión estimada por edad, años cotizados y base reguladora
+      </h2>
+      <p class="mt-2 max-w-3xl text-ink-soft">
+        Estos {escenariosEjemplo.length} ejemplos, calculados con la misma
+        fórmula que la calculadora interactiva de abajo, muestran la pensión
+        mensual estimada en la jubilación ordinaria y en la anticipada
+        (voluntaria y forzosa) para distintas combinaciones de edad actual,
+        años cotizados y base reguladora. Son casos ilustrativos, no tu
+        cálculo personal: usa la calculadora para introducir tus propios
+        datos. Cifras según el
+        {' '}<a href={BOE_LGSS} class="underline" target="_blank" rel="noopener">
+          artículo 210.1 de la Ley General de la Seguridad Social
+        </a> (porcentaje sobre base reguladora) y el
+        {' '}<a href={BOE_RD241_2026} class="underline" target="_blank" rel="noopener">
+          Real Decreto 241/2026
+        </a> (límites de pensión máxima y mínima para 2026).
+      </p>
+      <div class="mt-4 overflow-x-auto">
+        <table class="w-full text-sm">
+          <caption class="sr-only">
+            Ejemplos de pensión mensual estimada por edad actual, años
+            cotizados y base reguladora, en jubilación ordinaria, anticipada
+            voluntaria y anticipada forzosa
+          </caption>
+          <thead>
+            <tr class="border-b border-paper-200 text-left">
+              <th scope="col" class="py-2 pr-4 font-semibold">Edad actual</th>
+              <th scope="col" class="py-2 pr-4 font-semibold">Años cotizados</th>
+              <th scope="col" class="py-2 pr-4 font-semibold">Base reguladora</th>
+              <th scope="col" class="py-2 pr-4 font-semibold">Edad legal</th>
+              <th scope="col" class="py-2 pr-4 font-semibold">Pensión ordinaria</th>
+              <th scope="col" class="py-2 pr-4 font-semibold">Anticipada voluntaria</th>
+              <th scope="col" class="py-2 pr-4 font-semibold">Anticipada forzosa</th>
+            </tr>
+          </thead>
+          <tbody>
+            {
+              escenariosEjemplo.map((fila) => (
+                <tr class="border-b border-paper-200/60">
+                  <th scope="row" class="py-1.5 pr-4 text-left font-normal">
+                    {fila.edadActual} años
+                  </th>
+                  <td class="py-1.5 pr-4 tabular-nums">{fila.aniosCotizados} años</td>
+                  <td class="py-1.5 pr-4 tabular-nums">{euroTabla(fila.baseReguladora)}/mes</td>
+                  <td class="py-1.5 pr-4 tabular-nums">
+                    {fila.edadLegal.toLocaleString('es-ES', { maximumFractionDigits: 2 })} años
+                  </td>
+                  <td class="py-1.5 pr-4 tabular-nums">{celdaPension(fila.ordinaria)}</td>
+                  <td class="py-1.5 pr-4 tabular-nums">{celdaPension(fila.voluntaria)}</td>
+                  <td class="py-1.5 pr-4 tabular-nums">{celdaPension(fila.forzosa)}</td>
+                </tr>
+              ))
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="mt-16">
+      <h2 class="text-2xl font-semibold">Calcula tu caso personal</h2>
+      <p class="mt-2 max-w-3xl text-ink-soft">
+        Introduce tus datos para obtener una estimación adaptada a tu
+        situación, con las mismas fórmulas que los ejemplos anteriores.
+      </p>
+      <div class="mt-6">
+        <Simulador client:load disclaimer={DISCLAIMER} />
+      </div>
     </div>
 
     <div class="mt-16">
