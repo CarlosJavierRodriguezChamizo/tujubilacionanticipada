@@ -1,6 +1,6 @@
 ---
 import Base from '../layouts/Base.astro';
-import { SITE } from '../consts';
+import { SITE, IA } from '../consts';
 import { webPageSchema, breadcrumbSchema } from '../lib/schema';
 import calendario from '../../scripts/calendario.json';
 
@@ -57,13 +57,33 @@ const schema = [
 
       <h2>Quién está detrás</h2>
       <p>
-        El contenido está elaborado por la redacción de {SITE.name}, que revisa
-        y actualiza los artículos a partir de fuentes oficiales como la
-        Seguridad Social y el Boletín Oficial del Estado. Los artículos
-        publicados son revisados editorialmente por{' '}
+        El contenido lo produce la redacción de {SITE.name} a partir de fuentes
+        oficiales como la Seguridad Social y el Boletín Oficial del Estado. Los
+        artículos publicados son revisados editorialmente por{' '}
         <a href="/equipo/javier-rodriguez">{reviewerName}</a>, {reviewerTitle},
         que contrasta cada dato normativo con la fuente oficial
         correspondiente antes de la publicación.
+      </p>
+
+      <h2>Cómo se elabora el contenido (y qué papel tiene la IA)</h2>
+      <p>
+        Preferimos decirlo aquí antes de que lo deduzcas:{' '}
+        <strong>el borrador de los artículos lo redacta un sistema de
+        inteligencia artificial</strong>, a partir de un encargo editorial
+        concreto y de la fuente oficial que debe citar. Las ilustraciones de
+        portada también se generan con IA. Cada artículo lo indica junto a su
+        firma, y no publicamos nada sin que antes pase la verificación
+        automática de datos normativos y la revisión de la persona que lo
+        firma.
+      </p>
+      <p>
+        Lo que <strong>no</strong> hace ninguna IA es calcular tus cifras. El
+        simulador y el informe aplican las fórmulas y los coeficientes de la
+        Ley General de la Seguridad Social: con los mismos datos, el mismo
+        resultado siempre, y con la norma enlazada para que puedas
+        comprobarlo. Puedes leer el detalle completo —qué sistemas usamos, con
+        qué supervisión y qué límites tienen— en{' '}
+        <a href={IA.href}>Transparencia IA</a>.
       </p>
 
       <h2>Aviso importante</h2>

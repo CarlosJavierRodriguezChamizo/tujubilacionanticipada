@@ -7,7 +7,7 @@
  * grafo de conocimiento coherente para los motores de búsqueda.
  */
 import type { CollectionEntry } from 'astro:content';
-import { SITE, SOCIAL_PROFILES, REVIEWERS } from '../consts';
+import { SITE, SOCIAL_PROFILES, REVIEWERS, IA } from '../consts';
 import { jpegSize, resolveHeroImage } from './posts';
 import { getCanonicalSlug } from './canonical-map';
 
@@ -21,6 +21,28 @@ export function absUrl(path: string): string {
 // `@id` estables de las entidades sitewide.
 export const ORG_ID = `${SITE.url}/#organization`;
 export const WEBSITE_ID = `${SITE.url}/#website`;
+
+/**
+ * Marcado del origen digital del contenido (transparencia de IA, art. 50 RIA).
+ *
+ * Schema.org no define ninguna propiedad para declarar que un contenido lo
+ * generó un modelo, así que se usa el vocabulario estándar del sector: la
+ * propiedad `digitalsourcetype` de PLUS y los valores del NewsCode del IPTC,
+ * que es lo que leen C2PA, los agregadores y las herramientas de verificación.
+ *
+ * El término se declara en un `@context` en forma de array (JSON-LD 1.1) y
+ * SOLO en el nodo WebPage: el nodo Article, del que dependen los resultados
+ * enriquecidos de Google, se deja intacto con su `@context` de siempre.
+ */
+const PLUS_DIGITAL_SOURCE_TYPE = 'http://ns.useplus.org/ldf/vocab/digitalsourcetype';
+const IPTC_TRAINED_ALGORITHMIC_MEDIA =
+  'http://cv.iptc.org/newscodes/digitalsourcetype/trainedAlgorithmicMedia';
+
+/** `@context` que añade el término `digitalSourceType` al de Schema.org. */
+const CONTEXT_CON_ORIGEN_DIGITAL = [
+  'https://schema.org',
+  { digitalSourceType: { '@id': PLUS_DIGITAL_SOURCE_TYPE, '@type': '@id' } },
+];
 
 /**
  * Páginas de entidad de los revisores del contenido (EEAT): asocian el
@@ -75,6 +97,9 @@ export function organizationSchema(): JsonLd {
     },
     image: absUrl(SITE.defaultOgImage),
     email: SITE.email,
+    // Principios editoriales publicados: incluyen la declaración de uso de IA
+    // (art. 50 RIA). Es la propiedad de Schema.org prevista justo para esto.
+    publishingPrinciples: absUrl(IA.href),
     ...(SOCIAL_PROFILES.length > 0 ? { sameAs: SOCIAL_PROFILES } : {}),
     contactPoint: {
       '@type': 'ContactPoint',
@@ -174,6 +199,9 @@ export function blogPostingSchema(post: CollectionEntry<'blog'>): JsonLd {
     // que no referenciaba el @id de #organization ("Tu Jubilación Anticipada"):
     // dos entidades distintas para el mismo editor en la misma página.
     author: { '@id': ORG_ID },
+    // Apunta a /transparencia-ia, donde se declara cómo se elabora el
+    // contenido y qué parte interviene un sistema de IA.
+    publishingPrinciples: absUrl(IA.href),
     // `reviewedBy` NO se emite aquí: schema.org lo define sobre WebPage, no
     // sobre Article, y era el origen del error de validación en 117 URLs. Va en
     // el nodo WebPage que devuelve articleWebPageSchema().
@@ -208,8 +236,12 @@ export function articleWebPageSchema(post: CollectionEntry<'blog'>): JsonLd[] {
   const destinoCanonico = getCanonicalSlug(post.slug);
   const url = absUrl(`/blog/${destinoCanonico ?? post.slug}`);
 
+  // Solo se cambia el `@context` cuando hay algo que declarar: una página sin
+  // contenido generado por IA mantiene el contexto simple de siempre.
+  const origenIA = data.aiTextGenerated || data.aiImageGenerated;
+
   const webPage: JsonLd = {
-    '@context': 'https://schema.org',
+    '@context': origenIA ? CONTEXT_CON_ORIGEN_DIGITAL : 'https://schema.org',
     '@type': 'WebPage',
     '@id': `${url}#webpage`,
     url,
@@ -225,6 +257,8 @@ export function articleWebPageSchema(post: CollectionEntry<'blog'>): JsonLd[] {
     ...(data.reviewedBy
       ? { reviewedBy: reviewerReferenceSchema(data.reviewedBy, data.reviewerTitle) }
       : {}),
+    ...(origenIA ? { digitalSourceType: IPTC_TRAINED_ALGORITHMIC_MEDIA } : {}),
+    publishingPrinciples: absUrl(IA.href),
   };
 
   // El Person completo al que apunta el @id de reviewedBy: sin él, la

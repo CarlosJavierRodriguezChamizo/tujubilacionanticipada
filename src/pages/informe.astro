@@ -1,6 +1,7 @@
 ---
 import Base from '../layouts/Base.astro';
 import { breadcrumbSchema, webPageSchema } from '../lib/schema';
+import AvisoIA from '../components/AvisoIA.astro';
 import { DISCLAIMER } from '../consts';
 
 const path = '/informe';
@@ -120,6 +121,11 @@ const schema = [
       <p class="text-sm leading-relaxed text-ink-muted">
         <strong>Aviso:</strong> {DISCLAIMER}
       </p>
+      <AvisoIA
+        variante="herramienta"
+        class="mt-4"
+        nota="Tu informe lo genera ese mismo motor de cálculo, no un modelo de lenguaje: las cifras no se redactan, se calculan."
+      />
     </div>
   </section>
 
@@ -138,6 +144,30 @@ const schema = [
           <li class="flex items-center gap-2"><span class="text-clay-600" aria-hidden="true">✓</span> Pago con tarjeta o Bizum, fuera de nuestro dominio</li>
           <li class="flex items-center gap-2"><span class="text-clay-600" aria-hidden="true">✓</span> Tus datos, tratados conforme al RGPD, solo para emitir tu informe</li>
         </ul>
+
+        <!--
+          La comprobación de requisitos es automática y puede impedir la compra,
+          así que se explica antes de que nadie rellene nada: qué la decide, con
+          qué criterio y cómo llegar a una persona (art. 22 RGPD y art. 50 RIA).
+        -->
+        <div
+          role="note"
+          class="mt-6 rounded-xl border border-paper-300 border-l-4 border-l-brand-500 bg-paper-50 p-4 text-sm leading-relaxed text-ink-soft"
+        >
+          <p>
+            <span class="font-semibold text-ink">Cómo se decide si puedes comprarlo.</span>{' '}
+            Al enviar el formulario, un programa comprueba de forma automática si
+            tu caso cumple los requisitos legales de acceso a la jubilación
+            anticipada (años cotizados exigidos y cuantía mínima de la pensión).
+            No interviene ninguna inteligencia artificial, no se te puntúa ni se
+            elabora ningún perfil: si no cumples, no se te cobra y se te explica
+            gratis qué te falta. Si crees que el resultado no refleja tu
+            situación,{' '}
+            <a href="/asesoramiento" class="font-medium text-brand-700 underline underline-offset-2 hover:text-clay-700">
+              escríbenos y lo revisa una persona
+            </a>.
+          </p>
+        </div>
       </div>
 
       <div>

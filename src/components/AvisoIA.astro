@@ -1,0 +1,212 @@
+---
+/**
+ * Divulgación del uso de inteligencia artificial (art. 50 del Reglamento
+ * (UE) 2024/1689, «RIA»).
+ *
+ * Un único componente para las tres situaciones del sitio, de modo que el
+ * texto no pueda divergir entre páginas:
+ *
+ *   - `insignia`    → etiqueta breve junto a la firma del artículo. Cumple el
+ *                     art. 50.5: la información se da de forma clara y
+ *                     distinguible en la primera exposición al contenido, sin
+ *                     obligar a desplegar nada ni a buscarla en el pie.
+ *   - `bloque`      → divulgación completa al final del artículo: qué generó
+ *                     una máquina, quién lo revisó, qué límites tiene y dónde
+ *                     avisar de un error.
+ *   - `herramienta` → aviso inverso, para el simulador y el informe: aquí NO
+ *                     interviene ningún sistema de IA, el cálculo es
+ *                     determinista y no hay perfilado ni decisión automatizada
+ *                     con efectos jurídicos (art. 22 RGPD).
+ *
+ * Todos los textos salen de `IA` en src/consts.ts. Este componente decide
+ * cómo se presentan, nunca qué se declara.
+ */
+import { IA, SITE } from '../consts';
+
+interface Props {
+  variante?: 'insignia' | 'bloque' | 'herramienta';
+  /** Persona que revisó el contenido, si la hay (art. 50.4: control editorial). */
+  revisadoPor?: string;
+  /**
+   * ¿Hubo revisión humana? Por defecto se deduce de `revisadoPor`. Se pasa
+   * explícito donde la etiqueta cubre varios contenidos a la vez (el listado
+   * del blog) y no hay una sola persona a la que nombrar.
+   */
+  revisado?: boolean;
+  /** Cargo del revisor, tal como se publica en el artículo. */
+  revisorTitulo?: string;
+  /** Página de entidad del revisor, si existe. */
+  revisorHref?: string;
+  /** ¿El borrador del texto lo generó un sistema de IA? */
+  iaTexto?: boolean;
+  /** ¿La ilustración de portada la generó un sistema de IA? */
+  iaImagen?: boolean;
+  /** Matiz concreto de este contenido, si lo tiene. */
+  nota?: string;
+  /** Clases extra del contenedor. */
+  class?: string;
+}
+
+const {
+  variante = 'insignia',
+  revisadoPor,
+  revisado,
+  revisorTitulo,
+  revisorHref,
+  iaTexto = true,
+  iaImagen = false,
+  nota,
+  class: clase = '',
+} = Astro.props;
+
+// Sin IA en el texto ni en la imagen no hay nada que divulgar: el componente
+// no imprime una etiqueta vacía ni, peor, una etiqueta falsa.
+const hayIA = iaTexto || iaImagen;
+
+const hayRevision = revisado ?? Boolean(revisadoPor);
+
+const etiqueta = iaTexto
+  ? hayRevision
+    ? IA.etiquetaArticulo
+    : 'Texto elaborado con inteligencia artificial'
+  : IA.etiquetaImagen;
+---
+
+{
+  variante === 'insignia' && hayIA && (
+    <p
+      class={`flex flex-wrap items-center gap-x-2 gap-y-1 rounded-lg border border-paper-300 bg-paper-100 px-3 py-2 text-xs leading-relaxed text-ink-soft ${clase}`}
+    >
+      <svg
+        class="h-4 w-4 shrink-0 text-clay-600"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.7"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        aria-hidden="true"
+        focusable="false"
+      >
+        <path d="M12 3.5 13.8 8.2 18.5 10 13.8 11.8 12 16.5 10.2 11.8 5.5 10 10.2 8.2Z" />
+        <path d="M18 16.5 18.7 18.3 20.5 19 18.7 19.7 18 21.5 17.3 19.7 15.5 19 17.3 18.3Z" />
+      </svg>
+      <span>
+        <span class="font-semibold text-ink">Transparencia:</span>{' '}{etiqueta}.
+      </span>
+      <a
+        href={IA.href}
+        class="font-medium text-brand-700 underline underline-offset-2 hover:text-clay-700"
+      >
+        Cómo usamos la IA
+      </a>
+    </p>
+  )
+}
+
+{
+  variante === 'bloque' && hayIA && (
+    <aside
+      aria-labelledby="aviso-ia-titulo"
+      class={`rounded-xl border border-paper-300 border-l-4 border-l-clay-500 bg-paper-100 p-5 text-sm leading-relaxed text-ink-soft ${clase}`}
+    >
+      <p
+        id="aviso-ia-titulo"
+        class="text-xs font-semibold uppercase tracking-wide text-clay-700"
+      >
+        Cómo se ha elaborado este contenido
+      </p>
+
+      <ul class="mt-3 space-y-2">
+        {iaTexto && (
+          <li>
+            El borrador de este texto lo <strong>generó un sistema de
+            inteligencia artificial</strong> (un modelo de lenguaje) a partir de
+            un encargo editorial y de las fuentes oficiales que se citan en él.
+          </li>
+        )}
+        {iaImagen && (
+          <li>
+            La <strong>ilustración de portada se generó con IA</strong>. Es un
+            dibujo editorial: no es una fotografía, no representa a personas
+            reales ni documenta ningún hecho.
+          </li>
+        )}
+        {revisadoPor ? (
+          <li>
+            Antes de publicarse lo revisó{' '}
+            {revisorHref ? (
+              <a
+                href={revisorHref}
+                class="font-medium text-brand-700 underline underline-offset-2 hover:text-clay-700"
+              >
+                {revisadoPor}
+              </a>
+            ) : (
+              <strong>{revisadoPor}</strong>
+            )}
+            {revisorTitulo && ` (${revisorTitulo})`}, que contrasta cada dato
+            normativo con su fuente oficial. La responsabilidad editorial de lo
+            publicado es de {SITE.name}.
+          </li>
+        ) : (
+          <li>
+            La responsabilidad editorial de lo publicado es de {SITE.name}, que
+            contrasta cada dato normativo con la fuente oficial citada.
+          </li>
+        )}
+        <li>
+          Una IA puede redactar con total seguridad un dato equivocado.{' '}
+          <strong>Comprueba siempre la fuente oficial enlazada</strong> y la
+          fecha de actualización antes de tomar una decisión.
+        </li>
+        {nota && <li>{nota}</li>}
+      </ul>
+
+      <p class="mt-4 text-xs text-ink-muted">
+        ¿Has visto un error? Escríbenos a{' '}
+        <a
+          href={`mailto:${SITE.email}?subject=Correcci%C3%B3n%20de%20contenido`}
+          class="font-medium text-brand-700 underline underline-offset-2 hover:text-clay-700"
+        >
+          {SITE.email}
+        </a>{' '}
+        y lo corregimos. Detalle completo del uso de IA en este sitio:{' '}
+        <a
+          href={IA.href}
+          class="font-medium text-brand-700 underline underline-offset-2 hover:text-clay-700"
+        >
+          Transparencia IA
+        </a>.
+      </p>
+    </aside>
+  )
+}
+
+{
+  variante === 'herramienta' && (
+    <div
+      role="note"
+      class={`rounded-xl border border-paper-300 border-l-4 border-l-brand-500 bg-paper-100 p-4 text-sm leading-relaxed text-ink-soft ${clase}`}
+    >
+      <p>
+        <span class="font-semibold text-ink">{IA.etiquetaHerramienta}.</span>{' '}
+        Aplica las fórmulas y los coeficientes que fija la Ley General de la
+        Seguridad Social: con los mismos datos devuelve siempre el mismo
+        resultado. No hay elaboración de perfiles ni una decisión automatizada
+        que produzca efectos jurídicos sobre ti (art. 22 del RGPD), y siempre
+        puedes contrastar el resultado con una persona.
+        {nota && ` ${nota}`}
+      </p>
+      <p class="mt-2 text-xs text-ink-muted">
+        Qué usa y qué no usa IA en este sitio:{' '}
+        <a
+          href={IA.href}
+          class="font-medium text-brand-700 underline underline-offset-2 hover:text-clay-700"
+        >
+          Transparencia IA
+        </a>.
+      </p>
+    </div>
+  )
+}
