@@ -1,6 +1,6 @@
 ---
 import Base from '../../layouts/Base.astro';
-import { SITE, REVIEWERS } from '../../consts';
+import { SITE, REVIEWERS, IA } from '../../consts';
 import { webPageSchema, breadcrumbSchema, reviewerPersonSchema, absUrl } from '../../lib/schema';
 import calendario from '../../../scripts/calendario.json';
 
@@ -67,12 +67,19 @@ const schema = [
 
       <h2>Qué significa &ldquo;revisado por&rdquo; en este sitio</h2>
       <p>
-        {reviewerName} no redacta los artículos de {SITE.name}: la redacción
-        corre a cargo del equipo editorial del sitio. Su función es distinta y
-        se indica de forma explícita al pie de cada artículo marcado como
-        &ldquo;Revisado por&rdquo;: comprobar que el contenido publicado sobre
-        jubilación anticipada se ajusta a la normativa vigente y a la
-        información oficial disponible en el momento de la revisión.
+        {reviewerName} no redacta los artículos de {SITE.name}: el borrador lo
+        genera un sistema de inteligencia artificial a partir de un encargo
+        editorial y de las fuentes oficiales que debe citar (así se declara en
+        cada artículo y en la página de{' '}
+        <a href={IA.href}>transparencia sobre IA</a>). Su función es
+        precisamente la que hace que ese borrador pueda publicarse: comprobar
+        que el contenido se ajusta a la normativa vigente y a la información
+        oficial disponible en el momento de la revisión.
+      </p>
+      <p>
+        Es la revisión humana que exige el artículo 50 del Reglamento (UE)
+        2024/1689 para el contenido generado con IA que informa al público
+        sobre asuntos de interés general. Sin ella, un artículo no se publica.
       </p>
 
       <h2>Qué revisa</h2>

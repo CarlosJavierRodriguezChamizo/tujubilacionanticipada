@@ -1,6 +1,7 @@
 ---
 import type { CollectionEntry } from 'astro:content';
 import ArticleCard from './ArticleCard.astro';
+import AvisoIA from './AvisoIA.astro';
 
 interface Props {
   posts: CollectionEntry<'blog'>[];
@@ -15,6 +16,13 @@ const pageHref = (n: number) => (n <= 1 ? '/blog' : `/blog/page/${n}`);
 const hasPrev = currentPage > 1;
 const hasNext = currentPage < lastPage;
 ---
+
+<!--
+  Divulgación de IA también en el listado: el art. 50.5 del Reglamento (UE)
+  2024/1689 exige informar «a más tardar» en la primera exposición, y para
+  quien solo hojea los titulares la primera exposición es esta página.
+-->
+<AvisoIA variante="insignia" class="mb-6" iaTexto={true} revisado={true} />
 
 <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
   {posts.map((post) => <ArticleCard post={post} />)}

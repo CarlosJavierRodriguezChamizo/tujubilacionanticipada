@@ -44,6 +44,24 @@ const blog = defineCollection({
     ogImage: z.string().optional(),
     tags: z.array(z.string()).default([]),
     draft: z.boolean().default(false),
+    /*
+     * Transparencia sobre IA (art. 50 del Reglamento (UE) 2024/1689).
+     *
+     * El pipeline de publicación redacta el borrador con un modelo de lenguaje
+     * y genera la portada con un modelo de imagen, así que el valor por defecto
+     * de ambos campos es `true`: la divulgación aparece sola y solo hay que
+     * tocar el frontmatter para el caso excepcional (un artículo escrito
+     * íntegramente por una persona, o una portada que no venga de un modelo).
+     *
+     * Nunca pongas `false` en un artículo cuyo borrador sí generó una IA: la
+     * etiqueta dejaría de mostrarse y la divulgación pasaría a ser falsa.
+     */
+    /** El borrador del texto lo generó un sistema de IA generativa. */
+    aiTextGenerated: z.boolean().default(true),
+    /** La ilustración de portada la generó un sistema de IA generativa. */
+    aiImageGenerated: z.boolean().default(true),
+    /** Matiz concreto de este artículo para el bloque de transparencia. */
+    aiNota: z.string().optional(),
   }),
 });
 

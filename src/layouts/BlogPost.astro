@@ -13,7 +13,8 @@ import { getCanonicalSlug } from '../lib/canonical-map';
 import ShareButtons from '../components/ShareButtons.astro';
 import RelatedArticles from '../components/RelatedArticles.astro';
 import AsesoramientoCard from '../components/AsesoramientoCard.astro';
-import { SITE, REVIEWERS } from '../consts';
+import AvisoIA from '../components/AvisoIA.astro';
+import { SITE, REVIEWERS, IA } from '../consts';
 
 interface Props {
   post: CollectionEntry<'blog'>;
@@ -46,6 +47,16 @@ const categoryHref =
 const canonicalDestino = getCanonicalSlug(post.slug);
 const canonicalPath = canonicalDestino ? `/blog/${canonicalDestino}` : undefined;
 
+// Divulgación de IA legible por máquina: se declara exactamente lo mismo que
+// muestra la insignia visible, para que no puedan contradecirse.
+const aiDisclosure = {
+  elementos: [
+    ...(data.aiTextGenerated ? ['text'] : []),
+    ...(data.aiImageGenerated && heroImage ? ['image'] : []),
+  ],
+  revisionHumana: Boolean(data.reviewedBy),
+};
+
 const articleSchema = blogPostingSchema(post);
 const breadcrumb = breadcrumbSchema([
   { name: 'Inicio', path: '/' },
@@ -63,6 +74,7 @@ const breadcrumb = breadcrumbSchema([
   image={data.ogImage ?? heroImage}
   ogType="article"
   schema={[articleSchema, ...articleWebPageSchema(post), breadcrumb]}
+  aiDisclosure={aiDisclosure}
 >
   <article class="container-prose py-10 sm:py-14">
     <nav aria-label="Migas de pan" class="mb-6 text-sm text-ink-muted">
@@ -112,6 +124,18 @@ const breadcrumb = breadcrumbSchema([
           )
         }
       </div>
+
+      <!--
+        Divulgación de IA en la primera exposición al contenido (art. 50.5
+        RIA): va junto a la firma, encima del artículo, no en el pie.
+      -->
+      <AvisoIA
+        variante="insignia"
+        class="mt-4"
+        iaTexto={data.aiTextGenerated}
+        iaImagen={data.aiImageGenerated}
+        revisadoPor={data.reviewedBy}
+      />
     </header>
 
     {
@@ -125,6 +149,14 @@ const breadcrumb = breadcrumbSchema([
             loading="eager"
             class="aspect-video w-full rounded-xl border border-paper-200 object-cover"
           />
+          {
+            data.aiImageGenerated && (
+              <figcaption class="mt-2 text-xs text-ink-muted">
+                {IA.etiquetaImagen}. Es un dibujo editorial: no representa a
+                personas ni hechos reales.
+              </figcaption>
+            )
+          }
         </figure>
       )
     }
@@ -137,9 +169,20 @@ const breadcrumb = breadcrumbSchema([
       <slot />
     </div>
 
+    <AvisoIA
+      variante="bloque"
+      class="mx-auto mt-12 max-w-prose"
+      iaTexto={data.aiTextGenerated}
+      iaImagen={data.aiImageGenerated}
+      revisadoPor={data.reviewedBy}
+      revisorTitulo={data.reviewerTitle}
+      revisorHref={reviewerHref}
+      nota={data.aiNota}
+    />
+
     {
       data.reviewedBy && (
-        <aside class="mx-auto mt-12 flex max-w-prose items-center gap-4 rounded-xl border border-paper-200 bg-paper-100 p-5">
+        <aside class="mx-auto mt-6 flex max-w-prose items-center gap-4 rounded-xl border border-paper-200 bg-paper-100 p-5">
           {reviewerImg && (
             reviewerHref ? (
               <a href={reviewerHref} class="shrink-0">
