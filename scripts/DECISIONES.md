@@ -503,3 +503,16 @@ Formato:
 - Riesgo identificado: (1) Toda la divulgación afirma que hay revisión humana antes de publicar; si la routine diaria publicara sin ella, el texto de `IA.revisionHumana` y `IA.etiquetaArticulo` deja de ser cierto y hay que corregirlo (queda anotado como punto abierto 1 de docs/CUMPLIMIENTO-IA.md). (2) LEGAL.titular/nif/domicilio siguen vacíos: la responsabilidad editorial que declara el aviso legal necesita un titular identificado (art. 10 LSSI-CE). (3) Hay que confirmar el origen de public/avatars/*.jpg y de public/equipo/javier-rodriguez.jpg: si fueran imágenes generadas con IA presentadas como personas reales, serían un problema de art. 50.4 y de práctica comercial engañosa. (4) El `@context` en array solo se emite en el nodo WebPage; el nodo Article, del que dependen los resultados enriquecidos, se deja intacto a propósito.
 - Commit: (pendiente de este mismo commit)
 - Veredicto del CEO: pendiente
+
+---
+
+## 2026-09-05 — seo-020 (reintento) Añadir a /simulador las fuentes normativas, coeficientes reductores y enlace al simulador oficial de la Seguridad Social (seo) — FALLIDA
+- Archivos: ninguno (el subagente se detuvo antes de tocar nada)
+- Qué: El subagente seo leyó src/lib/pension-calculo.ts para derivar la tabla de coeficientes reductores desde el módulo (sin copiar cifras a mano, como exigía la nota de reactivación) y, al contrastarla con contenido ya publicado del propio sitio que cita la misma fuente oficial, detectó una discrepancia interna verificable: COEF_VOLUNTARIA[1 mes de anticipo][tramo C, 41a6m-44a6m] = 2,96 % en el motor, frente a 2,86 % en src/content/blog/penalizacion-jubilacion-anticipada-voluntaria.mdx y src/content/blog/tabla-penalizacion-jubilacion-anticipada.mdx, ambos citando el PDF oficial de coeficientes reductores de seg-social.es para el mismo dato.
+- Por qué falló: La propia tarea exige detenerse y reportar en vez de corregir el motor por iniciativa propia si se detecta una cifra que no coincide con la normativa vigente. El subagente no pudo verificar contra boe.es/seg-social.es porque el acceso saliente a esos dominios está bloqueado en este entorno (403 de proxy en WebFetch y en curl), pero la discrepancia interna entre el motor y contenido ya publicado del mismo dominio es suficiente para no arriesgar publicar una tercera cifra en /simulador.
+- Hipótesis: Sin evaluar (no se llegó a implementar).
+- Criterio de éxito: No cumplido.
+- Métrica y plazo: No aplica.
+- Riesgo identificado: Posible error en al menos una de las dos fuentes internas (motor vs. blog) para la celda [1 mes, tramo C] de COEF_VOLUNTARIA; no auditado el resto de las 96 celdas de COEF_VOLUNTARIA/COEF_INVOLUNTARIA, así que podría haber más discrepancias sin detectar. Bloquea también ux-003 y ux-004, que dependen del mismo archivo y contenido.
+- Commit: (pendiente de este mismo commit)
+- Veredicto del CEO: pendiente
